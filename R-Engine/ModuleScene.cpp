@@ -3,7 +3,6 @@
 #include "ModuleScene.h"
 #include "Primitive.h"
 
-
 ModuleScene::ModuleScene(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
 }
@@ -17,7 +16,7 @@ bool ModuleScene::Start()
 	LOG("Loading Intro assets");
 	bool ret = true;
 
-	App->camera->Move(vec3(1.0f, 1.0f, 0.0f));
+	App->camera->Position = vec3(0, 1, 4);
 	App->camera->LookAt(vec3(0, 0, 0));
 
 	return ret;
@@ -37,6 +36,11 @@ update_status ModuleScene::Update(float dt)
 	Plane p(0, 1, 0, 0);
 	p.axis = true;
 	p.Render();
+	
+	if (App->input->GetKey(SDL_SCANCODE_X) == KEY_DOWN) {
+		App->camera->Position = vec3(0, 1, 4);
+		App->camera->LookAt(vec3(0, 0, 0));
+	}
 
 	if (SDL_GetTicks() >= TIME_TRIAL)
 	{

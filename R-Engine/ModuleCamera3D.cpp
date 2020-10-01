@@ -23,6 +23,8 @@ bool ModuleCamera3D::Start()
 	LOG("Setting up the camera");
 	bool ret = true;
 
+
+
 	return ret;
 }
 
@@ -95,19 +97,6 @@ update_status ModuleCamera3D::Update(float dt)
 		}
 
 		Position = Reference + Z * length(Position);
-	}
-	if (App->input->GetKey(SDL_SCANCODE_X) == KEY_REPEAT)
-{
-		mat4x4 matrix;
-
-		Position = matrix.translation();
-
-		X = vec3{ matrix[0], matrix[0], matrix[0] };
-		Y = vec3{ matrix[0], matrix[0], matrix[0] };
-		Z = vec3{ matrix[0], matrix[0], matrix[0] };
-
-		vec3 center = { matrix[0], matrix[0], matrix[0] };
-		Look((center)-Z * 18, center, true);
 	}
 
 	// Recalculate matrix -------------
