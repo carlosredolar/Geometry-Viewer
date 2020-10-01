@@ -1,6 +1,5 @@
 #include "Globals.h"
 #include "Application.h"
-#include "ModulePlayer.h"
 #include "ModuleCamera3D.h"
 
 ModuleCamera3D::ModuleCamera3D(Application* app, bool start_enabled) : Module(app, start_enabled)
@@ -97,17 +96,18 @@ update_status ModuleCamera3D::Update(float dt)
 
 		Position = Reference + Z * length(Position);
 	}
-	else {
+	if (App->input->GetKey(SDL_SCANCODE_X) == KEY_REPEAT)
+{
 		mat4x4 matrix;
 
 		Position = matrix.translation();
 
-		X = vec3{ matrix[0], matrix[1], matrix[2] };
-		Y = vec3{ matrix[4], matrix[5], matrix[6] };
-		Z = vec3{ matrix[8], matrix[9], matrix[10] };
+		X = vec3{ matrix[0], matrix[0], matrix[0] };
+		Y = vec3{ matrix[0], matrix[0], matrix[0] };
+		Z = vec3{ matrix[0], matrix[0], matrix[0] };
 
-		vec3 VehicleLocation = { matrix[12], matrix[13] + 7, matrix[14] };
-		Look((VehicleLocation)-Z * 18, VehicleLocation, true);
+		vec3 center = { matrix[0], matrix[0], matrix[0] };
+		Look((center)-Z * 18, center, true);
 	}
 
 	// Recalculate matrix -------------
