@@ -3,6 +3,8 @@
 #include "ModuleScene.h"
 #include "Primitive.h"
 
+#include "ImGui/imgui.h"
+
 ModuleScene::ModuleScene(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
 }
@@ -15,6 +17,9 @@ bool ModuleScene::Start()
 {
 	LOG("Loading Intro assets");
 	bool ret = true;
+
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
 
 	App->camera->Position = vec3(0, 1, 4);
 	App->camera->LookAt(vec3(0, 0, 0));
