@@ -41,10 +41,10 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(ProjectDir)\glew\include;$(ProjectDir)\SDL_mixer\include;$(ProjectDir)\SDL\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)Glew\include;$(ProjectDir)SDL\include;$(IncludePath)</IncludePath>
     <TargetName>$(ProjectName)</TargetName>
-    <OutDir>$(SolutionDir)Build\Debug</OutDir>
-    <IntDir>$(SolutionDir)Intermediate</IntDir>
+    <OutDir>$(SolutionDir)Build\Debug\</OutDir>
+    <IntDir>$(SolutionDir)Intermediate\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)Build\Release</OutDir>
@@ -61,7 +61,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
-      <AdditionalLibraryDirectories>$(ProjectDir)\SDL_mixer\libx86;$(ProjectDir)\glew\libx86;$(ProjectDir)\SDL\libx86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)glew\libx86;$(ProjectDir)SDL\libx86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;glew32.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
