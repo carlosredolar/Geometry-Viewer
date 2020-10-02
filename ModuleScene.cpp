@@ -37,7 +37,8 @@ update_status ModuleScene::Update(float dt)
 	p.axis = true;
 	p.Render();
 	
-	if (App->input->GetKey(SDL_SCANCODE_X) == KEY_DOWN) {
+	if (App->input->GetKey(SDL_SCANCODE_X) == KEY_DOWN) 
+	{
 		App->camera->Position = vec3(0, 1, 4);
 		App->camera->LookAt(vec3(0, 0, 0));
 	}
@@ -50,7 +51,8 @@ update_status ModuleScene::Update(float dt)
 	return UPDATE_CONTINUE;
 }
 
-void ModuleScene::CreateBox(int degrees, vec3 angle, vec3 offset, vec3 size, Color color) {
+void ModuleScene::CreateBox(int degrees, vec3 angle, vec3 offset, vec3 size, Color color) 
+{
 
 	Cube cube;
 	cube.size = size;
@@ -60,7 +62,8 @@ void ModuleScene::CreateBox(int degrees, vec3 angle, vec3 offset, vec3 size, Col
 	cube.Render();
 }
 
-void ModuleScene::RenderBox(int degrees, vec3 angle, vec3 offset, vec3 size, Color color) {
+void ModuleScene::RenderBox(int degrees, vec3 angle, vec3 offset, vec3 size, Color color) 
+{
 
 	Cube cube;
 	cube.size = size;

@@ -1,2 +1,4 @@
 C:\Users\oscarrm9\Documents\GitHub\R-Engine\R-Engine\Debug\R-Engine.exe
 C:\Users\oscarrm9\Documents\GitHub\R-Engine\R-Engine\Debug\R-Engine.pdb
+C:\Users\oscarrm9\Documents\GitHub\R-Engine\Debug\R-Engine.exe
+C:\Users\oscarrm9\Documents\GitHub\R-Engine\Debug\R-Engine.pdb
