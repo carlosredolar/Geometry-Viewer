@@ -1,4 +1,0 @@
-﻿  ModuleScene.cpp
-C:\Users\oscarrm9\Documents\GitHub\R-Engine\ModuleScene.cpp(61,19): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\oscarrm9\Documents\GitHub\R-Engine\ModuleScene.cpp(72,19): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-  R-Engine.vcxproj -> C:\Users\oscarrm9\Documents\GitHub\R-Engine\Debug\R-Engine.exe
