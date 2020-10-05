@@ -246,7 +246,7 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 			{
 
 				// Github link:
-				ShellExecuteA(NULL, "open", "https://github.com/Sauko22/Unfalse-Engine", NULL, NULL, SW_SHOWNORMAL);
+				ShellExecuteA(NULL, "open", "https://github.com/carlosredolar/R-Engine", NULL, NULL, SW_SHOWNORMAL);
 			}
 
 
