@@ -4,10 +4,6 @@
 #include "Globals.h"
 #include "Primitive.h"
 
-#define MAX_SNAKE 2
-#define MAP_LENGHT 1000
-#define TIME_TRIAL 50*1000
-
 class ModuleScene : public Module
 {
 public:

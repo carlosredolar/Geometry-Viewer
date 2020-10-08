@@ -96,6 +96,9 @@
     <ClInclude Include="ImGui\imstb_truetype.h">
       <Filter>Sources\ImGui</Filter>
     </ClInclude>
+    <ClInclude Include="ModuleGui.h">
+      <Filter>Sources\Modules</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleCamera3D.cpp">
@@ -250,6 +253,9 @@
     </ClCompile>
     <ClCompile Include="MathGeoLib\include\Time\Clock.cpp">
       <Filter>Sources\MathGeoLib</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleGui.cpp">
+      <Filter>Sources\Modules</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

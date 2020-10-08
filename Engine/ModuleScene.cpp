@@ -1,7 +1,5 @@
-#include "Globals.h"
 #include "Application.h"
 #include "ModuleScene.h"
-#include "Primitive.h"
 
 #include "ImGui/imgui.h"
 
@@ -17,9 +15,6 @@ bool ModuleScene::Start()
 {
 	LOG("Loading Intro assets");
 	bool ret = true;
-
-	ImGui::CreateContext();
-	ImGuiIO& io = ImGui::GetIO();
 
 	App->camera->Position = vec3(0, 1, 4);
 	App->camera->LookAt(vec3(0, 0, 0));
@@ -46,11 +41,6 @@ update_status ModuleScene::Update(float dt)
 	{
 		App->camera->Position = vec3(0, 1, 4);
 		App->camera->LookAt(vec3(0, 0, 0));
-	}
-
-	if (SDL_GetTicks() >= TIME_TRIAL)
-	{
-		return UPDATE_STOP;
 	}
 
 	return UPDATE_CONTINUE;

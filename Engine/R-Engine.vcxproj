@@ -98,6 +98,7 @@
     <ClInclude Include="ImGui\imstb_truetype.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="ModuleCamera3D.h" />
+    <ClInclude Include="ModuleGui.h" />
     <ClInclude Include="ModuleRenderer3D.h" />
     <ClInclude Include="ModuleScene.h" />
     <ClInclude Include="p2List.h" />
@@ -155,6 +156,7 @@
     <ClCompile Include="MathGeoLib\include\Math\TransformOps.cpp" />
     <ClCompile Include="MathGeoLib\include\Time\Clock.cpp" />
     <ClCompile Include="ModuleCamera3D.cpp" />
+    <ClCompile Include="ModuleGui.cpp" />
     <ClCompile Include="ModuleInput.cpp" />
     <ClCompile Include="ModuleRenderer3D.cpp" />
     <ClCompile Include="ModuleScene.cpp" />

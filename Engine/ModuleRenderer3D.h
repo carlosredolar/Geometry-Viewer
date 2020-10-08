@@ -4,12 +4,6 @@
 #include "glmath.h"
 #include "Light.h"
 
-//ImGui includes
-#include "Imgui/imgui.h"
-#include "Imgui/imgui_internal.h"
-#include "Imgui/imgui_impl_sdl.h"
-#include "Imgui/imgui_impl_opengl3.h"
-
 #define MAX_LIGHTS 8
 
 class ModuleRenderer3D : public Module
@@ -32,10 +26,5 @@ public:
 	mat3x3 NormalMatrix;
 	mat4x4 ModelMatrix, ViewMatrix, ProjectionMatrix;
 private:
-	// Window 3 variables
-	float f;
-	char buf[20];
 
-	// Window 4 variables
-	float my_color[4];
 };
