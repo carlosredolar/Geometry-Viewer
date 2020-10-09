@@ -43,27 +43,148 @@ update_status ModuleScene::Update(float dt)
 		App->camera->LookAt(vec3(0, 0, 0));
 	}
 
+	/*glLineWidth(2.0f);
+	glBegin(GL_TRIANGLES);
+		glVertex3f(0.f, 0.f, 0.f);
+		glVertex3f(1.f, 0.f, 0.f);
+		glVertex3f(0.f, 1.f, 0.f);
+
+		glVertex3f(1.f, 0.f, 0.f);
+		glVertex3f(1.f, 1.f, 0.f);
+		glVertex3f(0.f, 1.f, 0.f);
+
+		glVertex3f(0.f, 0.f, -1.f);
+		glVertex3f(0.f, 0.f, 0.f);
+		glVertex3f(0.f, 1.f, 0.f);
+
+		glVertex3f(0.f, 0.f, -1.f);
+		glVertex3f(0.f, 1.f, 0.f);
+		glVertex3f(0.f, 1.f, -1.f);
+
+		glVertex3f(1.f, 0.f, 0.f);
+		glVertex3f(1.f, 0.f, -1.f);
+		glVertex3f(1.f, 1.f, -1.f);
+
+		glVertex3f(1.f, 0.f, 0.f);
+		glVertex3f(1.f, 1.f, -1.f);
+		glVertex3f(1.f, 1.f, 0.f);
+
+		glVertex3f(1.f, 0.f, -1.f);
+		glVertex3f(0.f, 0.f, -1.f);
+		glVertex3f(0.f, 1.f, -1.f);
+
+		glVertex3f(1.f, 0.f, -1.f);
+		glVertex3f(0.f, 1.f, -1.f);
+		glVertex3f(1.f, 1.f, -1.f);
+	glEnd();
+	glLineWidth(1.0f);*/
+
+	//const int shapesize = 108;
+
+	//float shape[shapesize] =
+	//{
+	//	0.f, 0.f, 0.f,
+	//	1.f, 0.f, 0.f,
+	//	0.f, 1.f, 0.f,
+
+	//	1.f, 0.f, 0.f,
+	//	1.f, 1.f, 0.f,
+	//	0.f, 1.f, 0.f,
+
+	//	0.f, 0.f, -1.f,
+	//	0.f, 0.f, 0.f,
+	//	0.f, 1.f, 0.f,
+
+	//	0.f, 0.f, -1.f,
+	//	0.f, 1.f, 0.f,
+	//	0.f, 1.f, -1.f,
+
+	//	1.f, 0.f, 0.f,
+	//	1.f, 0.f, -1.f,
+	//	1.f, 1.f, -1.f,
+
+	//	1.f, 0.f, 0.f,
+	//	1.f, 1.f, -1.f,
+	//	1.f, 1.f, 0.f,
+
+	//	1.f, 0.f, -1.f,
+	//	0.f, 0.f, -1.f,
+	//	0.f, 1.f, -1.f,
+
+	//	1.f, 0.f, -1.f,
+	//	0.f, 1.f, -1.f,
+	//	1.f, 1.f, -1.f,
+
+	//	0.f, 1.f, 0.f,
+	//	1.f, 1.f, 0.f,
+	//	1.f, 1.f, -1.f,
+
+	//	0.f, 1.f, 0.f,
+	//	1.f, 1.f, -1.f,
+	//	0.f, 1.f, -1.f,
+
+	//	0.f, 0.f, 0.f,
+	//	1.f, 0.f, -1.f,
+	//	1.f, 0.f, 0.f,
+
+	//	0.f, 0.f, 0.f,
+	//	0.f, 0.f, -1.f,
+	//	1.f, 0.f, -1.f,
+	//};
+
+	//uint my_id = 0;
+	//glGenBuffers(1, (GLuint*)&(my_id));
+	//glBindBuffer(GL_ARRAY_BUFFER, my_id);
+	//glBufferData(GL_ARRAY_BUFFER, sizeof(float) * shapesize , shape, GL_STATIC_DRAW);
+
+	//glEnableClientState(GL_VERTEX_ARRAY);
+	//glBindBuffer(GL_ARRAY_BUFFER, my_id);
+	//glVertexPointer(3, GL_FLOAT, 0, NULL);
+	//// … bind and use other buffers
+	//glDrawArrays(GL_TRIANGLES, 0, shapesize/3);
+	//glDisableClientState(GL_VERTEX_ARRAY);
+
+	uint index[36] =
+	{
+		0,1,2,
+		0,2,3,
+		4,0,3,
+		4,3,7,
+		1,5,6,
+		1,6,2,
+		5,4,7,
+		5,7,6,
+		3,2,6,
+		3,6,7,
+		0,5,1,
+		0,1,5
+	};
+
+	float verts[24] =
+	{
+		0.f,0.f,0.f,//0
+		1.f,0.f,0.f,//1
+		1.f,1.f,0.f,//2
+		0.f,1.f,0.f,//3
+		0.f,0.f,-1.f,//4
+		1.f,0.f,-1.f,//5
+		1.f,1.f,-1.f,//6
+		0.f,1.f,-1.f//7
+	};
+
+	uint my_indices = 0;
+	glGenBuffers(1, (GLuint*)&(my_indices));
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, my_indices);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint)* 36, index, GL_STATIC_DRAW);
+
+	uint my_verts = 0;
+	glGenBuffers(1, (GLuint*)&(my_verts));
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, my_verts);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float) * 24, verts, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, my_indices);
+	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, NULL);
+
 	return UPDATE_CONTINUE;
 }
 
-void ModuleScene::CreateBox(int degrees, vec3 angle, vec3 offset, vec3 size, Color color) 
-{
-
-	Cube cube;
-	cube.size = size;
-	cube.SetPos(offset.x, offset.y, offset.z);
-	cube.color = color;
-	cube.SetRotation(degrees, angle);
-	cube.Render();
-}
-
-void ModuleScene::RenderBox(int degrees, vec3 angle, vec3 offset, vec3 size, Color color) 
-{
-
-	Cube cube;
-	cube.size = size;
-	cube.SetPos(offset.x, offset.y, offset.z);
-	cube.color = color;
-	cube.SetRotation(degrees, angle);
-	cube.Render();
-}
