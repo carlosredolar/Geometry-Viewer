@@ -5,6 +5,7 @@
 
 ModuleScene::ModuleScene(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
+
 }
 
 ModuleScene::~ModuleScene()
@@ -144,7 +145,7 @@ update_status ModuleScene::Update(float dt)
 	//glDrawArrays(GL_TRIANGLES, 0, shapesize/3);
 	//glDisableClientState(GL_VERTEX_ARRAY);
 
-	uint index[36] =
+	int index[36] =
 	{
 		0,1,2,
 		0,2,3,
@@ -159,8 +160,8 @@ update_status ModuleScene::Update(float dt)
 		0,5,1,
 		0,1,5
 	};
-
-	float verts[24] =
+	
+	static const float verts[24] =
 	{
 		0.f,0.f,0.f,//0
 		1.f,0.f,0.f,//1
@@ -172,18 +173,22 @@ update_status ModuleScene::Update(float dt)
 		0.f,1.f,-1.f//7
 	};
 
+	glEnableClientState(GL_VERTEX_ARRAY);
+
+	uint my_id = 0;
+	glGenBuffers(1, (GLuint*)&(my_id));
+	glBindBuffer(GL_ARRAY_BUFFER, my_id);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(verts) * 3, verts, GL_STATIC_DRAW);
+	
 	uint my_indices = 0;
 	glGenBuffers(1, (GLuint*)&(my_indices));
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, my_indices);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint)* 36, index, GL_STATIC_DRAW);
-
-	uint my_verts = 0;
-	glGenBuffers(1, (GLuint*)&(my_verts));
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, my_verts);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float) * 24, verts, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(index), index, GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, my_indices);
-	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, NULL);
+	glDrawElements(GL_TRIANGLES, sizeof(index), GL_UNSIGNED_BYTE, NULL);
+
+	glDisableClientState(GL_VERTEX_ARRAY);
 
 	return UPDATE_CONTINUE;
 }

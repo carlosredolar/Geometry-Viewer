@@ -18,6 +18,6 @@ public:
 	void CreateBox(int degrees, vec3 angle, vec3 offset, vec3 size, Color color);
 	void RenderBox(int degrees, vec3 angle, vec3 offset, vec3 size, Color color);
 
-public:
+private:
 
 };
