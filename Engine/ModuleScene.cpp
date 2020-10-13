@@ -145,50 +145,50 @@ update_status ModuleScene::Update(float dt)
 	//glDrawArrays(GL_TRIANGLES, 0, shapesize/3);
 	//glDisableClientState(GL_VERTEX_ARRAY);
 
-	int index[36] =
-	{
-		0,1,2,
-		0,2,3,
-		4,0,3,
-		4,3,7,
-		1,5,6,
-		1,6,2,
-		5,4,7,
-		5,7,6,
-		3,2,6,
-		3,6,7,
-		0,5,1,
-		0,1,5
-	};
-	
-	static const float verts[24] =
-	{
-		0.f,0.f,0.f,//0
-		1.f,0.f,0.f,//1
-		1.f,1.f,0.f,//2
-		0.f,1.f,0.f,//3
-		0.f,0.f,-1.f,//4
-		1.f,0.f,-1.f,//5
-		1.f,1.f,-1.f,//6
-		0.f,1.f,-1.f//7
-	};
+	//int index[36] =
+	//{
+	//	0,1,2,
+	//	0,2,3,
+	//	4,0,3,
+	//	4,3,7,
+	//	1,5,6,
+	//	1,6,2,
+	//	5,4,7,
+	//	5,7,6,
+	//	3,2,6,
+	//	3,6,7,
+	//	0,5,1,
+	//	0,1,5
+	//};
+	//
+	//static const float verts[24] =
+	//{
+	//	0.f,0.f,0.f,//0
+	//	1.f,0.f,0.f,//1
+	//	1.f,1.f,0.f,//2
+	//	0.f,1.f,0.f,//3
+	//	0.f,0.f,-1.f,//4
+	//	1.f,0.f,-1.f,//5
+	//	1.f,1.f,-1.f,//6
+	//	0.f,1.f,-1.f//7
+	//};
 
-	glEnableClientState(GL_VERTEX_ARRAY);
+	//glEnableClientState(GL_VERTEX_ARRAY);
 
-	uint my_id = 0;
-	glGenBuffers(1, (GLuint*)&(my_id));
-	glBindBuffer(GL_ARRAY_BUFFER, my_id);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(verts) * 3, verts, GL_STATIC_DRAW);
-	
-	uint my_indices = 0;
-	glGenBuffers(1, (GLuint*)&(my_indices));
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, my_indices);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(index), index, GL_STATIC_DRAW);
+	//uint my_id = 0;
+	//glGenBuffers(1, (GLuint*)&(my_id));
+	//glBindBuffer(GL_ARRAY_BUFFER, my_id);
+	//glBufferData(GL_ARRAY_BUFFER, sizeof(verts) * 3, verts, GL_STATIC_DRAW);
+	//
+	//uint my_indices = 0;
+	//glGenBuffers(1, (GLuint*)&(my_indices));
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, my_indices);
+	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(index), index, GL_STATIC_DRAW);
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, my_indices);
-	glDrawElements(GL_TRIANGLES, sizeof(index), GL_UNSIGNED_BYTE, NULL);
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, my_indices);
+	//glDrawElements(GL_TRIANGLES, sizeof(index), GL_UNSIGNED_BYTE, NULL);
 
-	glDisableClientState(GL_VERTEX_ARRAY);
+	//glDisableClientState(GL_VERTEX_ARRAY);
 
 	return UPDATE_CONTINUE;
 }
