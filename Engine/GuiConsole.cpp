@@ -1,39 +1,39 @@
 #include "Application.h"
 #include "Globals.h"
-#include "UIWindow.h"
+#include "GuiWindow.h"
 #include "ImGui/imconfig.h"
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_impl_sdl.h"
 #include "ImGui/imgui_impl_opengl3.h"
 #include "Glew/include/glew.h"
-#include "UIConsole.h"
+#include "GuiConsole.h"
 #include "ModuleGui.h"
 
 using namespace ImGui;
 
-UIConsole::UIConsole() : UIWindow()
+GuiConsole::GuiConsole() : GuiWindow()
 {
 	is_on = false;
 }
 
-UIConsole::~UIConsole()
+GuiConsole::~GuiConsole()
 {}
 
-bool UIConsole::Start()
+bool GuiConsole::Start()
 {
 	bool ret = true;
 
 	return ret;
 }
 
-bool UIConsole::CleanUp()
+bool GuiConsole::CleanUp()
 {
 	bool ret = true;
 
 	return ret;
 }
 
-void UIConsole::Draw()
+void GuiConsole::Draw()
 {
 	Begin("Console", &is_on);
 

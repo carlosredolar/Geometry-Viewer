@@ -102,7 +102,10 @@
     <ClInclude Include="ModuleGui.h">
       <Filter>Sources\Modules\Gui</Filter>
     </ClInclude>
-    <ClInclude Include="UIConsole.h">
+    <ClInclude Include="GuiConsole.h">
+      <Filter>Sources\Modules\Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="GuiConfiguration.h">
       <Filter>Sources\Modules\Gui</Filter>
     </ClInclude>
   </ItemGroup>
@@ -263,13 +266,16 @@
     <ClCompile Include="ModuleGui.cpp">
       <Filter>Sources\Modules\Gui</Filter>
     </ClCompile>
-    <ClCompile Include="UIWindow.h">
+    <ClCompile Include="GuiConsole.cpp">
       <Filter>Sources\Modules\Gui</Filter>
     </ClCompile>
-    <ClCompile Include="UIWindow.cpp">
+    <ClCompile Include="GuiWindow.cpp">
       <Filter>Sources\Modules\Gui</Filter>
     </ClCompile>
-    <ClCompile Include="UIConsole.cpp">
+    <ClCompile Include="GuiWindow.h">
+      <Filter>Sources\Modules\Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="GuiConfiguration.cpp">
       <Filter>Sources\Modules\Gui</Filter>
     </ClCompile>
   </ItemGroup>

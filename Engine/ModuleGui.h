@@ -1,13 +1,14 @@
 #pragma once
 #include "Module.h"
 #include "Globals.h"
-#include "UIWindow.h"
+#include "GuiWindow.h"
 
 //ImGui includes
 #include "Imgui/imgui.h"
 
-class UIWindow;
-class UIConsole;
+class GuiWindow;
+class GuiConsole;
+class GuiConfiguration;
 
 class ModuleGui : public Module
 {
@@ -24,7 +25,7 @@ public:
 	void ConsoleLog(const char* text);
 	void DebugConsole();
 
-	std::vector<UIWindow*> ui_windows;
+	std::vector<GuiWindow*> ui_windows;
 	ImGuiTextBuffer debug_console_buff;
 
 private:
@@ -36,5 +37,6 @@ private:
 	float my_color[4];
 
 	//UI Windows
-	UIConsole* ui_console = nullptr;
+	GuiConsole* ui_console = nullptr;
+	GuiConfiguration* ui_configuration = nullptr;
 };

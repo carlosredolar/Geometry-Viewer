@@ -1,6 +1,7 @@
 #include "Application.h"
 #include "ModuleGui.h"
-#include "UIConsole.h"
+#include "GuiConsole.h"
+#include "GuiConfiguration.h"
 
 #include "Imgui/imgui_internal.h"
 #include "Imgui/imgui_impl_sdl.h"
@@ -20,7 +21,8 @@ ModuleGui::ModuleGui(Application* app, bool start_enabled) : Module(app, start_e
 	my_color[2] = 1;
 	my_color[3] = 1;
 
-	ui_windows.push_back(ui_console = new UIConsole());
+	ui_windows.push_back(ui_console = new GuiConsole());
+	ui_windows.push_back(ui_configuration = new GuiConfiguration());
 }
 
 ModuleGui::~ModuleGui()
@@ -39,6 +41,7 @@ bool ModuleGui::Start()
 	ImGui_ImplOpenGL3_Init();
 
 	ui_console->Start();
+	ui_configuration->Start();
 
 	return true;
 }
@@ -47,17 +50,13 @@ update_status ModuleGui::PreUpdate(float dt)
 {
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplSDL2_NewFrame(App->window->window);
-	//NewFrame();
+	NewFrame();
 
 	return UPDATE_CONTINUE;
 }
 
 update_status ModuleGui::Update(float dt) 
 {
-	ImGui_ImplOpenGL3_NewFrame();
-	ImGui_ImplSDL2_NewFrame(App->window->window);
-	NewFrame();
-
 	// Window 1
 	if (Begin("Test1", NULL)) {
 		Text("Text window 1");
@@ -148,7 +147,11 @@ update_status ModuleGui::Update(float dt)
 		{
 			if (MenuItem("Console")) 
 			{
-				ui_console->Activate();
+				ui_console->is_on = !ui_console->is_on;
+			}
+			if (MenuItem("Configuration"))
+			{
+				ui_configuration->is_on = !ui_configuration->is_on;
 			}
 			ImGui::EndMenu();
 		}
@@ -200,9 +203,12 @@ bool ModuleGui::CleanUp()
 {
 	for (int i = 0; i < ui_windows.capacity(); i++)
 	{
-		ui_windows[i]->~UIWindow();
+		//ui_windows[i]->is_on = false;
+		ui_windows[i]->~GuiWindow();
 	}
 	ui_windows.clear();
+
+	//debug_console_buff.clear();
 
 	return true;
 }

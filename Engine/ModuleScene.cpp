@@ -44,6 +44,10 @@ update_status ModuleScene::Update(float dt)
 		App->camera->LookAt(vec3(0, 0, 0));
 	}
 
+	if (App->input->GetKey(SDL_SCANCODE_T) == KEY_DOWN) {
+		LOG("Console test");
+	}
+
 	/*glLineWidth(2.0f);
 	glBegin(GL_TRIANGLES);
 		glVertex3f(0.f, 0.f, 0.f);

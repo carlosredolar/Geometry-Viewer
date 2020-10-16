@@ -1,17 +1,16 @@
-#ifndef __UIWINDOW_H__
-#define __UIWINDOW_H__
+#ifndef __GUIWINDOW_H__
+#define __GUIWINDOW_H__
 
 #include "Application.h"
 #include "Globals.h"
 #include "SDL/include/SDL.h"
 
-class UIWindow
+class GuiWindow
 {
 public:
-	UIWindow();
-	virtual ~UIWindow();
+	GuiWindow();
+	virtual ~GuiWindow();
 
-	virtual void Activate();
 	virtual bool IsActive();
 	virtual void Draw() = 0;
 
