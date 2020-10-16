@@ -24,7 +24,7 @@ public:
 private:
 
 	Timer	ms_timer;
-	float	dt;
+	float	dt = 0;
 	p2List<Module*> list_modules;
 
 public:
@@ -42,3 +42,4 @@ private:
 	void PrepareUpdate();
 	void FinishUpdate();
 };
+extern Application* App;

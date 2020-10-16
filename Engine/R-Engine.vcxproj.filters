@@ -22,6 +22,9 @@
     <Filter Include="Sources\MathGeoLib">
       <UniqueIdentifier>{3ff35a79-6fd3-45d9-b7b5-40a4d0bd65a4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\Modules\Gui">
+      <UniqueIdentifier>{05e7665b-9142-4433-b574-f36b6590db9d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Module.h">
@@ -97,7 +100,10 @@
       <Filter>Sources\ImGui</Filter>
     </ClInclude>
     <ClInclude Include="ModuleGui.h">
-      <Filter>Sources\Modules</Filter>
+      <Filter>Sources\Modules\Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="UIConsole.h">
+      <Filter>Sources\Modules\Gui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -255,7 +261,16 @@
       <Filter>Sources\MathGeoLib</Filter>
     </ClCompile>
     <ClCompile Include="ModuleGui.cpp">
-      <Filter>Sources\Modules</Filter>
+      <Filter>Sources\Modules\Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="UIWindow.h">
+      <Filter>Sources\Modules\Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="UIWindow.cpp">
+      <Filter>Sources\Modules\Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="UIConsole.cpp">
+      <Filter>Sources\Modules\Gui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

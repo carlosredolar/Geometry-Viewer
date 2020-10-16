@@ -15,16 +15,18 @@ Application::Application()
 
 	// Main Modules
 	AddModule(window);
+	AddModule(camera);
 	AddModule(input);
 	
 	// Scenes
 	AddModule(scene);
-	AddModule(camera);
 	AddModule(gui);
 
 	// Renderer last!
 	AddModule(renderer3D);
 }
+
+Application* App = nullptr;
 
 Application::~Application()
 {
