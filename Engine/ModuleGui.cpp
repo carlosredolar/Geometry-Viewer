@@ -201,7 +201,7 @@ update_status ModuleGui::PostUpdate(float dt)
 
 bool ModuleGui::CleanUp() 
 {
-	for (int i = 0; i < ui_windows.capacity(); i++)
+	for (int i = 0; i < ui_windows.capacity(); i++) //size instead of capacity
 	{
 		//ui_windows[i]->is_on = false;
 		ui_windows[i]->~GuiWindow();

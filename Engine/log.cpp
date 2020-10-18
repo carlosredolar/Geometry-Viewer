@@ -18,6 +18,6 @@ void log(const char file[], int line, const char* format, ...)
 
 	if (App)
 	{
-		App->gui->ConsoleLog(tmp_string2);
+		App->gui->ConsoleLog(tmp_string2); //no accedemos a la consola
 	}
 }
