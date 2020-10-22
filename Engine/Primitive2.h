@@ -74,3 +74,15 @@ public:
 
 	void Render();
 };
+
+class Grid2 {
+public:
+	Grid2(int size);
+	~Grid2();
+
+	void Render();
+
+private:
+	int size;
+
+};

@@ -325,3 +325,38 @@ void Pyramid2::Render()
 
 	RenderPrimitive2(vertex, 15, index, 18);
 }
+
+
+
+
+//GRID
+
+Grid2::Grid2(int grid_size) {
+	if ((grid_size % 2) != 0)
+		grid_size++;
+
+	size = grid_size;
+}
+
+Grid2::~Grid2() {}
+
+void Grid2::Render()
+{
+	glBegin(GL_LINES);
+
+	//Vertical Lines
+	for (float x = -size * 0.5f; x <= size * 0.5f; x++)
+	{
+		glVertex3f(x, 0, -size * 0.5f);
+		glVertex3f(x, 0, size * 0.5f);
+	}
+
+	//Hortiontal Lines
+	for (float z = -size * 0.5f; z <= size * 0.5f; z++)
+	{
+		glVertex3f(-size * 0.5f, 0, z);
+		glVertex3f(size * 0.5f, 0, z);
+	}
+
+	glEnd();
+}

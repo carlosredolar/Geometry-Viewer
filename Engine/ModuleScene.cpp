@@ -34,9 +34,9 @@ bool ModuleScene::CleanUp()
 // Update
 update_status ModuleScene::Update(float dt)
 {
-	Plane2 p(0, 1, 0, 0);
-	p.axis = true;
-	p.Render();
+	//Plane2 p(0, 1, 0, 0);
+	//p.axis = true;
+	//p.Render();
 	
 	if (App->input->GetKey(SDL_SCANCODE_X) == KEY_DOWN) 
 	{
@@ -48,7 +48,13 @@ update_status ModuleScene::Update(float dt)
 		LOG("Console test");
 	}
 
+
+	//Grid
+	Grid2 grid(20);
+	grid.Render();
+
 	//Rendering primitives
+	//uncomment the primitive u want to see
 	Cube2 cube;
 	cube.Render();
 	//Plane3 plane;
