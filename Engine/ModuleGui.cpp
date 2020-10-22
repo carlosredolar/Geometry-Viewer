@@ -57,7 +57,7 @@ update_status ModuleGui::PreUpdate(float dt)
 
 update_status ModuleGui::Update(float dt) 
 {
-	// Window 1
+	/*// Window 1
 	if (Begin("Test1", NULL)) {
 		Text("Text window 1");
 		Button("Shit");
@@ -89,15 +89,15 @@ update_status ModuleGui::Update(float dt)
 		{
 			if (MenuItem("Open.."))
 			{
-				/* Do stuff */
+				
 			}
 			if (MenuItem("Save", "Ctrl+S"))
 			{
-				/* Do stuff */
+				
 			}
 			if (MenuItem("Close", "Ctrl+W"))
 			{
-				/* Do stuff */
+				
 			}
 			ImGui::EndMenu();
 		}
@@ -117,7 +117,7 @@ update_status ModuleGui::Update(float dt)
 	for (int n = 0; n < 50; n++)
 		Text("%04d: Some text", n);
 	EndChild();
-	End();
+	End();*/
 
 	// Tool bar
 	if (BeginMainMenuBar())
