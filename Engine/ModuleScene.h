@@ -3,6 +3,7 @@
 #include "p2DynArray.h"
 #include "Globals.h"
 #include "Primitive.h"
+#include "Primitive2.h"
 #include "glew.h"
 
 class ModuleScene : public Module

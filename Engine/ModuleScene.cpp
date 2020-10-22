@@ -48,108 +48,21 @@ update_status ModuleScene::Update(float dt)
 		LOG("Console test");
 	}
 
-	/*glLineWidth(2.0f);
-	glBegin(GL_TRIANGLES);
-		glVertex3f(0.f, 0.f, 0.f);
-		glVertex3f(1.f, 0.f, 0.f);
-		glVertex3f(0.f, 1.f, 0.f);
+	//Rendering primitives
+	Cube2 cube;
+	cube.Render();
+	//Plane3 plane;
+	//plane.Render();
+	//Pyramid2 pyramid;
+	//pyramid.Render();
+	//Sphere2 sphere;
+	//sphere.Render();
+	//Cylinder2 cylinder;
+	//cylinder.Render();
 
-		glVertex3f(1.f, 0.f, 0.f);
-		glVertex3f(1.f, 1.f, 0.f);
-		glVertex3f(0.f, 1.f, 0.f);
+	
 
-		glVertex3f(0.f, 0.f, -1.f);
-		glVertex3f(0.f, 0.f, 0.f);
-		glVertex3f(0.f, 1.f, 0.f);
-
-		glVertex3f(0.f, 0.f, -1.f);
-		glVertex3f(0.f, 1.f, 0.f);
-		glVertex3f(0.f, 1.f, -1.f);
-
-		glVertex3f(1.f, 0.f, 0.f);
-		glVertex3f(1.f, 0.f, -1.f);
-		glVertex3f(1.f, 1.f, -1.f);
-
-		glVertex3f(1.f, 0.f, 0.f);
-		glVertex3f(1.f, 1.f, -1.f);
-		glVertex3f(1.f, 1.f, 0.f);
-
-		glVertex3f(1.f, 0.f, -1.f);
-		glVertex3f(0.f, 0.f, -1.f);
-		glVertex3f(0.f, 1.f, -1.f);
-
-		glVertex3f(1.f, 0.f, -1.f);
-		glVertex3f(0.f, 1.f, -1.f);
-		glVertex3f(1.f, 1.f, -1.f);
-	glEnd();
-	glLineWidth(1.0f);*/
-
-	//const int shapesize = 108;
-
-	//float shape[shapesize] =
-	//{
-	//	0.f, 0.f, 0.f,
-	//	1.f, 0.f, 0.f,
-	//	0.f, 1.f, 0.f,
-
-	//	1.f, 0.f, 0.f,
-	//	1.f, 1.f, 0.f,
-	//	0.f, 1.f, 0.f,
-
-	//	0.f, 0.f, -1.f,
-	//	0.f, 0.f, 0.f,
-	//	0.f, 1.f, 0.f,
-
-	//	0.f, 0.f, -1.f,
-	//	0.f, 1.f, 0.f,
-	//	0.f, 1.f, -1.f,
-
-	//	1.f, 0.f, 0.f,
-	//	1.f, 0.f, -1.f,
-	//	1.f, 1.f, -1.f,
-
-	//	1.f, 0.f, 0.f,
-	//	1.f, 1.f, -1.f,
-	//	1.f, 1.f, 0.f,
-
-	//	1.f, 0.f, -1.f,
-	//	0.f, 0.f, -1.f,
-	//	0.f, 1.f, -1.f,
-
-	//	1.f, 0.f, -1.f,
-	//	0.f, 1.f, -1.f,
-	//	1.f, 1.f, -1.f,
-
-	//	0.f, 1.f, 0.f,
-	//	1.f, 1.f, 0.f,
-	//	1.f, 1.f, -1.f,
-
-	//	0.f, 1.f, 0.f,
-	//	1.f, 1.f, -1.f,
-	//	0.f, 1.f, -1.f,
-
-	//	0.f, 0.f, 0.f,
-	//	1.f, 0.f, -1.f,
-	//	1.f, 0.f, 0.f,
-
-	//	0.f, 0.f, 0.f,
-	//	0.f, 0.f, -1.f,
-	//	1.f, 0.f, -1.f,
-	//};
-
-	//uint my_id = 0;
-	//glGenBuffers(1, (GLuint*)&(my_id));
-	//glBindBuffer(GL_ARRAY_BUFFER, my_id);
-	//glBufferData(GL_ARRAY_BUFFER, sizeof(float) * shapesize , shape, GL_STATIC_DRAW);
-
-	//glEnableClientState(GL_VERTEX_ARRAY);
-	//glBindBuffer(GL_ARRAY_BUFFER, my_id);
-	//glVertexPointer(3, GL_FLOAT, 0, NULL);
-	//// … bind and use other buffers
-	//glDrawArrays(GL_TRIANGLES, 0, shapesize/3);
-	//glDisableClientState(GL_VERTEX_ARRAY);
-
-	static float vertex[] = {
+	/*static float vertex[] = {
 						1.0f, 1.0f, 1.0f, //v0 
 						-1.0f, 1.0f, 1.0f, //v1
 						-1.0f, -1.0f, 1.0f, //v2
@@ -205,7 +118,7 @@ update_status ModuleScene::Update(float dt)
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	
-	glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_VERTEX_ARRAY);*/
 
 	return UPDATE_CONTINUE;
 }

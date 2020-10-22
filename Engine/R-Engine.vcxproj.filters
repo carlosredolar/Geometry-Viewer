@@ -111,6 +111,9 @@
     <ClInclude Include="GuiConfiguration.h">
       <Filter>Sources\Modules\Gui</Filter>
     </ClInclude>
+    <ClInclude Include="Primitive2.h">
+      <Filter>Sources\Helpers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleCamera3D.cpp">
@@ -277,6 +280,9 @@
     </ClCompile>
     <ClCompile Include="GuiConfiguration.cpp">
       <Filter>Sources\Modules\Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="Primitive2.cpp">
+      <Filter>Sources\Helpers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
