@@ -34,9 +34,6 @@ bool ModuleScene::CleanUp()
 // Update
 update_status ModuleScene::Update(float dt)
 {
-	//Plane2 p(0, 1, 0, 0);
-	//p.axis = true;
-	//p.Render();
 	
 	if (App->input->GetKey(SDL_SCANCODE_X) == KEY_DOWN) 
 	{
@@ -50,20 +47,20 @@ update_status ModuleScene::Update(float dt)
 
 
 	//Grid
-	Grid2 grid(20);
+	Grid grid(20);
 	grid.Render();
 
 	//Rendering primitives
 	//uncomment the primitive u want to see
-	Cube2 cube;
+	Cube cube;
 	cube.Render();
-	//Plane3 plane;
+	//Plane plane;
 	//plane.Render();
-	//Pyramid2 pyramid;
+	//Pyramid pyramid;
 	//pyramid.Render();
-	//Sphere2 sphere;
+	//Sphere sphere;
 	//sphere.Render();
-	//Cylinder2 cylinder;
+	//Cylinder cylinder;
 	//cylinder.Render();
 
 	
