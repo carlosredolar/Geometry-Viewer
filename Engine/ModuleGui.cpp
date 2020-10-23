@@ -170,6 +170,72 @@ update_status ModuleGui::Update(float dt)
 			PopStyleColor();
 			ImGui::EndMenu();
 		}
+		if (BeginMenu("About"))
+		{
+			ImGui::TextColored(ImVec4(0.95f, 0.5f, 0.07f, 1.0f), "R-Engine");
+			ImGui::Separator();
+
+			ImGui::SameLine();
+			ImGui::TextWrapped("3D Game Engine");
+			ImGui::TextWrapped("By");
+			ImGui::SameLine();
+			if (ImGui::SmallButton("Oscar Royo")) {
+				ShellExecuteA(NULL, "open", "https://github.com/oscarroyo4", NULL, NULL, SW_SHOWNORMAL);
+			}
+			ImGui::SameLine();
+			ImGui::TextWrapped("and");
+			ImGui::SameLine();
+			if (ImGui::SmallButton("Carlos Redolar")) {
+				ShellExecuteA(NULL, "open", "https://github.com/carlosredolar", NULL, NULL, SW_SHOWNORMAL);
+			}
+
+			ImGui::Separator();
+
+			GLint gl_major_version, gl_minor_version;
+			glGetIntegerv(GL_MAJOR_VERSION, &gl_major_version);
+			glGetIntegerv(GL_MINOR_VERSION, &gl_minor_version);
+			ImGui::Text("3rd party libraries used: ");
+			ImGui::BulletText("SDL"); 
+			ImGui::SameLine();
+			ImGui::Text("%d.%d.%d", SDL_MAJOR_VERSION, SDL_MINOR_VERSION, SDL_PATCHLEVEL);
+			ImGui::BulletText("ImGui "); 
+			ImGui::SameLine();
+			ImGui::Text("%s", ImGui::GetVersion());
+			ImGui::BulletText("OpenGL "); 
+			ImGui::SameLine();
+			ImGui::Text("%d.%d", gl_major_version, gl_minor_version);
+			ImGui::BulletText("Glew ");	
+			ImGui::SameLine();
+			ImGui::Text("%d.%d.%d", GLEW_VERSION_MAJOR, GLEW_VERSION_MINOR, GLEW_VERSION_MICRO);
+			ImGui::BulletText("MathGeoLib"); 
+			ImGui::SameLine();
+			ImGui::Text("1.5");
+			ImGui::BulletText("Assimp "); 
+			ImGui::SameLine();
+			ImGui::Text("3.1.1");			
+
+			ImGui::Separator();
+
+			ImGui::Text("License: ");
+			ImGui::Spacing();
+			ImGui::TextWrapped("MIT License");
+			ImGui::Spacing();
+			ImGui::TextWrapped("Copyright(c) 2020 pauraurell & pgalmor");
+			ImGui::Spacing();
+			ImGui::TextWrapped("Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files(the Software), to deal "
+				"in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and /or sell "
+				"copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:");
+			ImGui::Spacing();
+			ImGui::TextWrapped("The above copyright noticeand this permission notice shall be included in all"
+				"copies or substantial portions of the Software.");
+			ImGui::Spacing();
+			ImGui::TextWrapped("THE SOFTWARE IS PROVIDED AS IS, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, "
+				"FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER "
+				"LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.");
+
+		
+			ImGui::EndMenu();
+		}
 
 		EndMainMenuBar();
 	}
