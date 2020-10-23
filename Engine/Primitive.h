@@ -32,8 +32,6 @@ public:
 	Sphere();
 	~Sphere();
 
-	std::vector<GLfloat>* GetVerts();
-
 	void Render();
 
 private:

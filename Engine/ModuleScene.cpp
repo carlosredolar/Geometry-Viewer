@@ -19,7 +19,7 @@ bool ModuleScene::Start()
 	App->camera->Position = vec3(0, 1, 4);
 	App->camera->LookAt(vec3(0, 0, 0));
 
-	App->importer->LoadMesh("Assets/warrior/warrior.FBX");
+	App->importer->LoadMesh("Assets/baker_house/BakerHouse.fbx");
 
 	return ret;
 }

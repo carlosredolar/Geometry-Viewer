@@ -120,10 +120,6 @@ Sphere::~Sphere()
 	index.clear();
 }
 
-std::vector<GLfloat>* Sphere::GetVerts() {
-	return &vertex;
-}
-
 void Sphere::Render()
 {
 	glEnableClientState(GL_VERTEX_ARRAY);
