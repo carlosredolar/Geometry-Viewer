@@ -1,10 +1,10 @@
-/*#include "Globals.h"
+#include "Globals.h"
 #include "Application.h"
 #include "ModuleImport.h"
 
-#include "Assimp/Assimp/include/cimport.h"
-#include "Assimp/Assimp/include/scene.h"
-#include "Assimp/Assimp/include/postprocess.h"
+#include "Assimp/include/cimport.h"
+#include "Assimp/include/scene.h"
+#include "Assimp/include/postprocess.h"
 
 #pragma comment (lib, "Assimp/libx86/assimp.lib")
 
@@ -48,7 +48,7 @@ void ModuleImport::LoadMesh(char* file_path)
 	const aiScene* scene = aiImportFile(file_path, aiProcessPreset_TargetRealtime_MaxQuality);
 	if (scene != nullptr && scene->HasMeshes())
 	{
-		for (int i = 0; i > scene->mNumMeshes; i++)
+		for (int i = 0; i < scene->mNumMeshes; i++)
 		{
 			aiMesh* ourMesh = scene->mMeshes[i];
 			myMesh.num_vertex = ourMesh->mNumVertices;
@@ -79,4 +79,25 @@ void ModuleImport::LoadMesh(char* file_path)
 	}
 	else
 		LOG("Error loading scene %s", file_path);
-}*/
+}
+
+void ModuleImport::RenderMesh(mesh m) {
+	uint vertex_buffer = 0;
+	glGenBuffers(1, (GLuint*) & (vertex_buffer));
+	glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * m.num_vertex * 3, m.vertex, GL_STATIC_DRAW);
+
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
+	glVertexPointer(3, GL_FLOAT, 0, NULL);
+
+	uint index_buffer = 0;
+	glGenBuffers(1, (GLuint*) & (index_buffer));
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * m.num_index, m.index, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer);
+	glDrawElements(GL_TRIANGLES, m.num_index, GL_UNSIGNED_INT, NULL);
+
+	glDisableClientState(GL_VERTEX_ARRAY);
+}

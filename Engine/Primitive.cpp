@@ -30,11 +30,6 @@ void Primitive::RenderPrimitive(float vertex[], int num_vertex, uint index[], in
 	glDisableClientState(GL_VERTEX_ARRAY);
 }
 
-
-
-
-
-
 //CUBE
 
 Cube::Cube() : Primitive() {}
@@ -81,7 +76,7 @@ Sphere::Sphere() : Primitive()
 {
 	float radius = 1;
 	unsigned int rings = 12;
-	unsigned int sectors = 24;
+	unsigned int sectors = 12;
 
 	float const R = 1.0f / (float)(rings - 1);
 	float const S = 1.0f / (float)(sectors - 1);
@@ -123,6 +118,10 @@ Sphere::~Sphere()
 {
 	vertex.clear();
 	index.clear();
+}
+
+std::vector<GLfloat>* Sphere::GetVerts() {
+	return &vertex;
 }
 
 void Sphere::Render()
