@@ -28,8 +28,8 @@ bool ModuleImport::Init() {
 	return true;
 }
 
-update_status ModuleImport::Update() {
-
+update_status ModuleImport::Update(float dt) 
+{
 
 	return UPDATE_CONTINUE;
 }
@@ -46,21 +46,22 @@ bool ModuleImport::CleanUp() {
 void ModuleImport::LoadMesh(char* file_path)
 {
 	const aiScene* scene = aiImportFile(file_path, aiProcessPreset_TargetRealtime_MaxQuality);
+	mesh tempMesh;
 	if (scene != nullptr && scene->HasMeshes())
 	{
 		for (int i = 0; i < scene->mNumMeshes; i++)
 		{
 			aiMesh* ourMesh = scene->mMeshes[i];
-			myMesh.num_vertex = ourMesh->mNumVertices;
-			myMesh.vertex = new float[myMesh.num_vertex * 3];
-			memcpy(myMesh.vertex, ourMesh->mVertices, sizeof(float) * myMesh.num_vertex * 3);
-			LOG("New mesh with %d vertices", myMesh.num_vertex);
+			tempMesh.num_vertex = ourMesh->mNumVertices;
+			tempMesh.vertex = new float[tempMesh.num_vertex * 3];
+			memcpy(tempMesh.vertex, ourMesh->mVertices, sizeof(float) * tempMesh.num_vertex * 3);
+			LOG("New mesh with %d vertices", tempMesh.num_vertex);
 
 			// copy faces
 			if (ourMesh->HasFaces())
 			{
-				myMesh.num_index = ourMesh->mNumFaces * 3;
-				myMesh.index = new uint[myMesh.num_index]; // assume each face is a triangle
+				tempMesh.num_index = ourMesh->mNumFaces * 3;
+				tempMesh.index = new uint[tempMesh.num_index]; // assume each face is a triangle
 				for (uint i = 0; i < ourMesh->mNumFaces; ++i)
 				{
 					if (ourMesh->mFaces[i].mNumIndices != 3)
@@ -69,23 +70,26 @@ void ModuleImport::LoadMesh(char* file_path)
 					}
 					else
 					{
-						memcpy(&myMesh.index[i * 3], ourMesh->mFaces[i].mIndices, 3 * sizeof(uint));
+						memcpy(&tempMesh.index[i * 3], ourMesh->mFaces[i].mIndices, 3 * sizeof(uint));
 					}
 				}
 			}
 		}
-
 		aiReleaseImport(scene);
+		
+		meshes.push_back(tempMesh);
 	}
-	else
+	else 
+	{
 		LOG("Error loading scene %s", file_path);
+	}
 }
 
-void ModuleImport::RenderMesh(mesh m) {
+void ModuleImport::RenderMesh(mesh* m) {
 	uint vertex_buffer = 0;
 	glGenBuffers(1, (GLuint*) & (vertex_buffer));
 	glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * m.num_vertex * 3, m.vertex, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * m->num_vertex * 3, m->vertex, GL_STATIC_DRAW);
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
@@ -94,10 +98,22 @@ void ModuleImport::RenderMesh(mesh m) {
 	uint index_buffer = 0;
 	glGenBuffers(1, (GLuint*) & (index_buffer));
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * m.num_index, m.index, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * m->num_index, m->index, GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer);
-	glDrawElements(GL_TRIANGLES, m.num_index, GL_UNSIGNED_INT, NULL);
+	glDrawElements(GL_TRIANGLES, m->num_index, GL_UNSIGNED_INT, NULL);
 
 	glDisableClientState(GL_VERTEX_ARRAY);
+}
+
+update_status ModuleImport::PostUpdate(float dt)
+{
+	std::vector<mesh>::iterator ptr;
+
+	for (ptr = meshes.begin(); ptr < meshes.end(); ptr++) 
+	{
+		mesh temp = *ptr;
+		if(temp.enabled) RenderMesh(&temp);
+	}
+	return UPDATE_CONTINUE;
 }
