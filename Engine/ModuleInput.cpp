@@ -30,6 +30,8 @@ bool ModuleInput::Init()
 		ret = false;
 	}
 
+	SDL_EventState(SDL_DROPFILE, SDL_ENABLE);
+
 	return ret;
 }
 
@@ -86,6 +88,9 @@ update_status ModuleInput::PreUpdate(float dt)
 
 	bool quit = false;
 	SDL_Event e;
+
+	char* dropped_file_path;
+
 	while(SDL_PollEvent(&e))
 	{
 		switch(e.type)
@@ -111,6 +116,13 @@ update_status ModuleInput::PreUpdate(float dt)
 				if(e.window.event == SDL_WINDOWEVENT_RESIZED)
 					App->renderer3D->OnResize(e.window.data1, e.window.data2);
 			}
+			break;
+
+			case SDL_DROPFILE:
+				dropped_file_path = e.drop.file;
+				App->importer->LoadMesh(dropped_file_path);
+				SDL_free(dropped_file_path);
+			break;
 		}
 	}
 
