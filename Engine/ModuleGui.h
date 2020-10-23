@@ -17,6 +17,7 @@ public:
 	~ModuleGui();
 
 	bool Start();
+	update_status DockSpace(bool* p_open);
 	update_status PreUpdate(float dt);
 	update_status Update(float dt);
 	update_status PostUpdate(float dt);
@@ -29,6 +30,8 @@ public:
 	ImGuiTextBuffer debug_console_buff;
 
 private:
+	bool* dockingwindow;
+
 	// Window 3 variables
 	float f;
 	char buf[20];
