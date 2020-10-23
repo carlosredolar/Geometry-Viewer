@@ -56,11 +56,6 @@ void GuiConfiguration::Draw()
 	SetNextWindowSize(ImVec2(370, 795), ImGuiCond_Once);
 	SetWindowPos(ImVec2(0, 20), ImGuiCond_Once);
 
-	if (TreeNode("Options"))
-	{
-		TreePop();
-	}
-
 	if (CollapsingHeader("Application"))
 	{
 		Text("Engine Name: %s", TITLE);
@@ -89,6 +84,47 @@ void GuiConfiguration::Draw()
 		PlotHistogram("##framerate", &vector_fps[0], vector_fps.size(), 0, NULL, 0.0f, 100.0f, ImVec2(310, 100));
 		Text("Milliseconds %.1f", vector_ms[vector_ms.size() - 1]);
 		PlotHistogram("##milliseconds", &vector_ms[0], vector_ms.size(), 0, NULL, 0.0f, 40.0f, ImVec2(310, 100));
+	}
+
+	if (CollapsingHeader("Window"))
+	{
+		int values = 1.000;
+
+		//Checkbox("Active");
+		Text("Icon: *default*");
+
+		if (SliderFloat("Brightness", &App->window->brightness, 0.0f, 1.0f))
+		{
+			SDL_SetWindowBrightness(App->window->window, App->window->brightness);
+			SDL_UpdateWindowSurface(App->window->window);
+		}
+
+
+		if (SliderInt("Width", &App->window->width, 1, 2000) || SliderInt("Height", &App->window->height, 1, 2000))
+		{
+			SDL_SetWindowSize(App->window->window, App->window->width, App->window->height);
+			SDL_UpdateWindowSurface(App->window->window);
+		}
+
+		if (Checkbox("Fullscreen", &App->window->fullscreen))
+		{
+			if (App->window->fullscreen)
+				SDL_SetWindowFullscreen(App->window->window, SDL_WINDOW_FULLSCREEN);
+			else
+				SDL_SetWindowFullscreen(App->window->window, App->window->flags);
+		}
+		if (Checkbox("Borderless", &App->window->borderless))
+		{
+			SDL_SetWindowBordered(App->window->window, (SDL_bool)!App->window->borderless);
+		}
+		SameLine();
+		if (Checkbox("Fullscreen Desktop", &App->window->fullscreen_desktop))
+		{
+			if (App->window->fullscreen_desktop)
+				SDL_SetWindowFullscreen(App->window->window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+			else
+				SDL_SetWindowFullscreen(App->window->window, App->window->flags);
+		}
 	}
 
 	if (CollapsingHeader("3D Renderer"))
@@ -134,47 +170,6 @@ void GuiConfiguration::Draw()
 				glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 			else
 				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		}
-	}
-
-	if (CollapsingHeader("Window"))
-	{
-		int values = 1.000;
-
-		//Checkbox("Active");
-		Text("Icon: *default*");
-
-		if (SliderFloat("Brightness", &App->window->brightness, 0.0f, 1.0f))
-		{
-			SDL_SetWindowBrightness(App->window->window, App->window->brightness);
-			SDL_UpdateWindowSurface(App->window->window);
-		}
-
-
-		if (SliderInt("Width", &App->window->width, 1, 2000) || SliderInt("Height", &App->window->height, 1, 2000))
-		{
-			SDL_SetWindowSize(App->window->window, App->window->width, App->window->height);
-			SDL_UpdateWindowSurface(App->window->window);
-		}
-
-		if (Checkbox("Fullscreen", &App->window->fullscreen))
-		{
-			if (App->window->fullscreen)
-				SDL_SetWindowFullscreen(App->window->window, SDL_WINDOW_FULLSCREEN);
-			else
-				SDL_SetWindowFullscreen(App->window->window, App->window->flags);
-		}
-		if (Checkbox("Borderless", &App->window->borderless))
-		{
-			SDL_SetWindowBordered(App->window->window, (SDL_bool)!App->window->borderless);
-		}
-		SameLine();
-		if (Checkbox("Fullscreen Desktop", &App->window->fullscreen_desktop))
-		{
-			if (App->window->fullscreen_desktop)
-				SDL_SetWindowFullscreen(App->window->window, SDL_WINDOW_FULLSCREEN_DESKTOP);
-			else
-				SDL_SetWindowFullscreen(App->window->window, App->window->flags);
 		}
 	}
 

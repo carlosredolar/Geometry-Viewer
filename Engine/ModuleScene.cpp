@@ -5,7 +5,6 @@
 
 ModuleScene::ModuleScene(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
-
 }
 
 ModuleScene::~ModuleScene()
@@ -19,6 +18,8 @@ bool ModuleScene::Start()
 
 	App->camera->Position = vec3(0, 1, 4);
 	App->camera->LookAt(vec3(0, 0, 0));
+
+	App->importer->LoadMesh("Assets/baker_house/BakerHouse.fbx");
 
 	return ret;
 }
@@ -34,9 +35,6 @@ bool ModuleScene::CleanUp()
 // Update
 update_status ModuleScene::Update(float dt)
 {
-	Plane2 p(0, 1, 0, 0);
-	p.axis = true;
-	p.Render();
 	
 	if (App->input->GetKey(SDL_SCANCODE_X) == KEY_DOWN) 
 	{
@@ -48,164 +46,21 @@ update_status ModuleScene::Update(float dt)
 		LOG("Console test");
 	}
 
-	/*glLineWidth(2.0f);
-	glBegin(GL_TRIANGLES);
-		glVertex3f(0.f, 0.f, 0.f);
-		glVertex3f(1.f, 0.f, 0.f);
-		glVertex3f(0.f, 1.f, 0.f);
 
-		glVertex3f(1.f, 0.f, 0.f);
-		glVertex3f(1.f, 1.f, 0.f);
-		glVertex3f(0.f, 1.f, 0.f);
+	//Grid
+	Grid grid(20);
+	grid.Render();
 
-		glVertex3f(0.f, 0.f, -1.f);
-		glVertex3f(0.f, 0.f, 0.f);
-		glVertex3f(0.f, 1.f, 0.f);
+	App->importer->RenderMesh(App->importer->myMesh);
 
-		glVertex3f(0.f, 0.f, -1.f);
-		glVertex3f(0.f, 1.f, 0.f);
-		glVertex3f(0.f, 1.f, -1.f);
-
-		glVertex3f(1.f, 0.f, 0.f);
-		glVertex3f(1.f, 0.f, -1.f);
-		glVertex3f(1.f, 1.f, -1.f);
-
-		glVertex3f(1.f, 0.f, 0.f);
-		glVertex3f(1.f, 1.f, -1.f);
-		glVertex3f(1.f, 1.f, 0.f);
-
-		glVertex3f(1.f, 0.f, -1.f);
-		glVertex3f(0.f, 0.f, -1.f);
-		glVertex3f(0.f, 1.f, -1.f);
-
-		glVertex3f(1.f, 0.f, -1.f);
-		glVertex3f(0.f, 1.f, -1.f);
-		glVertex3f(1.f, 1.f, -1.f);
-	glEnd();
-	glLineWidth(1.0f);*/
-
-	//const int shapesize = 108;
-
-	//float shape[shapesize] =
-	//{
-	//	0.f, 0.f, 0.f,
-	//	1.f, 0.f, 0.f,
-	//	0.f, 1.f, 0.f,
-
-	//	1.f, 0.f, 0.f,
-	//	1.f, 1.f, 0.f,
-	//	0.f, 1.f, 0.f,
-
-	//	0.f, 0.f, -1.f,
-	//	0.f, 0.f, 0.f,
-	//	0.f, 1.f, 0.f,
-
-	//	0.f, 0.f, -1.f,
-	//	0.f, 1.f, 0.f,
-	//	0.f, 1.f, -1.f,
-
-	//	1.f, 0.f, 0.f,
-	//	1.f, 0.f, -1.f,
-	//	1.f, 1.f, -1.f,
-
-	//	1.f, 0.f, 0.f,
-	//	1.f, 1.f, -1.f,
-	//	1.f, 1.f, 0.f,
-
-	//	1.f, 0.f, -1.f,
-	//	0.f, 0.f, -1.f,
-	//	0.f, 1.f, -1.f,
-
-	//	1.f, 0.f, -1.f,
-	//	0.f, 1.f, -1.f,
-	//	1.f, 1.f, -1.f,
-
-	//	0.f, 1.f, 0.f,
-	//	1.f, 1.f, 0.f,
-	//	1.f, 1.f, -1.f,
-
-	//	0.f, 1.f, 0.f,
-	//	1.f, 1.f, -1.f,
-	//	0.f, 1.f, -1.f,
-
-	//	0.f, 0.f, 0.f,
-	//	1.f, 0.f, -1.f,
-	//	1.f, 0.f, 0.f,
-
-	//	0.f, 0.f, 0.f,
-	//	0.f, 0.f, -1.f,
-	//	1.f, 0.f, -1.f,
-	//};
-
-	//uint my_id = 0;
-	//glGenBuffers(1, (GLuint*)&(my_id));
-	//glBindBuffer(GL_ARRAY_BUFFER, my_id);
-	//glBufferData(GL_ARRAY_BUFFER, sizeof(float) * shapesize , shape, GL_STATIC_DRAW);
-
-	//glEnableClientState(GL_VERTEX_ARRAY);
-	//glBindBuffer(GL_ARRAY_BUFFER, my_id);
-	//glVertexPointer(3, GL_FLOAT, 0, NULL);
-	//// … bind and use other buffers
-	//glDrawArrays(GL_TRIANGLES, 0, shapesize/3);
-	//glDisableClientState(GL_VERTEX_ARRAY);
-
-	static float vertex[] = {
-						1.0f, 1.0f, 1.0f, //v0 
-						-1.0f, 1.0f, 1.0f, //v1
-						-1.0f, -1.0f, 1.0f, //v2
-						1.0f, -1.0f, 1.0f, //v3
-						1.0f, -1.0f, -1.0f, //v4
-						1.0f, 1.0f, -1.0f, //v5
-						-1.0f, 1.0f, -1.0f, //v6
-						-1.0f, -1.0f, -1.0f //v7
-	};
-	static uint indices[] = { //Front
-							  0, 1, 2,
-							  2, 3, 0,
-							  //Right
-							  0, 3, 4,
-							  4, 5, 0,
-							  //Up
-							  0, 5, 6,
-							  6, 1, 0,
-							  //Back
-							  7, 6, 5,
-							  5, 4, 7,
-							  //Left
-							  7, 2, 1,
-							  1, 6, 7,
-							  //Back
-							  7, 4, 3,
-							  3, 2, 7
-	};
-	
-	//Vertex
-	uint vert_id = 0;
-	glGenBuffers(1, (GLuint*)& (vert_id));
-	glBindBuffer(GL_ARRAY_BUFFER, vert_id);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertex), vertex, GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	
-	//Index
-	uint ind_id = 0;
-	glGenBuffers(1, (GLuint*)& (ind_id));
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ind_id);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	
-	//Draw
-	glEnableClientState(GL_VERTEX_ARRAY);
-	
-	glBindBuffer(GL_ARRAY_BUFFER, vert_id);
-	glVertexPointer(3, GL_FLOAT, 0, NULL);
-	
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ind_id);
-	glDrawElements(GL_TRIANGLES, sizeof(indices), GL_UNSIGNED_INT, NULL);
-	
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	
-	glDisableClientState(GL_VERTEX_ARRAY);
+	//Rendering primitives
+	//uncomment the primitive u want to see
+	//Cube cube;
+	//cube.Render();
+	//Plane plane;
+	//plane.Render();
+	//Pyramid pyramid;
+	//pyramid.Render();
 
 	return UPDATE_CONTINUE;
 }

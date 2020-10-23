@@ -1,95 +1,88 @@
-
 #pragma once
-#include "glmath.h"
-#include "Color.h"
+#include "Globals.h"
+#include <vector>;
 
-enum PrimitiveTypes
-{
-	Primitive_Point,
-	Primitive_Line,
-	Primitive_Plane,
-	Primitive_Cube,
-	Primitive_Sphere,
-	Primitive_Cylinder
-};
+typedef float GLfloat;
+typedef unsigned short GLushort;
 
-class Primitive
-{
+class Primitive {
 public:
-
 	Primitive();
+	virtual ~Primitive();
 
-	virtual void	Render() const;
-	virtual void	InnerRender() const;
-	void			SetPos(float x, float y, float z);
-	void			SetRotation(float angle, const vec3 &u);
-	void			Scale(float x, float y, float z);
-	PrimitiveTypes	GetType() const;
+	virtual void Render() = 0;
 
 public:
-	
-	Color color;
-	mat4x4 transform;
-	bool axis,wire;
 
 protected:
-	PrimitiveTypes type;
+	void RenderPrimitive(float vertex[], int num_vertex, uint index[], int num_index);
 };
 
-// ============================================
-class Cube : public Primitive
-{
-public :
-	Cube();
-	Cube(float sizeX, float sizeY, float sizeZ);
-	void InnerRender() const;
+class Cube : public Primitive {
 public:
-	vec3 size;
+	Cube();
+	Cube(float x, float y, float z);
+	~Cube();
+
+	void Render();
 };
 
-// ============================================
-class Sphere : public Primitive
-{
+class Sphere : public Primitive {
 public:
 	Sphere();
-	Sphere(float radius);
-	void InnerRender() const;
-public:
-	float radius;
+	~Sphere();
+
+	void Render();
+
+private:
+	std::vector<GLfloat> vertex;
+	std::vector<GLushort> index;
 };
 
-// ============================================
-class Cylinder : public Primitive
-{
+class Plane : public Primitive {
+public:
+	Plane();
+	~Plane();
+
+	void Render();
+};
+
+class Cylinder : public Primitive {
 public:
 	Cylinder();
-	Cylinder(float radius, float height);
-	void InnerRender() const;
-public:
+	Cylinder(float radius, float height, int sides);
+	~Cylinder();
+
+	void CalculateGeometry();
+	void Render();
+private:
 	float radius;
 	float height;
+	unsigned int sides;
+
+	float* vertex;
+	int num_vertex;
+
+	uint* index;
+	int num_index;
 };
 
-// ============================================
-class Line : public Primitive
-{
+class Pyramid : public Primitive {
 public:
-	Line();
-	Line(float x, float y, float z);
-	void InnerRender() const;
-public:
-	vec3 origin;
-	vec3 destination;
+	Pyramid();
+	~Pyramid();
+
+	void Render();
 };
 
-// ============================================
-class Plane2 : public Primitive
-{
+class Grid {
 public:
-	Plane2();
-	Plane2(float x, float y, float z, float d);
-	void InnerRender() const;
-public:
-	vec3 normal;
-	float constant;
+	Grid(int size);
+	~Grid();
+
+	void Render();
+
+private:
+	int size;
+
 };

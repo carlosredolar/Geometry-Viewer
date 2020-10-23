@@ -61,7 +61,7 @@ update_status ModuleGui::Update(float dt)
 
 	// Window 1
 	Begin("Main Window");
-	
+	Text("Text window 1");
 	End();
 
 	// Window 2
@@ -89,15 +89,15 @@ update_status ModuleGui::Update(float dt)
 		{
 			if (MenuItem("Open.."))
 			{
-				/* Do stuff */
+				
 			}
 			if (MenuItem("Save", "Ctrl+S"))
 			{
-				/* Do stuff */
+				
 			}
 			if (MenuItem("Close", "Ctrl+W"))
 			{
-				/* Do stuff */
+				
 			}
 			ImGui::EndMenu();
 		}
