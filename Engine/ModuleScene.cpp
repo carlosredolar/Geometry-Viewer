@@ -46,12 +46,9 @@ update_status ModuleScene::Update(float dt)
 		LOG("Console test");
 	}
 
-
 	//Grid
 	Grid grid(20);
 	grid.Render();
-
-	App->importer->RenderMesh(App->importer->myMesh);
 
 	//Rendering primitives
 	//uncomment the primitive u want to see

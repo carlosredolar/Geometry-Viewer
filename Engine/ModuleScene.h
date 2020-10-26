@@ -20,6 +20,5 @@ public:
 	//void RenderBox(int degrees, vec3 angle, vec3 offset, vec3 size, Color color);
 
 private:
-	
-	
+
 };
