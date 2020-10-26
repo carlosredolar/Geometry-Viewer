@@ -41,7 +41,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(ProjectDir)MathGeoLib\include\Time;$(ProjectDir)MathGeoLib\include\Math;$(ProjectDir)MathGeoLib\include\Geometry;$(ProjectDir)MathGeoLib\include\Algorithm\Random;$(ProjectDir)MathGeoLib\include;$(ProjectDir)Glew\include;$(ProjectDir)SDL\include;$(IncludePath)</IncludePath>
+    <IncludePath>H:\GitHub\R-Engine\Engine\PhysFS\include;$(ProjectDir)MathGeoLib\include\Time;$(ProjectDir)MathGeoLib\include\Math;$(ProjectDir)MathGeoLib\include\Geometry;$(ProjectDir)MathGeoLib\include\Algorithm\Random;$(ProjectDir)MathGeoLib\include;$(ProjectDir)Glew\include;H:\GitHub\R-Engine\Engine\DevIL\include;$(ProjectDir)SDL\include;$(IncludePath)</IncludePath>
     <TargetName>$(ProjectName)</TargetName>
     <OutDir>$(SolutionDir)Build\Debug\</OutDir>
     <IntDir>$(SolutionDir)Intermediate\</IntDir>
@@ -86,6 +86,7 @@
   <ItemGroup>
     <ClInclude Include="Application.h" />
     <ClInclude Include="Color.h" />
+    <ClInclude Include="FileManager.h" />
     <ClInclude Include="glmath.h" />
     <ClInclude Include="Globals.h" />
     <ClInclude Include="GuiConfiguration.h" />
@@ -117,6 +118,7 @@
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="Color.cpp" />
+    <ClCompile Include="FileManager.cpp" />
     <ClCompile Include="glmath.cpp" />
     <ClCompile Include="GuiConfiguration.cpp" />
     <ClCompile Include="GuiConsole.cpp" />

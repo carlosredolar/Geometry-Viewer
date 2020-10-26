@@ -114,6 +114,9 @@
     <ClInclude Include="ModuleImport.h">
       <Filter>Sources\Modules</Filter>
     </ClInclude>
+    <ClInclude Include="FileManager.h">
+      <Filter>Sources\Modules</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleCamera3D.cpp">
@@ -282,6 +285,9 @@
       <Filter>Sources\Helpers</Filter>
     </ClCompile>
     <ClCompile Include="ModuleImport.cpp">
+      <Filter>Sources\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="FileManager.cpp">
       <Filter>Sources\Modules</Filter>
     </ClCompile>
   </ItemGroup>

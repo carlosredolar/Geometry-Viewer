@@ -20,10 +20,24 @@ ModuleImport::~ModuleImport()
 
 bool ModuleImport::Init() {
 
-	// Stream log messages to Debug window
+	//Log messages to Debug window
 	struct aiLogStream stream;
 	stream = aiGetPredefinedLogStream(aiDefaultLogStream_DEBUGGER, nullptr);
 	aiAttachLogStream(&stream);
+	InitializeDevIL();
+
+	return true;
+}
+
+bool ModuleImport::InitializeDevIL()
+{
+	//initialize IL
+	ilInit();
+	//initialize ILU
+	iluInit();
+	//initialize ILUT with OpenGl Support
+	ilutInit();
+	ilutRenderer(ILUT_OPENGL); //call this before using any ilut function
 
 	return true;
 }
@@ -37,7 +51,7 @@ update_status ModuleImport::Update(float dt)
 
 bool ModuleImport::CleanUp() {
 
-	// detach log stream
+	//Detach the log stream
 	aiDetachAllLogStreams();
 
 	return true;
