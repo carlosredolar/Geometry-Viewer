@@ -90,4 +90,4 @@ private:
 	std::vector<uint>			bytesVector;
 };
 
-#endif // __ModuleFileManager_H__
+#endif // __ModuleFileManager_H_

@@ -11,6 +11,7 @@
 #include "ModuleScene.h"
 #include "ModuleGui.h"
 #include "ModuleImport.h"
+#include "FileManager.h"
 
 class Application
 {
@@ -22,6 +23,7 @@ public:
 	ModuleScene* scene;
 	ModuleGui* gui;
 	ModuleImport* importer;
+	FileManager* fm;
 
 private:
 

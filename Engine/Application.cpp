@@ -9,6 +9,7 @@ Application::Application()
 	scene = new ModuleScene(this);
 	gui = new ModuleGui(this);
 	importer = new ModuleImport(this);
+	fm = new FileManager(this);
 
 	// The order of calls is very important!
 	// Modules will Init() Start() and Update in this order
@@ -16,6 +17,7 @@ Application::Application()
 
 	// Main Modules
 	AddModule(window);
+	AddModule(fm);
 	AddModule(camera);
 	AddModule(input);
 	AddModule(importer);

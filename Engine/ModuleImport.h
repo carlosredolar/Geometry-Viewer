@@ -1,9 +1,8 @@
 #pragma once
 #include "Globals.h"
 #include "Module.h"
-#include "DevIL/include/il.h";
-#include "DevIL/include/ilu.h";
-#include "DevIL/include/ilut.h";
+
+#include "MathGeoLib/include/MathGeoLib.h"
 
 struct mesh
 {
@@ -25,13 +24,18 @@ public:
 	~ModuleImport();
 
 	bool Init();
-	bool InitializeDevIL();
 	update_status Update(float dt);
 	update_status PostUpdate(float dt);
 	bool CleanUp();
 
-	void LoadMesh(char* file_path);
-	void LoadTexture(char* file_path);
+	uint LoadTexture(const char* path);
+	uint LoadDefaultTexture();
+
+	void LoadMesh(char* filepath);
 	void RenderMesh(mesh* m);
+
 	std::vector<mesh> meshes;
+
+	uint vertex_buffer = 0;
+	uint index_buffer = 0;
 };
