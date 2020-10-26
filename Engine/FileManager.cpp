@@ -48,11 +48,13 @@ bool FileManager::Awake()
 
 bool FileManager::CleanUp()
 {
+	LOG("Cleaning FileManager");
+
 	pathVector.clear();
 	bufferVector.clear();
 	bytesVector.clear();
 
-	return false;
+	return true;
 }
 
 void FileManager::CreateFolderDirs()
