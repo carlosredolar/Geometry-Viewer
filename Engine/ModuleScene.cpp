@@ -46,12 +46,6 @@ update_status ModuleScene::Update(float dt)
 		LOG("Console test");
 	}
 
-	if (App->input->GetKey(SDL_SCANCODE_4) == KEY_DOWN) {
-		LOG("Multiple mesh test");
-		App->importer->LoadMesh("Assets/warrior/warrior.FBX");
-	}
-
-
 	//Grid
 	Grid grid(20);
 	grid.Render();
