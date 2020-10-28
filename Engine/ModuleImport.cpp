@@ -105,12 +105,18 @@ void ModuleImport::RenderMesh(mesh* m) {
 
 	glDisableClientState(GL_VERTEX_ARRAY);
 
-	if (m->enableVertexNormals) {
+
+	uint normal_buffer = 0;
+	glGenBuffers(1, (GLuint*) & (normal_buffer));
+	glBindBuffer(GL_ARRAY_BUFFER, normal_buffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(uint) * m->num_normals * 3, m->normals, GL_STATIC_DRAW);
+
+	if (m->enableVertexNormals /*&& m->normals!= nullptr*/) {
 
 		RenderVertexNormals(m);
 	}
 
-	if (m->enableFaceNormals) {
+	if (m->enableFaceNormals && m->normals != nullptr) {
 
 		RenderFaceNormals(m);
 	}

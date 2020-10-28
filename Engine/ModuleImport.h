@@ -25,7 +25,7 @@ struct mesh
 	float* texcoords = nullptr;
 
 	bool enabled = true;
-	bool enableVertexNormals = false;
+	bool enableVertexNormals = true;
 	bool enableFaceNormals = false;
 };
 
