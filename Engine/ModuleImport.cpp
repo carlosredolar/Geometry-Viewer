@@ -166,6 +166,11 @@ bool ModuleImport::LoadNodeMeshes(const aiScene* scene, const aiNode* node, Game
 	return true;
 }
 
+update_status ModuleImport::PostUpdate(float dt)
+{
+	return UPDATE_CONTINUE;
+}
+
 bool ModuleImport::LoadVertices(aiMesh* mesh, std::vector<float3>& vertices, std::vector<float3>& normals, std::vector<float2>& textureCoords)
 {
 	for (uint i = 0; i < mesh->mNumVertices; i++)
@@ -216,31 +221,6 @@ bool ModuleImport::LoadIndices(aiMesh* mesh, std::vector<uint>& indices)
 	}
 
 	return true;
-}
-
-void ModuleImport::RenderMesh(mesh* m) {
-
-	glGenBuffers(1, (GLuint*) & (vertex_buffer));
-	glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * m->num_vertex * 3, m->vertex, GL_STATIC_DRAW);
-
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
-	glVertexPointer(3, GL_FLOAT, 0, NULL);
-
-	glGenBuffers(1, (GLuint*) & (index_buffer));
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * m->num_index, m->index, GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer);
-	glDrawElements(GL_TRIANGLES, m->num_index, GL_UNSIGNED_INT, NULL);
-
-	glDisableClientState(GL_VERTEX_ARRAY);
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	glDeleteBuffers(1, &vertex_buffer);
-	glDeleteBuffers(1, &index_buffer);
 }
 
 uint ModuleImport::LoadTexture(const char* path)
@@ -297,16 +277,4 @@ uint ModuleImport::LoadDefaultTexture()
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 20, 20, 0, GL_RGBA, GL_UNSIGNED_BYTE, checkerImage);
 
 	return textID;
-}
-
-update_status ModuleImport::PostUpdate(float dt)
-{
-	std::vector<mesh>::iterator ptr;
-
-	for (ptr = meshes.begin(); ptr < meshes.end(); ptr++) 
-	{
-		mesh temp = *ptr;
-		if(temp.enabled) RenderMesh(&temp);
-	}
-	return UPDATE_CONTINUE;
 }
