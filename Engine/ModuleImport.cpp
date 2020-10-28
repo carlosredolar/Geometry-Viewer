@@ -106,17 +106,13 @@ void ModuleImport::RenderMesh(mesh* m) {
 	glDisableClientState(GL_VERTEX_ARRAY);
 
 	if (m->enableVertexNormals) {
-		glBegin(GL_LINES);
-		glColor3f(0.3f, 0.1f, 0.7f);
+
 		RenderVertexNormals(m);
-		glEnd();
 	}
 
 	if (m->enableFaceNormals) {
-		glBegin(GL_LINES);
-		glColor3f(0.6f, 0.4f, 0.1f);
+
 		RenderFaceNormals(m);
-		glEnd();
 	}
 }
 
@@ -134,6 +130,8 @@ update_status ModuleImport::PostUpdate(float dt)
 
 void ModuleImport::RenderVertexNormals(mesh* m)
 {
+	glBegin(GL_LINES);
+	glColor3f(0.3f, 0.1f, 0.7f);
 	for (size_t i = 0; i < m->num_vertex * 3; i += 3)
 	{
 		float x = m->vertex[i];
@@ -146,10 +144,13 @@ void ModuleImport::RenderVertexNormals(mesh* m)
 		float normal_z = m->normals[i + 2];
 		glVertex3f(x + normal_x, y + normal_y, z + normal_z);
 	}
+	glEnd();
 }
 
 void ModuleImport::RenderFaceNormals(mesh* m)
 {
+	glBegin(GL_LINES);
+	glColor3f(0.3f, 0.1f, 0.7f);
 	for (size_t i = 0; i < m->num_vertex * 3; i += 3)
 	{
 		float x = (m->vertex[i] + m->vertex[i + 3] + m->vertex[i + 6]) / 3;
@@ -162,4 +163,5 @@ void ModuleImport::RenderFaceNormals(mesh* m)
 		float normal_z = m->normals[i + 2];
 		glVertex3f(x + normal_x, y + normal_y, z + normal_z);
 	}
+	glEnd();
 }
