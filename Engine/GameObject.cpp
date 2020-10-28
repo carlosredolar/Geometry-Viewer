@@ -2,39 +2,43 @@
 #include "Component_Mesh.h"
 #include "Component.h"
 
-GameObject::GameObject(char* name, GameObject* parent, bool active) :name(name), parent(parent), active(active) {}
+GameObject::GameObject(const char* name, GameObject* parent, bool enabled) :name(name), parent(parent), enabled(enabled) {}
 
 GameObject::~GameObject()
 {
 
 }
 
+void GameObject::Update()
+{
+	//Update components
+	std::vector<Component*>::iterator component = components.begin();
+
+	for (; component != components.end(); ++component) {
+		(*component)->Update();
+	}
+
+	//Update childs
+	std::vector<GameObject*>::iterator gameObject = childs.begin();
+
+	for (; gameObject != childs.end(); ++gameObject) {
+		(*gameObject)->Update();
+	}
+}
+
 void GameObject::Enable()
 {
-	active = true;
+	enabled = true;
 }
 
 void GameObject::Disable()
 {
-	active = false;
-}
-
-void GameObject::Update()
-{
-	//Update components
-	std::vector<Component*>::iterator comp = components.begin();
-
-	for (; comp != components.end(); ++comp)(*comp)->Update();
-
-	//Update childs
-	std::vector<GameObject*>::iterator g_o = childs.begin();
-
-	for (; g_o != childs.end(); ++g_o)(*g_o)->Update();
+	enabled = false;
 }
 
 bool GameObject::IsEnabled()
 {
-	return active;
+	return enabled;
 }
 
 GameObject* const GameObject::GetParent() const
@@ -42,11 +46,15 @@ GameObject* const GameObject::GetParent() const
 	return parent;
 }
 
-void GameObject::AddGameObjectAsChild(GameObject * game_object)
+void GameObject::AddGameObjectAsChild(GameObject * gameObject)
 {
-	game_object->parent->EraseChildPointer(game_object);
-	game_object->ChangeParent(this);
-	childs.push_back(game_object);
+	if(gameObject->parent != this)
+	{
+		gameObject->parent->SeparateChild(gameObject);
+		gameObject->ChangeParent(this);
+	}
+	
+	childs.push_back(gameObject);
 }
 
 void GameObject::ChangeParent(GameObject * new_parent)
@@ -59,7 +67,7 @@ std::vector<GameObject*>* const GameObject::GetChilds()
 	return &childs;
 }
 
-void GameObject::EraseChildPointer(GameObject * child)
+void GameObject::SeparateChild(GameObject * child)
 {
 	std::vector<GameObject*>::iterator it;
 	if (child != nullptr) {
@@ -89,33 +97,31 @@ void GameObject::DeleteChild(GameObject * child)
 	}
 }
 
-void GameObject::CreateComponent(Component::COMPONENT_TYPE type)
+Component* GameObject::CreateComponent(Component::COMPONENT_TYPE type)
 {
 	switch (type)
 	{
 		/*case Component::COMPONENT_TYPE::TRANSFORM:
-			components.push_back(new ComponentTransform(type));
+			components.push_back(new Component_Transform(type));
 			break;*/
 	case Component::COMPONENT_TYPE::MESH:
-		ComponentMesh* cMesh = new ComponentMesh(this);
-		CheckAddComponent(cMesh);
+		Component_Mesh* componentMesh = new Component_Mesh(this);
+		CheckAddComponent(componentMesh);
+		return componentMesh;
 		break;
 		//case Component::COMPONENT_TYPE::MATERIAL:
-		//	components.push_back(new ComponentMaterial(type));
-		//	break;
-		//case Component::COMPONENT_TYPE::NONE:
-		//	components.push_back(new Component(type));
+		//	components.push_back(new Component_Material(type));
 		//	break;
 	}
 }
 
-void GameObject::CheckAddComponent(Component * new_comp)
+void GameObject::CheckAddComponent(Component * newComp)
 {
 	for (auto it = components.begin(); it != components.end(); ++it)
 	{
-		if (*it != nullptr && *it == new_comp)return;
+		if (*it != nullptr && *it == newComp)return;
 	}
-	components.push_back(new_comp);
+	components.push_back(newComp);
 }
 
 std::vector<Component*>* const GameObject::GetComponents()
@@ -123,12 +129,12 @@ std::vector<Component*>* const GameObject::GetComponents()
 	return &components;
 }
 
-std::string& const GameObject::GetName()
+const char* const GameObject::GetName()
 {
 	return name;
 }
 
-void GameObject::ChangeName(std::string & new_name)
+void GameObject::ChangeName(char* new_name)
 {
 	name = new_name;
 }
@@ -141,7 +147,7 @@ void GameObject::GetChildsNewParent()
 	else
 	{
 		prnt = parent->GetParent();
-		while (prnt == nullptr && prnt->name != std::string("root"))
+		while (prnt == nullptr && prnt->name != "root")
 		{
 			prnt = prnt->GetParent();
 		}

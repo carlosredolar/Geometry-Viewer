@@ -5,6 +5,7 @@
 #include "Primitive.h"
 #include "ModuleImport.h"
 #include "glew.h"
+#include "GameObject.h"
 
 class ModuleScene : public Module
 {
@@ -15,10 +16,11 @@ public:
 	bool Start();
 	update_status Update(float dt);
 	bool CleanUp();
-
-	//void CreateBox(int degrees, vec3 angle, vec3 offset, vec3 size, Color color);
-	//void RenderBox(int degrees, vec3 angle, vec3 offset, vec3 size, Color color);
+	GameObject* CreateGameObject(const char* name, GameObject* parent, bool enabled);
 
 private:
+
+	GameObject* root;
+	std::vector<GameObject*> gameObjects;
 
 };

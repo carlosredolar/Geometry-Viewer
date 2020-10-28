@@ -3,6 +3,9 @@
 #include "Module.h"
 
 #include "MathGeoLib/include/MathGeoLib.h"
+#include "Assimp/include/scene.h"
+
+class GameObject;
 
 struct mesh
 {
@@ -32,6 +35,10 @@ public:
 	uint LoadDefaultTexture();
 
 	void LoadMesh(char* filepath);
+	bool LoadSceneMeshes(const aiScene* scene, const aiNode* parent, GameObject* gOParent);
+	bool LoadNodeMeshes(const aiScene* scene, const aiNode* node, GameObject* parent);
+	bool LoadVertices(aiMesh* mesh, std::vector<float3>& vertices, std::vector<float3>& normals, std::vector<float2>& textureCoords);
+	bool LoadIndices(aiMesh* mesh, std::vector<uint>& indices);
 	void RenderMesh(mesh* m);
 
 	std::vector<mesh> meshes;

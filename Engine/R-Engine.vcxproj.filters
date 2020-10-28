@@ -132,6 +132,9 @@
     <ClInclude Include="Component.h">
       <Filter>Sources\GO&amp;Comp</Filter>
     </ClInclude>
+    <ClInclude Include="Component_Mesh.h">
+      <Filter>Sources\GO&amp;Comp</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleCamera3D.cpp">
@@ -306,6 +309,12 @@
       <Filter>Sources\Modules</Filter>
     </ClCompile>
     <ClCompile Include="GameObject.cpp">
+      <Filter>Sources\GO&amp;Comp</Filter>
+    </ClCompile>
+    <ClCompile Include="Component.cpp">
+      <Filter>Sources\GO&amp;Comp</Filter>
+    </ClCompile>
+    <ClCompile Include="Component_Mesh.cpp">
       <Filter>Sources\GO&amp;Comp</Filter>
     </ClCompile>
   </ItemGroup>

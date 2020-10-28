@@ -70,17 +70,6 @@ update_status ModuleGui::Update(float dt)
 	End();
 
 	// Window 3
-	Begin("Test3");
-	Text("Hello, world %d", 123);
-	if (Button("Save"))
-	{
-		//MySaveFunction();
-	}
-	InputText("string", buf, IM_ARRAYSIZE(buf));
-	SliderFloat("float", &f, 0.0f, 1.0f);
-	End();
-
-	// Window 4
 	// If nullptr is a bool, a close icon in the window appears
 	Begin("My First Tool", nullptr, ImGuiWindowFlags_MenuBar);
 	if (BeginMenuBar())

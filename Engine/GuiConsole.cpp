@@ -13,7 +13,7 @@ using namespace ImGui;
 
 GuiConsole::GuiConsole() : GuiWindow()
 {
-	is_on = false;
+	is_on = true;
 }
 
 GuiConsole::~GuiConsole()

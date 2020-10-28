@@ -2,7 +2,6 @@
 #ifndef __GAMEOBJECT_H__
 #define __GAMEOBJECT_H__
 
-#include <string>
 #include <vector>
 #include "Component.h"
 
@@ -10,7 +9,7 @@ class GameObject
 {
 public:
 	//Constructor
-	GameObject(char* name, GameObject* parent, bool active = true);
+	GameObject(const char* name, GameObject* parent, bool enabled = true);
 
 	//Destructor
 	~GameObject();
@@ -23,27 +22,25 @@ public:
 
 	bool IsEnabled(); //Return if enabled
 
-
 	GameObject* const GetParent() const; //Get it's parent
 
-	void AddGameObjectAsChild(GameObject* game_object); //Add another GameObject as a child
+	void AddGameObjectAsChild(GameObject* gameObject); //Add another GameObject as a child
 
-	void ChangeParent(GameObject* new_parent); //Change parent
+	void ChangeParent(GameObject* newParent); //Change parent
 
 	std::vector<GameObject*>* const GetChilds(); //Get a pointer to this game object childs vector
 
-	//Erasing a child from this game object but not deleting it
-	void EraseChildPointer(GameObject* child);
+	//Separate child from this game object
+	void SeparateChild(GameObject* child);
 
-	//Completly delete a child. Send a true boolean to delete all childs!
+	//Delete child
 	void DeleteChild(GameObject* child);
 
 	//Send this game object childs to this parent
 	void GetChildsNewParent();
 
-
-	//Add a component to this game object. Enter type!
-	void CreateComponent(Component::COMPONENT_TYPE type);
+	//Add a component to this game object
+	Component* CreateComponent(Component::COMPONENT_TYPE type);
 
 	//Check and add component
 	void CheckAddComponent(Component* new_comp);
@@ -51,17 +48,16 @@ public:
 	//Get a pointer to this game object components vector
 	std::vector<Component*>* const GetComponents();
 
-
 	//Get a reference to this game object name
-	std::string& const GetName();
+	const char* const GetName();
 
 	//Change game object's name. Passed by reference
-	void ChangeName(std::string& new_name);
+	void ChangeName(char* new_name);
 
 private:
-	GameObject* parent;
-	bool						active;
-	std::string					name;
+	GameObject*					parent;
+	const char*					name;
+	bool						enabled;
 	std::vector<Component*>		components;
 	std::vector<GameObject*>	childs;
 };

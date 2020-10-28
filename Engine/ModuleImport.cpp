@@ -1,10 +1,11 @@
 #include "Globals.h"
 #include "Application.h"
 #include "ModuleImport.h"
+#include "GameObject.h"
+#include "Component_Mesh.h"
 #include "Defs.h"
 
 #include "Assimp/include/cimport.h"
-#include "Assimp/include/scene.h"
 #include "Assimp/include/postprocess.h"
 
 #include "Glew/include/glew.h"
@@ -84,43 +85,187 @@ void ModuleImport::LoadMesh(char* filepath)
 
 	RELEASE_ARRAY(buffer);
 
-	mesh tempMesh;
-	if (scene != nullptr && scene->HasMeshes())
+	if (scene != nullptr && scene->HasMeshes()) 
 	{
-		for (int i = 0; i < scene->mNumMeshes; i++)
-		{
-			aiMesh* ourMesh = scene->mMeshes[i];
-			tempMesh.num_vertex = ourMesh->mNumVertices;
-			tempMesh.vertex = new float[tempMesh.num_vertex * 3];
-			memcpy(tempMesh.vertex, ourMesh->mVertices, sizeof(float) * tempMesh.num_vertex * 3);
-			LOG("New mesh with %d vertices", tempMesh.num_vertex);
+		std::vector<Component_Mesh> loadedMeshes;
+		bool ret = true;
 
-			// copy faces
-			if (ourMesh->HasFaces())
-			{
-				tempMesh.num_index = ourMesh->mNumFaces * 3;
-				tempMesh.index = new uint[tempMesh.num_index]; // assume each face is a triangle
-				for (uint i = 0; i < ourMesh->mNumFaces; ++i)
-				{
-					if (ourMesh->mFaces[i].mNumIndices != 3)
-					{
-						LOG("WARNING, geometry face with != 3 indices!");
-					}
-					else
-					{
-						memcpy(&tempMesh.index[i * 3], ourMesh->mFaces[i].mIndices, 3 * sizeof(uint));
-					}
-				}
-			}
+		GameObject* sceneGameObject = App->scene->CreateGameObject(scene->mRootNode->mName.C_Str(), nullptr, true);
+		
+		ret = LoadSceneMeshes(scene, scene->mRootNode, sceneGameObject);
+
+		if (ret && loadedMeshes.size() > 0)
+		{
+			LOG("Loaded %i mesh(es)!", loadedMeshes.size())
 		}
 		aiReleaseImport(scene);
-		
-		meshes.push_back(tempMesh);
 	}
-	else 
+
+
+
+	//mesh tempMesh;
+	//if (scene != nullptr && scene->HasMeshes())
+	//{
+	//	for (int i = 0; i < scene->mNumMeshes; i++)
+	//	{
+	//		aiMesh* ourMesh = scene->mMeshes[i];
+	//		tempMesh.num_vertex = ourMesh->mNumVertices;
+	//		tempMesh.vertex = new float[tempMesh.num_vertex * 3];
+	//		memcpy(tempMesh.vertex, ourMesh->mVertices, sizeof(float) * tempMesh.num_vertex * 3);
+	//		LOG("New mesh with %d vertices", tempMesh.num_vertex);
+
+	//		// copy faces
+	//		if (ourMesh->HasFaces())
+	//		{
+	//			tempMesh.num_index = ourMesh->mNumFaces * 3;
+	//			tempMesh.index = new uint[tempMesh.num_index]; // assume each face is a triangle
+	//			for (uint i = 0; i < ourMesh->mNumFaces; ++i)
+	//			{
+	//				if (ourMesh->mFaces[i].mNumIndices != 3)
+	//				{
+	//					LOG("WARNING, geometry face with != 3 indices!");
+	//				}
+	//				else
+	//				{
+	//					memcpy(&tempMesh.index[i * 3], ourMesh->mFaces[i].mIndices, 3 * sizeof(uint));
+	//				}
+	//			}
+	//		}
+	//	}
+	//	aiReleaseImport(scene);
+	//	
+	//	meshes.push_back(tempMesh);
+	//}
+	//else 
+	//{
+	//	LOG("Error loading scene %s", filepath);
+	//}
+}
+
+bool ModuleImport::LoadSceneMeshes(const aiScene* scene, const aiNode* parent, GameObject* gOParent)
+{
+	for (int i = 0; i < parent->mNumChildren; i++)
 	{
-		LOG("Error loading scene %s", filepath);
+		LoadNodeMeshes(scene, parent->mChildren[i], gOParent);
 	}
+
+	return true;
+}
+
+bool ModuleImport::LoadNodeMeshes(const aiScene* scene, const aiNode* node, GameObject* parent)
+{
+	GameObject* newGameObject = App->scene->CreateGameObject(node->mName.C_Str(), parent, true);
+
+	//Transform Load------
+	//aiVector3D translation, scaling;
+	//aiQuaternion rotation;
+
+	//node->mTransformation.Decompose(scaling, rotation, translation);
+	//float3 pos(translation.x, translation.y, translation.z);
+	//Quat rot(rotation.x, rotation.y, rotation.z, rotation.w);
+	//float3 scale(scaling.x, scaling.y, scaling.z);
+
+	//newGameObject->GetComponent<Component_Transform>()->SetTransformation(pos, rot, scale);
+
+	//Mesh Load---------
+	for (int i = 0; i < node->mNumMeshes; i++)
+	{
+		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
+
+		std::vector<float3> vertices;
+		std::vector<float3> normals;
+		std::vector<float2> textureCoords;
+		std::vector<uint> indices;
+
+		vertices.reserve(mesh->mNumVertices);
+		if (mesh->HasNormals())
+			normals.reserve(mesh->mNumVertices);
+		textureCoords.reserve(mesh->mNumVertices);
+
+		LoadVertices(mesh, vertices, normals, textureCoords);
+		if (vertices.size() == 0)
+		{
+			LOG("Error loading vertices in scene")
+				return false;
+		}
+		else
+			LOG("New mesh with %i vertices", vertices.size());
+
+		indices.reserve(mesh->mNumFaces * 3);
+		bool ret = LoadIndices(mesh, indices);
+		if (indices.size() == 0 || !ret)
+		{
+			LOG("Error loading indices in scene")
+				return false;
+		}
+		else
+			LOG("New mesh with %i indices", indices.size());
+
+		Component_Mesh* newMesh = (Component_Mesh*)newGameObject->CreateComponent(Component::COMPONENT_TYPE::MESH);
+
+		newMesh->GenerateMesh(vertices, indices, normals, textureCoords);
+	}
+
+	//Materials Load-----
+
+
+
+	LoadSceneMeshes(scene, node, newGameObject);
+
+	return true;
+}
+
+bool ModuleImport::LoadVertices(aiMesh* mesh, std::vector<float3>& vertices, std::vector<float3>& normals, std::vector<float2>& textureCoords)
+{
+	for (uint i = 0; i < mesh->mNumVertices; i++)
+	{
+		// process vertex positions, normals and texture coordinates
+		float3 vector;
+		vector.x = mesh->mVertices[i].x;
+		vector.y = mesh->mVertices[i].y;
+		vector.z = mesh->mVertices[i].z;
+
+		vertices.push_back(vector);
+
+		if (mesh->HasNormals())
+		{
+			float3 normal;
+			normal.x = mesh->mNormals[i].x;
+			normal.y = mesh->mNormals[i].y;
+			normal.z = mesh->mNormals[i].z;
+			normals.push_back(normal);
+		}
+
+		float2 textCoord;
+		if (mesh->mTextureCoords[0])
+		{
+			textCoord.x = mesh->mTextureCoords[0][i].x;
+			textCoord.y = mesh->mTextureCoords[0][i].y;
+		}
+		else
+			textCoord = float2(0.0f, 0.0f);
+
+		textureCoords.push_back(textCoord);
+	}
+	return true;
+}
+
+bool ModuleImport::LoadIndices(aiMesh* mesh, std::vector<uint>& indices)
+{
+	for (uint i = 0; i < mesh->mNumFaces; i++)
+	{
+		aiFace face = mesh->mFaces[i];
+		if (face.mNumIndices != 3)
+		{
+			LOG("ERROR loading Mesh! At least 1 face is not made of triangles!")
+				return false;
+		}
+
+		for (uint j = 0; j < face.mNumIndices; j++)
+			indices.push_back(face.mIndices[j]);
+	}
+
+	return true;
 }
 
 void ModuleImport::RenderMesh(mesh* m) {
