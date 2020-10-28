@@ -104,6 +104,20 @@ void ModuleImport::RenderMesh(mesh* m) {
 	glDrawElements(GL_TRIANGLES, m->num_index, GL_UNSIGNED_INT, NULL);
 
 	glDisableClientState(GL_VERTEX_ARRAY);
+
+	if (m->enableVertexNormals) {
+		glBegin(GL_LINES);
+		glColor3f(0.3f, 0.1f, 0.7f);
+		RenderVertexNormals(m);
+		glEnd();
+	}
+
+	if (m->enableFaceNormals) {
+		glBegin(GL_LINES);
+		glColor3f(0.6f, 0.4f, 0.1f);
+		RenderFaceNormals(m);
+		glEnd();
+	}
 }
 
 update_status ModuleImport::PostUpdate(float dt)
@@ -116,4 +130,36 @@ update_status ModuleImport::PostUpdate(float dt)
 		if(temp.enabled) RenderMesh(&temp);
 	}
 	return UPDATE_CONTINUE;
+}
+
+void ModuleImport::RenderVertexNormals(mesh* m)
+{
+	for (size_t i = 0; i < m->num_vertex * 3; i += 3)
+	{
+		float x = m->vertex[i];
+		float y = m->vertex[i + 1];
+		float z = m->vertex[i + 2];
+		glVertex3f(x, y, z);
+
+		float normal_x = m->normals[i];
+		float normal_y = m->normals[i + 1];
+		float normal_z = m->normals[i + 2];
+		glVertex3f(x + normal_x, y + normal_y, z + normal_z);
+	}
+}
+
+void ModuleImport::RenderFaceNormals(mesh* m)
+{
+	for (size_t i = 0; i < m->num_vertex * 3; i += 3)
+	{
+		float x = (m->vertex[i] + m->vertex[i + 3] + m->vertex[i + 6]) / 3;
+		float y = (m->vertex[i + 1] + m->vertex[i + 4] + m->vertex[i + 7]) / 3;
+		float z = (m->vertex[i + 2] + m->vertex[i + 5] + m->vertex[i + 8]) / 3;
+		glVertex3f(x, y, z);
+
+		float normal_x = m->normals[i];
+		float normal_y = m->normals[i + 1];
+		float normal_z = m->normals[i + 2];
+		glVertex3f(x + normal_x, y + normal_y, z + normal_z);
+	}
 }
