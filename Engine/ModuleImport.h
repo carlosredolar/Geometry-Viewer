@@ -24,6 +24,5 @@ public:
 	void LoadMesh(char* filepath);
 	bool LoadSceneMeshes(const aiScene* scene, const aiNode* parent, GameObject* gOParent);
 	bool LoadNodeMeshes(const aiScene* scene, const aiNode* node, GameObject* parent);
-	bool LoadVertices(aiMesh* mesh, std::vector<float3>& vertices, std::vector<float3>& normals, std::vector<float2>& textureCoords);
-	bool LoadIndices(aiMesh* mesh, std::vector<uint>& indices);
+	bool LoadVertices(aiMesh* mesh, std::vector<float3>& vertices, std::vector<float3>& normals, std::vector<float2>& textureCoords, std::vector<uint>& indices);
 };

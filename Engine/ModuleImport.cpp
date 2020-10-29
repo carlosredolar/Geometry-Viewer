@@ -136,25 +136,13 @@ bool ModuleImport::LoadNodeMeshes(const aiScene* scene, const aiNode* node, Game
 		textureCoords.reserve(nodeMesh->mNumVertices); //Reserve texture space
 		index.reserve(nodeMesh->mNumFaces * 3); //Reserve index space
 
-		LoadVertices(nodeMesh, vertex, normals, textureCoords);
-		if (vertex.size() == 0) {
-			LOG("Error loading vertices in this mesh")
-				return false;
-		}
-		else
-		{ 
-			LOG("New mesh with %i vertices", vertex.size());
-		}
+		LoadVertices(nodeMesh, vertex, normals, textureCoords, index);
+		if (vertex.size() == 0) { LOG("Error loading vertices in this mesh") return false; }
+		else LOG("New mesh with %i vertices", vertex.size());
 
 		bool ret = LoadIndices(nodeMesh, index);
-		if (index.size() == 0 || !ret) {
-			LOG("Error loading indices in this mesh")
-				return false;
-		}
-		else
-		{
-			LOG("And with %i indices", index.size());
-		}
+		if (index.size() == 0 || !ret) { LOG("Error loading indices in this mesh") return false; }
+		else LOG("And with %i indices", index.size());
 
 		Component_Mesh* newMesh = (Component_Mesh*)newGameObject->CreateComponent(Component::COMPONENT_TYPE::MESH);
 		newMesh->GenerateMesh(vertex, index, normals, textureCoords);
@@ -171,21 +159,19 @@ update_status ModuleImport::PostUpdate(float dt)
 	return UPDATE_CONTINUE;
 }
 
-bool ModuleImport::LoadVertices(aiMesh* mesh, std::vector<float3>& vertices, std::vector<float3>& normals, std::vector<float2>& textureCoords)
+bool ModuleImport::LoadVertices(aiMesh* mesh, std::vector<float3>& vertices, std::vector<float3>& normals, std::vector<float2>& textureCoords, std::vector<uint>& indices)
 {
-	for (uint i = 0; i < mesh->mNumVertices; i++)
-	{
+	bool ret = true;
+	for (uint i = 0; i < mesh->mNumVertices; i++) {
 		// Vertex
 		float3 vector;
 		vector.x = mesh->mVertices[i].x;
 		vector.y = mesh->mVertices[i].y;
 		vector.z = mesh->mVertices[i].z;
-
 		vertices.push_back(vector);
 
 		// Normals
-		if (mesh->HasNormals())
-		{
+		if (mesh->HasNormals()){
 			float3 newNormal;
 			newNormal.x = mesh->mNormals[i].x;
 			newNormal.y = mesh->mNormals[i].y;
@@ -200,27 +186,21 @@ bool ModuleImport::LoadVertices(aiMesh* mesh, std::vector<float3>& vertices, std
 			newTextCord.x = mesh->mTextureCoords[0][i].x;
 			newTextCord.y = mesh->mTextureCoords[0][i].y;
 		}
-		else
-			newTextCord = float2(0.0f, 0.0f);
-
+		else newTextCord = float2(0.0f, 0.0f);
 		textureCoords.push_back(newTextCord);
 	}
-	return true;
-}
-
-bool ModuleImport::LoadIndices(aiMesh* mesh, std::vector<uint>& indices)
-{
 	//Load indices
 	for (uint i = 0; i < mesh->mNumFaces; i++) {
 		aiFace face = mesh->mFaces[i];
 		if (face.mNumIndices != 3) {
-			LOG("ERROR loading Mesh! Not all faces are made out of triangles!")
-			return false;
+			LOG("Error! Not all faces are made out of triangles!")
+			ret = false;
+			break;
 		}
 		for (uint j = 0; j < face.mNumIndices; j++) indices.push_back(face.mIndices[j]);
 	}
 
-	return true;
+	return ret;
 }
 
 uint ModuleImport::LoadTexture(const char* path)
