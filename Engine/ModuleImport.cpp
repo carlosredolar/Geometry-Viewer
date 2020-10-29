@@ -136,12 +136,14 @@ bool ModuleImport::LoadNodeMeshes(const aiScene* scene, const aiNode* node, Game
 		textureCoords.reserve(nodeMesh->mNumVertices); //Reserve texture space
 		index.reserve(nodeMesh->mNumFaces * 3); //Reserve index space
 
+		//Loading all
 		LoadVertexNormalsTexturesIndex(nodeMesh, vertex, normals, textureCoords, index);
 		if (vertex.size() == 0) { LOG("Error loading vertices in this mesh") return false; }
 		else LOG("New mesh with %i vertices", vertex.size());
 		if (index.size() == 0) { LOG("Error loading indices in this mesh") return false; }
 		else LOG("And with %i indices", index.size());
 
+		//Create new component mesh
 		Component_Mesh* newMesh = (Component_Mesh*)newGameObject->CreateComponent(Component::COMPONENT_TYPE::MESH);
 		newMesh->GenerateMesh(vertex, index, normals, textureCoords);
 	}
