@@ -136,12 +136,10 @@ bool ModuleImport::LoadNodeMeshes(const aiScene* scene, const aiNode* node, Game
 		textureCoords.reserve(nodeMesh->mNumVertices); //Reserve texture space
 		index.reserve(nodeMesh->mNumFaces * 3); //Reserve index space
 
-		LoadVertices(nodeMesh, vertex, normals, textureCoords, index);
+		LoadVertexNormalsTexturesIndex(nodeMesh, vertex, normals, textureCoords, index);
 		if (vertex.size() == 0) { LOG("Error loading vertices in this mesh") return false; }
 		else LOG("New mesh with %i vertices", vertex.size());
-
-		bool ret = LoadIndices(nodeMesh, index);
-		if (index.size() == 0 || !ret) { LOG("Error loading indices in this mesh") return false; }
+		if (index.size() == 0) { LOG("Error loading indices in this mesh") return false; }
 		else LOG("And with %i indices", index.size());
 
 		Component_Mesh* newMesh = (Component_Mesh*)newGameObject->CreateComponent(Component::COMPONENT_TYPE::MESH);
@@ -159,7 +157,7 @@ update_status ModuleImport::PostUpdate(float dt)
 	return UPDATE_CONTINUE;
 }
 
-bool ModuleImport::LoadVertices(aiMesh* mesh, std::vector<float3>& vertices, std::vector<float3>& normals, std::vector<float2>& textureCoords, std::vector<uint>& indices)
+bool ModuleImport::LoadVertexNormalsTexturesIndex(aiMesh* mesh, std::vector<float3>& vertices, std::vector<float3>& normals, std::vector<float2>& textureCoords, std::vector<uint>& indices)
 {
 	bool ret = true;
 	for (uint i = 0; i < mesh->mNumVertices; i++) {
