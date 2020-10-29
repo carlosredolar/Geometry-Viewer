@@ -135,6 +135,12 @@
     <ClInclude Include="Component_Mesh.h">
       <Filter>Sources\GO&amp;Comp</Filter>
     </ClInclude>
+    <ClInclude Include="GuiInspector.h">
+      <Filter>Sources\Modules\Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="Component_Transform.h">
+      <Filter>Sources\GO&amp;Comp</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleCamera3D.cpp">
@@ -315,6 +321,12 @@
       <Filter>Sources\GO&amp;Comp</Filter>
     </ClCompile>
     <ClCompile Include="Component_Mesh.cpp">
+      <Filter>Sources\GO&amp;Comp</Filter>
+    </ClCompile>
+    <ClCompile Include="GuiInspector.cpp">
+      <Filter>Sources\Modules\Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="Component_Transform.cpp">
       <Filter>Sources\GO&amp;Comp</Filter>
     </ClCompile>
   </ItemGroup>

@@ -9,6 +9,7 @@
 class GuiWindow;
 class GuiConsole;
 class GuiConfiguration;
+class GuiInspector;
 
 class ModuleGui : public Module
 {
@@ -31,15 +32,10 @@ public:
 
 private:
 	bool* dockingwindow;
-
-	// Window 3 variables
-	float f;
-	char buf[20];
-
-	// Window 4 variables
-	float my_color[4];
+	bool demo;
 
 	//UI Windows
 	GuiConsole* ui_console = nullptr;
 	GuiConfiguration* ui_configuration = nullptr;
+	GuiInspector* ui_inspector = nullptr;
 };

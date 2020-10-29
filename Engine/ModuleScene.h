@@ -17,10 +17,14 @@ public:
 	update_status Update(float dt);
 	bool CleanUp();
 	GameObject* CreateGameObject(const char* name, GameObject* parent, bool enabled);
+	GameObject* GetGameObject(const char* name);
+	GameObject* GetGameObject(int id);
 
 private:
 
 	GameObject* root;
 	std::vector<GameObject*> gameObjects;
+	std::vector<int*> goID;
+	int currentID;
 
 };

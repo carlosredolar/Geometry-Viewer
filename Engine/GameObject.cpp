@@ -1,5 +1,6 @@
 #include "GameObject.h"
 #include "Component_Mesh.h"
+#include "Component_Transform.h"
 #include "Component.h"
 
 GameObject::GameObject(const char* name, GameObject* parent, bool enabled) :name(name), parent(parent), enabled(enabled) {}
@@ -101,17 +102,17 @@ Component* GameObject::CreateComponent(Component::COMPONENT_TYPE type)
 {
 	switch (type)
 	{
-		/*case Component::COMPONENT_TYPE::TRANSFORM:
-			components.push_back(new Component_Transform(type));
-			break;*/
+	case Component::COMPONENT_TYPE::TRANSFORM:
+		components.push_back(new Component_Transform(this));
+		break;
 	case Component::COMPONENT_TYPE::MESH:
 		Component_Mesh* componentMesh = new Component_Mesh(this);
 		CheckAddComponent(componentMesh);
 		return componentMesh;
 		break;
-		//case Component::COMPONENT_TYPE::MATERIAL:
-		//	components.push_back(new Component_Material(type));
-		//	break;
+	//case Component::COMPONENT_TYPE::MATERIAL:
+	//	components.push_back(new Component_Material(type));
+	//	break;
 	}
 }
 
@@ -131,7 +132,7 @@ std::vector<Component*>* const GameObject::GetComponents()
 
 const char* const GameObject::GetName()
 {
-	return name;
+	return name.c_str();
 }
 
 void GameObject::ChangeName(char* new_name)

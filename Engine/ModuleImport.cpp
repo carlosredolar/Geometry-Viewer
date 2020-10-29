@@ -2,7 +2,9 @@
 #include "Application.h"
 #include "ModuleImport.h"
 #include "GameObject.h"
+#include "Component.h"
 #include "Component_Mesh.h"
+#include "Component_Transform.h"
 #include "Defs.h"
 
 #include "Assimp/include/cimport.h"
@@ -111,15 +113,15 @@ bool ModuleImport::LoadNodeMeshes(const aiScene* scene, const aiNode* node, Game
 	GameObject* newGameObject = App->scene->CreateGameObject(node->mName.C_Str(), parent, true);
 
 	//Loading and creating transform component
-	//aiVector3D translation, scaling;
-	//aiQuaternion rotation;
+	aiVector3D translation, scaling;
+	aiQuaternion rotation;
 
-	//node->mTransformation.Decompose(scaling, rotation, translation);
-	//float3 pos(translation.x, translation.y, translation.z);
-	//Quat rot(rotation.x, rotation.y, rotation.z, rotation.w);
-	//float3 scale(scaling.x, scaling.y, scaling.z);
+	node->mTransformation.Decompose(scaling, rotation, translation);
+	float3 pos(translation.x, translation.y, translation.z);
+	Quat rot(rotation.x, rotation.y, rotation.z, rotation.w);
+	float3 scale(scaling.x, scaling.y, scaling.z);
 
-	//newGameObject->GetComponent<Component_Transform>()->SetTransformation(pos, rot, scale);
+	newGameObject->GetComponent<Component_Transform>()->SetTransform(pos, rot, scale);
 
 	//Loading mesh
 	for (int i = 0; i < node->mNumMeshes; i++)
