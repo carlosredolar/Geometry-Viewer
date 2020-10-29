@@ -60,62 +60,18 @@ update_status ModuleGui::Update(float dt)
 	DockSpace(dockingwindow);
 
 	// Window 1
-	Begin("Main Window");
-	Text("Text window 1");
+	Begin("Inspector");
+	Text("Here goes the inspector with all the components");
 	End();
 
 	// Window 2
-	Begin("Test2");
-	Text("Text window 2");
-	End();
-
-	// Window 3
-	Begin("Test3");
-	Text("Hello, world %d", 123);
-	if (Button("Save"))
-	{
-		//MySaveFunction();
-	}
-	InputText("string", buf, IM_ARRAYSIZE(buf));
-	SliderFloat("float", &f, 0.0f, 1.0f);
-	End();
-
-	// Window 4
 	// If nullptr is a bool, a close icon in the window appears
-	Begin("My First Tool", nullptr, ImGuiWindowFlags_MenuBar);
-	if (BeginMenuBar())
-	{
-		if (BeginMenu("File"))
-		{
-			if (MenuItem("Open.."))
-			{
-				
-			}
-			if (MenuItem("Save", "Ctrl+S"))
-			{
-				
-			}
-			if (MenuItem("Close", "Ctrl+W"))
-			{
-				
-			}
-			ImGui::EndMenu();
-		}
-		EndMenuBar();
-	}
-
-	// Edit a color (stored as 4 floats)
-	ColorEdit4("Color", my_color);
-
-	// Plot some values
-	const float my_values[] = { 0.2f, 0.1f, 1.0f, 0.5f, 0.9f, 2.2f };
-	PlotLines("Frame Times", my_values, IM_ARRAYSIZE(my_values));
-
-	// Display contents in a scrolling region
-	TextColored(ImVec4(1, 1, 0, 1), "Important Stuff");
+	Begin("Hierarchy", nullptr, ImGuiWindowFlags_MenuBar);
+	
+	TextColored(ImVec4(1, 1, 0, 1), "Scene");
 	BeginChild("Scrolling");
 	for (int n = 0; n < 50; n++)
-		Text("%04d: Some text", n);
+		Text("%02d: Object", n);
 	EndChild();
 	End();
 
