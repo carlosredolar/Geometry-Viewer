@@ -94,7 +94,6 @@ void ModuleImport::LoadMesh(char* filepath)
 		bool ret = true;
 
 		GameObject* sceneGameObject = App->scene->CreateGameObject(scene->mRootNode->mName.C_Str(), nullptr, true);
-		ret = LoadSceneMeshes(scene, scene->mRootNode, sceneGameObject);
 
 		//Loading and creating transform component
 		aiVector3D translation, scaling;
@@ -106,6 +105,8 @@ void ModuleImport::LoadMesh(char* filepath)
 		float3 scale(scaling.x, scaling.y, scaling.z);
 
 		sceneGameObject->GetComponent<Component_Transform>()->SetTransform(pos, rot, scale);
+
+		ret = LoadSceneMeshes(scene, scene->mRootNode, sceneGameObject);
 
 		if (ret && loadedMeshes.size() > 0)LOG("Loaded %i mesh(es)!", loadedMeshes.size())
 		aiReleaseImport(scene);

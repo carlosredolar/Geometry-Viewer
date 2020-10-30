@@ -27,6 +27,7 @@ public:
 
 	void SelectGameObject(GameObject* gO);
 	void ConsoleLog(const char* text);
+	void CleanLog();
 	void DebugConsole();
 
 	std::vector<GuiWindow*> ui_windows;

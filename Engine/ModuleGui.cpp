@@ -230,10 +230,16 @@ void ModuleGui::ConsoleLog(const char* text)
 	debug_console_buff.appendf(text);
 }
 
+void ModuleGui::CleanLog()
+{
+	debug_console_buff.clear();
+}
+
 void ModuleGui::DebugConsole()
 {
 	BeginChild("Console Log");
 	TextUnformatted(debug_console_buff.begin());
+	SetScrollHereY(1.0f);
 	EndChild();
 }
 

@@ -9,7 +9,6 @@ GuiInspector::GuiInspector() : GuiWindow()
 	is_on = true;
 	strncpy(buf, "Insert a text", 128);
 	gameObjectSelected = nullptr;
-	reload = false;
 }
 
 GuiInspector::~GuiInspector()
@@ -34,13 +33,12 @@ void GuiInspector::Select(GameObject* selected) {
 	transformGO = selected->GetComponent<Component_Transform>();
 	meshGO = selected->GetComponent<Component_Mesh>();
 	textureGO = selected->GetComponent<Component_Texture>();
-	reload = true;
 }
 
 void GuiInspector::Draw()
 {
 	Begin("Inspector", &is_on);
-	if (gameObjectSelected != nullptr && !reload) {
+	if (gameObjectSelected != nullptr) {
 		static bool gameobjectCheck = gameObjectSelected->IsEnabled();
 		Checkbox("Active", &gameobjectCheck);
 		(gameobjectCheck) ? gameObjectSelected->Enable() : gameObjectSelected->Disable();
@@ -51,11 +49,11 @@ void GuiInspector::Draw()
 		if (CollapsingHeader("Transform")) 
 		{
 			float3 tempValues = transformGO->GetPosition();
-			static float pos[3] = { tempValues.x, tempValues.y, tempValues.z };
+			float pos[3] = { tempValues.x, tempValues.y, tempValues.z };
 			tempValues = transformGO->GetRotationEuler();
-			static float rot[3] = { tempValues.x, tempValues.y, tempValues.z };
+			float rot[3] = { tempValues.x, tempValues.y, tempValues.z };
 			tempValues = transformGO->GetScale();
-			static float scl[3] = { tempValues.x, tempValues.y, tempValues.z };
+			float scl[3] = { tempValues.x, tempValues.y, tempValues.z };
 			DragFloat3("Position", pos, 0.05f);
 			DragFloat3("Rotation", rot, 0.05f);
 			DragFloat3("Scale", scl, 0.05f);
@@ -88,6 +86,5 @@ void GuiInspector::Draw()
 		Text("Here goes the inspector with all the components");
 
 	}
-	if (reload) reload = false;
 	End();
 }
