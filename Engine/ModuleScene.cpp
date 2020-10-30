@@ -18,7 +18,7 @@ bool ModuleScene::Start()
 	bool ret = true;
 
 	//Create root gameObject
-	root = new GameObject("Root", nullptr, true);
+	root = new GameObject("Scene", nullptr, true);
 	root->id = 0;
 	currentID = 0;
 	gameObjects.push_back(root);

@@ -10,6 +10,7 @@ class GuiWindow;
 class GuiConsole;
 class GuiConfiguration;
 class GuiInspector;
+class GuiHierarchy;
 
 class ModuleGui : public Module
 {
@@ -24,6 +25,7 @@ public:
 	update_status PostUpdate(float dt);
 	bool CleanUp();
 
+	void SelectGameObject(GameObject* gO);
 	void ConsoleLog(const char* text);
 	void DebugConsole();
 
@@ -38,4 +40,5 @@ private:
 	GuiConsole* ui_console = nullptr;
 	GuiConfiguration* ui_configuration = nullptr;
 	GuiInspector* ui_inspector = nullptr;
+	GuiHierarchy* ui_hierarchy = nullptr;
 };

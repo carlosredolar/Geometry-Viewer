@@ -27,6 +27,7 @@ private:
 	Component_Mesh* meshGO;
 	Component_Texture* textureGO;
 	char buf[128];
+	bool reload;
 };
 
 #endif // !__GuiInspector_H__
