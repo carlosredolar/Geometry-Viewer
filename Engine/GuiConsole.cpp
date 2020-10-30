@@ -1,11 +1,4 @@
 #include "Application.h"
-#include "Globals.h"
-#include "GuiWindow.h"
-#include "ImGui/imconfig.h"
-#include "ImGui/imgui.h"
-#include "ImGui/imgui_impl_sdl.h"
-#include "ImGui/imgui_impl_opengl3.h"
-#include "Glew/include/glew.h"
 #include "GuiConsole.h"
 #include "ModuleGui.h"
 

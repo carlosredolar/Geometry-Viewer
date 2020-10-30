@@ -2,27 +2,21 @@
 #include "ModuleGui.h"
 #include "GuiConsole.h"
 #include "GuiConfiguration.h"
+#include "GuiInspector.h"
+#include "ModuleScene.h"
 
-#include "Imgui/imgui_internal.h"
-#include "Imgui/imgui_impl_sdl.h"
-#include "Imgui/imgui_impl_opengl3.h"
+#include "ImGui/imconfig.h"
+#include "ImGui/imgui_internal.h"
+#include "ImGui/imgui_impl_sdl.h"
+#include "ImGui/imgui_impl_opengl3.h"
 
 using namespace ImGui;
 
 ModuleGui::ModuleGui(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
-	// Window 3 variables
-	f = 0.5;
-	strncpy(buf, "Insert a text", 20);
-
-	// Window 4 variables
-	my_color[0] = 1;
-	my_color[1] = 1;
-	my_color[2] = 1;
-	my_color[3] = 1;
-
 	ui_windows.push_back(ui_console = new GuiConsole());
 	ui_windows.push_back(ui_configuration = new GuiConfiguration());
+	ui_windows.push_back(ui_inspector = new GuiInspector());
 }
 
 ModuleGui::~ModuleGui()
@@ -30,7 +24,6 @@ ModuleGui::~ModuleGui()
 
 bool ModuleGui::Start() 
 {
-	IMGUI_CHECKVERSION();
 	CreateContext();
 	ImGuiIO& io = GetIO(); (void)io;
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
@@ -42,6 +35,7 @@ bool ModuleGui::Start()
 
 	ui_console->Start();
 	ui_configuration->Start();
+	ui_inspector->Start();
 
 	return true;
 }
@@ -59,10 +53,13 @@ update_status ModuleGui::Update(float dt)
 {
 	DockSpace(dockingwindow);
 
-	// Window 1
-	Begin("Inspector");
-	Text("Here goes the inspector with all the components");
-	End();
+	if (demo) {
+		ShowDemoWindow(&demo);
+	}
+
+	if (App->input->GetKey(SDL_SCANCODE_3) == KEY_DOWN) {
+		if (ui_inspector->is_on) ui_inspector->Select(App->scene->GetGameObject("Baker_house"));
+	}
 
 	// Window 2
 	// If nullptr is a bool, a close icon in the window appears
@@ -196,7 +193,7 @@ update_status ModuleGui::Update(float dt)
 		EndMainMenuBar();
 	}
 
-	for (int i = 0; i < ui_windows.capacity(); i++)
+	for (int i = 0; i < ui_windows.size(); i++)
 	{
 		if (ui_windows[i]->IsActive())
 			ui_windows[i]->Draw();
@@ -230,7 +227,7 @@ bool ModuleGui::CleanUp()
 	}
 	ui_windows.clear();
 
-	//debug_console_buff.clear();
+	debug_console_buff.clear();
 
 	return true;
 }

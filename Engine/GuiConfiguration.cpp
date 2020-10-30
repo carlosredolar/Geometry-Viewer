@@ -25,7 +25,7 @@ bool GuiConfiguration::Start()
 {
 	bool ret = true;
 
-	SDL_VERSION(&version);
+	SDL_VERSION(&sdlVersion);
 	cpu_cache = SDL_GetCPUCacheLineSize();
 	cpu_count = SDL_GetCPUCount();
 	ram = SDL_GetSystemRAM() / 1000;
@@ -60,7 +60,6 @@ void GuiConfiguration::Draw()
 	{
 		Text("Engine Name: %s", TITLE);
 		
-		App->window->SetTitle(TITLE);
 		static char organization[9] = "UPC CITM";
 		Text("Organization: %s", organization);
 
@@ -204,13 +203,16 @@ void GuiConfiguration::Draw()
 		//Checkbox("Active");
 		Text("SDL Version:");
 		SameLine();
-		TextColored(ImVec4(1.0f, 1.0f, 0.5f, 1.0f), "%d.%d.%d", version.major, version.minor, version.patch);
+		TextColored(ImVec4(1.0f, 1.0f, 0.5f, 1.0f), "%d.%d.%d", sdlVersion.major, sdlVersion.minor, sdlVersion.patch);
 		Text("OpenGL version supported:");
 		SameLine();
 		TextColored(ImVec4(1.0f, 1.0f, 0.5f, 1.0f), "%s", glGetString(GL_VERSION));
 		Text("GLSL:");
 		SameLine();
 		TextColored(ImVec4(1.0f, 1.0f, 0.5f, 1.0f), "%s", glGetString(GL_SHADING_LANGUAGE_VERSION));
+		Text("ImGui version:");
+		SameLine();
+		TextColored(ImVec4(1.0f, 1.0f, 0.5f, 1.0f), IMGUI_VERSION);
 
 		Separator();
 		Text("CPUs:");

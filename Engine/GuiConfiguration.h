@@ -25,7 +25,7 @@ public:
 
 public:
 
-	SDL_version version;
+	SDL_version sdlVersion;
 	int cpu_cache = 0;
 	int cpu_count = 0;
 	int ram = 0;
