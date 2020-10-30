@@ -6,6 +6,8 @@
 #include "Globals.h"
 #include "MathGeoLib/include/MathGeoLib.h"
 
+struct meshInfo;
+
 class Component_Mesh : public Component {
 public:
 
@@ -15,7 +17,7 @@ public:
 	//Destructor
 	~Component_Mesh();
 
-	void GenerateMesh(std::vector<float3> vertices, std::vector<uint> indices, std::vector<float3> normals, std::vector<float2> textureCoords);
+	void GenerateMesh(meshInfo* newMesh, std::vector<float3> vertices, std::vector<uint> indices, std::vector<float3> normals, std::vector<float2> textureCoords);
 
 	//Update
 	void Update() override;
@@ -29,31 +31,17 @@ public:
 	//Check if component is enabled
 	bool IsEnabled() override;
 
+	const char* GetName();
+
 	void CreateBuffers();
+
 	void Render();
 
 	void CleanUp();
 
 private:
-	//uint id_index = 0; // index in VRAM
-	//uint* index = nullptr;
 
-	//uint id_vertex = 0; // unique vertex in VRAM
-	//float* vertex = nullptr;
-
-	uint idVertex;
-	std::vector<float3> vertices;
-
-	uint idIndex;
-	std::vector<uint> indices;
-
-	uint idNormals;
-	std::vector<float3> normals;
-
-	uint idTextureCoords;
-	std::vector<float2> textureCoords;
-
-	uint idTextureImage;
+	meshInfo* mesh;
 };
 
 #endif // !__COMPONENT_MESH_H__

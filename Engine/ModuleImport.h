@@ -7,6 +7,23 @@
 
 class GameObject;
 
+struct meshInfo 
+{
+	std::string name;
+
+	uint idVertex;
+	std::vector<float3> vertices;
+
+	uint idIndex;
+	std::vector<uint> indices;
+
+	uint idNormals;
+	std::vector<float3> normals;
+
+	uint idTextureCoords;
+	std::vector<float2> textureCoords;
+};
+
 class ModuleImport : public Module
 {
 public:
@@ -25,4 +42,5 @@ public:
 	bool LoadSceneMeshes(const aiScene* scene, const aiNode* parent, GameObject* gOParent);
 	bool LoadNodeMeshes(const aiScene* scene, const aiNode* node, GameObject* parent);
 	bool LoadVertexNormalsTexturesIndex(aiMesh* mesh, std::vector<float3>& vertices, std::vector<float3>& normals, std::vector<float2>& textureCoords, std::vector<uint>& indices);
+	std::vector<meshInfo*> meshes;
 };
