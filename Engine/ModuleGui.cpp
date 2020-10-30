@@ -151,6 +151,9 @@ update_status ModuleGui::Update(float dt)
 			ImGui::BulletText("SDL"); 
 			ImGui::SameLine();
 			ImGui::Text("%d.%d.%d", SDL_MAJOR_VERSION, SDL_MINOR_VERSION, SDL_PATCHLEVEL);
+			ImGui::BulletText("SDL Mixer ");
+			ImGui::SameLine();
+			ImGui::Text("2.0.0");
 			ImGui::BulletText("ImGui "); 
 			ImGui::SameLine();
 			ImGui::Text("%s", ImGui::GetVersion());
@@ -165,7 +168,10 @@ update_status ModuleGui::Update(float dt)
 			ImGui::Text("1.5");
 			ImGui::BulletText("Assimp "); 
 			ImGui::SameLine();
-			ImGui::Text("3.1.1");			
+			ImGui::Text("3.1.1");	
+			ImGui::BulletText("Devil ");
+			ImGui::SameLine();
+			ImGui::Text("1.7.8");
 
 			ImGui::Separator();
 

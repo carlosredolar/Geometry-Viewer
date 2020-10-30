@@ -91,12 +91,26 @@ update_status ModuleInput::PreUpdate(float dt)
 
 	char* dropped_file_path;
 
+	scrollUp = false;
+	scrollDown = false;
+
 	while(SDL_PollEvent(&e))
 	{
 		switch(e.type)
 		{
 			case SDL_MOUSEWHEEL:
-			mouse_z = e.wheel.y;
+				
+				if (e.wheel.y > 0)
+				{
+					scrollUp = true;
+					//scrollDown = false;
+				}
+				else if (e.wheel.y < 0)
+				{
+					//scrollUp = false;
+					scrollDown = true;
+				}
+			//mouse_z = e.wheel.y;
 			break;
 
 			case SDL_MOUSEMOTION:

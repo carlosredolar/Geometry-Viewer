@@ -32,6 +32,8 @@ public:
 	bool IsEnabled() override;
 
 	const char* GetName();
+	int GetVertices();
+	int GetIndices();
 
 	void CreateBuffers();
 
@@ -42,13 +44,15 @@ public:
 
 	void CleanUp();
 
+	bool enableVertexNormals = false;
+	bool enableFaceNormals = false;
+
 private:
 
 
 	uint idTextureImage;
 
-	bool enableVertexNormals = false;
-	bool enableFaceNormals = false;
+	
 	meshInfo* mesh;
 
 };

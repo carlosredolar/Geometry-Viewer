@@ -177,12 +177,12 @@ void Component_Mesh::RenderVertexNormals(std::vector<float3> vertices, std::vect
 		float z = vertices[i].z;
 		glVertex3f(x, y, z);
 
-		float normal_x = normals[i].x;
-		float normal_y = normals[i].y;
-		float normal_z = normals[i].z;
+		float normal_x = normals[i].x/3;
+		float normal_y = normals[i].y/3;
+		float normal_z = normals[i].z/3;
 		glVertex3f(x + normal_x, y + normal_y, z + normal_z);
 	}
-
+	glColor3f(1.f, 1.f, 1.f);
 	glEnd();
 }
 
@@ -198,12 +198,12 @@ void Component_Mesh::RenderFaceNormals(std::vector<float3> vertices, std::vector
 		float z = (vertices[i].z + vertices[i + 1].z + vertices[i + 2].z) / 3;
 		glVertex3f(x, y, z);
 
-		float normal_x = normals[i].x;
-		float normal_y = normals[i].y;
-		float normal_z = normals[i].z;
+		float normal_x = normals[i].x/3;
+		float normal_y = normals[i].y/3;
+		float normal_z = normals[i].z/3;
 		glVertex3f(x + normal_x, y + normal_y, z + normal_z);
 	}
-
+	glColor3f(1.f, 1.f, 1.f);
 	glEnd();
 
 }
@@ -212,4 +212,14 @@ const char* Component_Mesh::GetName()
 {
 	return mesh->name.c_str();
 
+}
+
+int Component_Mesh::GetVertices()
+{
+	return mesh->vertices.size();
+}
+
+int Component_Mesh::GetIndices()
+{
+	return mesh->indices.size();
 }
