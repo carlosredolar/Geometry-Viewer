@@ -56,10 +56,6 @@ update_status ModuleGui::Update(float dt)
 {
 	DockSpace(dockingwindow);
 
-	if (demo) {
-		ShowDemoWindow(&demo);
-	}
-
 	// Tool bar
 	if (BeginMainMenuBar())
 	{
@@ -68,7 +64,6 @@ update_status ModuleGui::Update(float dt)
 
 			if (MenuItem("New"))
 			{
-
 				// New file
 			}
 
