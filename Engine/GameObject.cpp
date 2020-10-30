@@ -1,6 +1,7 @@
 #include "GameObject.h"
 #include "Component_Mesh.h"
 #include "Component_Transform.h"
+#include "Component_Texture.h"
 #include "Component.h"
 
 GameObject::GameObject(const char* name, GameObject* parent, bool enabled) :name(name), parent(parent), enabled(enabled) {}
@@ -12,18 +13,21 @@ GameObject::~GameObject()
 
 void GameObject::Update()
 {
-	//Update components
-	std::vector<Component*>::iterator component = components.begin();
+	if (IsEnabled()) 
+	{
+		//Update components
+		std::vector<Component*>::iterator component = components.begin();
 
-	for (; component != components.end(); ++component) {
-		(*component)->Update();
-	}
+		for (; component != components.end(); ++component) {
+			(*component)->Update();
+		}
 
-	//Update childs
-	std::vector<GameObject*>::iterator gameObject = childs.begin();
+		//Update childs
+		std::vector<GameObject*>::iterator gameObject = childs.begin();
 
-	for (; gameObject != childs.end(); ++gameObject) {
-		(*gameObject)->Update();
+		for (; gameObject != childs.end(); ++gameObject) {
+			(*gameObject)->Update();
+		}
 	}
 }
 
@@ -100,19 +104,23 @@ void GameObject::DeleteChild(GameObject * child)
 
 Component* GameObject::CreateComponent(Component::COMPONENT_TYPE type)
 {
+	Component_Texture* componentTexture = nullptr;
+	Component_Mesh* componentMesh = nullptr;
 	switch (type)
 	{
 	case Component::COMPONENT_TYPE::TRANSFORM:
 		components.push_back(new Component_Transform(this));
 		break;
+	case Component::COMPONENT_TYPE::TEXTURE:
+		componentTexture = new Component_Texture(this);
+		CheckAddComponent(componentTexture);
+		return componentTexture;
+		break;
 	case Component::COMPONENT_TYPE::MESH:
-		Component_Mesh* componentMesh = new Component_Mesh(this);
+		componentMesh = new Component_Mesh(this);
 		CheckAddComponent(componentMesh);
 		return componentMesh;
 		break;
-	//case Component::COMPONENT_TYPE::MATERIAL:
-	//	components.push_back(new Component_Material(type));
-	//	break;
 	}
 }
 

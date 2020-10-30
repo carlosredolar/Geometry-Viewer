@@ -11,7 +11,7 @@ public:
 	static enum class COMPONENT_TYPE {
 		TRANSFORM,
 		MESH,
-		MATERIAL,
+		TEXTURE,
 		NONE
 	};
 
@@ -38,11 +38,11 @@ public:
 
 	//Public variables
 	bool enabled;
+	GameObject* ownerGameObject;
 
 private:
 
 	COMPONENT_TYPE	type;
-	GameObject* ownerGameObject;
 
 };
 

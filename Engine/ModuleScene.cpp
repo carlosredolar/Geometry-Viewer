@@ -1,5 +1,6 @@
 #include "Application.h"
 #include "ModuleScene.h"
+#include "Component_Texture.h"
 
 #include "ImGui/imgui.h"
 
@@ -26,6 +27,11 @@ bool ModuleScene::Start()
 	App->camera->LookAt(vec3(0, 0, 0));
 
 	App->importer->LoadMesh("Assets/baker_house/BakerHouse.fbx");
+	uint bhTexture = App->importer->LoadTexture("Assets/baker_house/Baker_house.png");
+	Component_Texture* bhTex = (Component_Texture*)GetGameObject("Baker_house")->CreateComponent(Component::COMPONENT_TYPE::TEXTURE);
+	bhTex->SetIdTexture(bhTexture);
+	bhTex = (Component_Texture*)GetGameObject("Chimney")->CreateComponent(Component::COMPONENT_TYPE::TEXTURE);
+	bhTex->SetIdTexture(bhTexture);
 
 	return ret;
 }

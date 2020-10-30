@@ -1,4 +1,6 @@
 #include "Component_Mesh.h"
+#include "Component_Texture.h"
+#include "ModuleImport.h"
 #include "Glew/include/glew.h"
 #pragma comment (lib, "Glew/libx86/glew32.lib")
 
@@ -10,7 +12,7 @@
 
 Component_Mesh::Component_Mesh(GameObject* ownerGameObject, bool enabled) : Component(COMPONENT_TYPE::MESH, ownerGameObject, enabled)
 {
-
+	mesh = nullptr;
 }
 
 Component_Mesh::~Component_Mesh()
@@ -20,7 +22,7 @@ Component_Mesh::~Component_Mesh()
 
 void Component_Mesh::Update()
 {
-	Render();
+	if(IsEnabled()) Render();
 }
 
 void Component_Mesh::Enable()
@@ -39,51 +41,54 @@ bool Component_Mesh::IsEnabled()
 }
 
 void Component_Mesh::CleanUp() {
-	vertices.clear();
-	indices.clear();
-	normals.clear();
-	textureCoords.clear();
+	mesh->vertices.clear();
+	mesh->indices.clear();
+	mesh->normals.clear();
+	mesh->textureCoords.clear();
 
-	glDeleteBuffers(1, &idVertex);
-	glDeleteBuffers(1, &idIndex);
-	glDeleteBuffers(1, &idNormals);
-	glDeleteBuffers(1, &idTextureCoords);
+	glDeleteBuffers(1, &mesh->idVertex);
+	glDeleteBuffers(1, &mesh->idIndex);
+	glDeleteBuffers(1, &mesh->idNormals);
+	glDeleteBuffers(1, &mesh->idTextureCoords);
+
+	delete mesh;
 }
 
-void Component_Mesh::GenerateMesh(std::vector<float3> vertices, std::vector<uint> indices, std::vector<float3> normals, std::vector<float2> textureCoords)
+void Component_Mesh::GenerateMesh(meshInfo* newMesh, std::vector<float3> vertices, std::vector<uint> indices, std::vector<float3> normals, std::vector<float2> textureCoords)
 {
-	this->vertices = vertices;
-	this->indices = indices;
-	this->normals = normals;
-	this->textureCoords = textureCoords;
+	mesh = newMesh;
+	mesh->vertices = vertices;
+	mesh->indices = indices;
+	mesh->normals = normals;
+	mesh->textureCoords = textureCoords;
 
 	CreateBuffers();
 }
 
 void Component_Mesh::CreateBuffers()
 {
-	if (!indices.empty() && !vertices.empty())
+	if (!mesh->indices.empty() && !mesh->vertices.empty())
 	{
-		glGenBuffers(1, (GLuint*) & (idVertex));
-		glBindBuffer(GL_ARRAY_BUFFER, idVertex);
-		glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float3), &vertices[0], GL_STATIC_DRAW);
+		glGenBuffers(1, (GLuint*) & (mesh->idVertex));
+		glBindBuffer(GL_ARRAY_BUFFER, mesh->idVertex);
+		glBufferData(GL_ARRAY_BUFFER, mesh->vertices.size() * sizeof(float3), &mesh->vertices[0], GL_STATIC_DRAW);
 
-		glGenBuffers(1, (GLuint*) & (idIndex));
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idIndex);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint), &indices[0], GL_STATIC_DRAW);
+		glGenBuffers(1, (GLuint*) & (mesh->idIndex));
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->idIndex);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh->indices.size() * sizeof(uint), &mesh->indices[0], GL_STATIC_DRAW);
 
-		if (!normals.empty())
+		if (!mesh->normals.empty())
 		{
-			glGenBuffers(1, (GLuint*) & (idNormals));
-			glBindBuffer(GL_ARRAY_BUFFER, idNormals);
-			glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(float3), &normals[0], GL_STATIC_DRAW);
+			glGenBuffers(1, (GLuint*) & (mesh->idNormals));
+			glBindBuffer(GL_ARRAY_BUFFER, mesh->idNormals);
+			glBufferData(GL_ARRAY_BUFFER, mesh->normals.size() * sizeof(float3), &mesh->normals[0], GL_STATIC_DRAW);
 		}
 
-		if (!textureCoords.empty())
+		if (!mesh->textureCoords.empty())
 		{
-			glGenBuffers(1, (GLuint*) & (idTextureCoords));
-			glBindBuffer(GL_ARRAY_BUFFER, idTextureCoords);
-			glBufferData(GL_ARRAY_BUFFER, textureCoords.size() * sizeof(float2), &textureCoords[0], GL_STATIC_DRAW);
+			glGenBuffers(1, (GLuint*) & (mesh->idTextureCoords));
+			glBindBuffer(GL_ARRAY_BUFFER, mesh->idTextureCoords);
+			glBufferData(GL_ARRAY_BUFFER, mesh->textureCoords.size() * sizeof(float2), &mesh->textureCoords[0], GL_STATIC_DRAW);
 		}
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -93,44 +98,48 @@ void Component_Mesh::CreateBuffers()
 	}
 }
 
-void Component_Mesh::Render() {
+void Component_Mesh::Render() 
+{
 	//Render
+
+	Component_Texture* texture = ownerGameObject->GetComponent<Component_Texture>();
+
 	glEnableClientState(GL_VERTEX_ARRAY);
 
-	if (idNormals != -1)
+	if (mesh->idNormals != -1)
 		glEnableClientState(GL_NORMAL_ARRAY);
 
-	if (idTextureCoords != -1)
+	if (mesh->idTextureCoords != -1)
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-	if (idTextureImage != -1)
+	if (texture && texture->IsEnabled())
 	{
 		glEnableClientState(GL_TEXTURE_2D);
 	}
 
-	glBindBuffer(GL_ARRAY_BUFFER, idVertex);
+	glBindBuffer(GL_ARRAY_BUFFER, mesh->idVertex);
 	glVertexPointer(3, GL_FLOAT, 0, NULL);
 
-	if (idNormals != -1)
+	if (mesh->idNormals != -1)
 	{
-		glBindBuffer(GL_ARRAY_BUFFER, idNormals);
+		glBindBuffer(GL_ARRAY_BUFFER, mesh->idNormals);
 		glNormalPointer(GL_FLOAT, 0, NULL);
 	}
 
-	if (idTextureCoords != -1)
+	if (mesh->idTextureCoords != -1)
 	{
-		glBindBuffer(GL_ARRAY_BUFFER, idTextureCoords);
+		glBindBuffer(GL_ARRAY_BUFFER, mesh->idTextureCoords);
 		glTexCoordPointer(2, GL_FLOAT, 0, NULL);
 	}
 
-	if (idTextureImage != -1)
+	if (texture && texture->IsEnabled())
 	{
-		glBindTexture(GL_TEXTURE_2D, idTextureImage);
+		glBindTexture(GL_TEXTURE_2D, texture->GetIdTexture());
 	}
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idIndex);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->idIndex);
 
-	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, NULL);
+	glDrawElements(GL_TRIANGLES, mesh->indices.size(), GL_UNSIGNED_INT, NULL);
 
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);
@@ -142,4 +151,9 @@ void Component_Mesh::Render() {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_TEXTURE_COORD_ARRAY, 0);
+}
+
+const char* Component_Mesh::GetName() 
+{
+	return mesh->name.c_str();
 }
