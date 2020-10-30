@@ -32,6 +32,8 @@ public:
 	bool IsEnabled() override;
 
 	const char* GetName();
+	int GetVertices();
+	int GetIndices();
 
 	void CreateBuffers();
 

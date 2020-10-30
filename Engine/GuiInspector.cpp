@@ -72,6 +72,12 @@ void GuiInspector::Draw()
 				(meshCheck) ? meshGO->Enable() : meshGO->Disable();
 				strncpy(buf, meshGO->GetName(), 128);
 				InputText("Mesh Name", buf, ARRAYSIZE(buf));
+				Text("Vertices: ");
+				SameLine();
+				TextColored(ImVec4(0.95f, 0.5f, 0.07f, 1.0f), "%i", meshGO->GetVertices());
+				Text("Indices: ");
+				SameLine();
+				TextColored(ImVec4(0.95f, 0.5f, 0.07f, 1.0f), "%i", meshGO->GetIndices());
 				static bool vertexnormalsCheck = meshGO->enableVertexNormals;
 				Checkbox("Vertex Normals", &vertexnormalsCheck);
 				(vertexnormalsCheck) ? meshGO->enableVertexNormals = true : meshGO->enableVertexNormals = false;

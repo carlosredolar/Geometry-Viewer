@@ -213,3 +213,13 @@ const char* Component_Mesh::GetName()
 	return mesh->name.c_str();
 
 }
+
+int Component_Mesh::GetVertices()
+{
+	return mesh->vertices.size();
+}
+
+int Component_Mesh::GetIndices()
+{
+	return mesh->indices.size();
+}
