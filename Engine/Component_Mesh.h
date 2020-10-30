@@ -42,13 +42,15 @@ public:
 
 	void CleanUp();
 
+	bool enableVertexNormals = false;
+	bool enableFaceNormals = false;
+
 private:
 
 
 	uint idTextureImage;
 
-	bool enableVertexNormals = false;
-	bool enableFaceNormals = false;
+	
 	meshInfo* mesh;
 
 };

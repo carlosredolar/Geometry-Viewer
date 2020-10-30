@@ -72,6 +72,12 @@ void GuiInspector::Draw()
 				(meshCheck) ? meshGO->Enable() : meshGO->Disable();
 				strncpy(buf, meshGO->GetName(), 128);
 				InputText("Mesh Name", buf, ARRAYSIZE(buf));
+				static bool vertexnormalsCheck = meshGO->enableVertexNormals;
+				Checkbox("Vertex Normals", &vertexnormalsCheck);
+				(vertexnormalsCheck) ? meshGO->enableVertexNormals = true : meshGO->enableVertexNormals = false;
+				static bool facenormalsCheck = meshGO->enableFaceNormals;
+				Checkbox("Face Normals", &facenormalsCheck);
+				(facenormalsCheck) ? meshGO->enableFaceNormals=true : meshGO->enableFaceNormals=false;
 			}
 		}
 		if (textureGO)
