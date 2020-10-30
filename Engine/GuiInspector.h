@@ -4,6 +4,8 @@
 #include "Module.h"
 #include "GuiWindow.h"
 #include "Component_Transform.h"
+#include "Component_Mesh.h"
+#include "Component_Texture.h"
 
 class GameObject;
 
@@ -21,7 +23,9 @@ public:
 
 private:
 	GameObject* gameObjectSelected;
-	Component_Transform* goTransform;
+	Component_Transform* transformGO;
+	Component_Mesh* meshGO;
+	Component_Texture* textureGO;
 	char buf[128];
 };
 

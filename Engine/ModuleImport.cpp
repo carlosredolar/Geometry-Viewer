@@ -5,6 +5,7 @@
 #include "Component.h"
 #include "Component_Mesh.h"
 #include "Component_Transform.h"
+#include "Component_Texture.h"
 #include "Defs.h"
 
 #include "Assimp/include/cimport.h"
@@ -146,8 +147,11 @@ bool ModuleImport::LoadNodeMeshes(const aiScene* scene, const aiNode* node, Game
 		else LOG("And with %i indices", index.size());
 
 		//Create new component mesh
-		Component_Mesh* newMesh = (Component_Mesh*)newGameObject->CreateComponent(Component::COMPONENT_TYPE::MESH);
-		newMesh->GenerateMesh(vertex, index, normals, textureCoords);
+		meshInfo* newMesh = new meshInfo;
+		newMesh->name = newGameObject->GetName();
+		meshes.push_back(newMesh);
+		Component_Mesh* newMeshComponent = (Component_Mesh*)newGameObject->CreateComponent(Component::COMPONENT_TYPE::MESH);
+		newMeshComponent->GenerateMesh(newMesh, vertex, index, normals, textureCoords);
 	}
 
 	//Here we will load Materials
@@ -207,26 +211,15 @@ bool ModuleImport::LoadVertexNormalsTexturesIndex(aiMesh* mesh, std::vector<floa
 
 uint ModuleImport::LoadTexture(const char* path)
 {
-	uint Image = 0;
+	uint ret = -1;
+	char* buffer = nullptr;
 
-	ilGenImages(1, &Image);
-	ilBindImage(Image);
+	uint bytesFile = App->fm->Load(path, &buffer);
 
-	//-------------
-	ilLoadImage(path);
+	ilLoadL(IL_TYPE_UNKNOWN, (const void*)buffer, bytesFile);
+	ret = ilutGLBindTexImage();
 
-	uint ret = ilutGLBindTexImage();
-	ilDeleteImages(1, &Image);
-
-	//----------------------- 
-	//char* buffer = nullptr;
-
-	//uint bytesFile = App->physFS->Load(path, &buffer);
-
-	//ilLoadL(IL_TYPE_UNKNOWN, (const void*)buffer, bytesFile);
-	//uint ret = ilutGLBindTexImage();
-
-	//RELEASE_ARRAY(buffer);
+	RELEASE_ARRAY(buffer);
 
 	return ret;
 }
