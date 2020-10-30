@@ -44,14 +44,18 @@ update_status ModuleCamera3D::Update(float dt)
 	vec3 newPos(0,0,0);
 	float speed = 10.0f * dt;
 	
+	
 	if(App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT)
-		speed = 50.0f * dt;
+		speed = 30.0f * dt;
 
-	if(App->input->GetKey(SDL_SCANCODE_R) == KEY_REPEAT) newPos.y += speed;
-	if(App->input->GetKey(SDL_SCANCODE_F) == KEY_REPEAT) newPos.y -= speed;
+	float scroll_speed = speed * 4;
 
-	if(App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) newPos -= Z * speed;
-	if(App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) newPos += Z * speed;
+	if(App->input->scrollUp) Position -= Z * scroll_speed;
+	if (App->input->scrollDown) Position += Z * scroll_speed;
+	//if(App->input->GetKey(SDL_MOUSEWHEEL) == KEY_REPEAT) newPos -= Z * speed;
+
+	if(App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) newPos += Y * speed;
+	if(App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) newPos -= Y * speed;
 
 
 	if(App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) newPos -= X * speed;
@@ -63,7 +67,7 @@ update_status ModuleCamera3D::Update(float dt)
 
 	// Mouse motion ----------------
 
-	if(App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_REPEAT)
+	if(App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT && App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT)
 	{
 		int dx = -App->input->GetMouseXMotion();
 		int dy = -App->input->GetMouseYMotion();
