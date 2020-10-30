@@ -37,11 +37,20 @@ public:
 
 	void Render();
 
+	void RenderVertexNormals(std::vector<float3> vertices, std::vector<float3> normals);
+	void RenderFaceNormals(std::vector<float3> vertices, std::vector<float3> normals);
+
 	void CleanUp();
 
 private:
 
+
+	uint idTextureImage;
+
+	bool enableVertexNormals = false;
+	bool enableFaceNormals = false;
 	meshInfo* mesh;
+
 };
 
 #endif // !__COMPONENT_MESH_H__
