@@ -29,6 +29,10 @@ bool GuiConsole::CleanUp()
 void GuiConsole::Draw()
 {
 	Begin("Console", &is_on);
+	if (Button("Clean")) 
+	{
+		App->gui->CleanLog();
+	}
 
 	App->gui->DebugConsole();
 

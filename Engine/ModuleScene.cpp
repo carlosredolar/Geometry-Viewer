@@ -18,7 +18,7 @@ bool ModuleScene::Start()
 	bool ret = true;
 
 	//Create root gameObject
-	root = new GameObject("Root", nullptr, true);
+	root = new GameObject("Scene", nullptr, true);
 	root->id = 0;
 	currentID = 0;
 	gameObjects.push_back(root);
@@ -96,16 +96,11 @@ GameObject* ModuleScene::CreateGameObject(const char* name, GameObject* parent, 
 	newGameObject->id = currentID;
 	gameObjects.push_back(newGameObject);
 
-	//Log gameObject creation
-	std::string logText = "Created new GameObject called ";
-	logText += name;
-	LOG(logText.c_str());
-
 	return newGameObject;
 }
 
 //Get gameObject functions
-GameObject* ModuleScene::GetGameObject(const char* name) //This method is slower but more precise
+GameObject* ModuleScene::GetGameObject(const char* name) //This method could fail if 2 gameObjects are named the same
 {
 	std::vector<GameObject*>::iterator currentGO = gameObjects.begin();
 
@@ -121,7 +116,7 @@ GameObject* ModuleScene::GetGameObject(const char* name) //This method is slower
 	return nullptr;
 }
 
-GameObject* ModuleScene::GetGameObject(int id) //This method is faster but it could fail
+GameObject* ModuleScene::GetGameObject(int id) //This method is fast and precise
 {
 	GameObject* ret;
 	ret = gameObjects.at(id);
@@ -136,4 +131,32 @@ GameObject* ModuleScene::GetGameObject(int id) //This method is faster but it co
 		LOG(logText.c_str());
 		return nullptr;
 	}
+}
+
+void ModuleScene::SelectGameObject(GameObject* selected) 
+{
+	std::vector<GameObject*>::iterator currentGO = gameObjects.begin();
+
+	for (; currentGO != gameObjects.end(); currentGO++) {
+		if ((*currentGO) == selected)
+		{
+			(*currentGO)->selected = true;
+			App->gui->SelectGameObject((*currentGO));
+		}
+		else (*currentGO)->selected = false;
+	}
+}
+
+GameObject* ModuleScene::GetSelectedGameObject()
+{
+	std::vector<GameObject*>::iterator currentGO = gameObjects.begin();
+
+	for (; currentGO != gameObjects.end(); currentGO++) {
+		if ((*currentGO)->selected)
+		{
+			return (*currentGO);
+		}
+	}
+
+	return nullptr;
 }

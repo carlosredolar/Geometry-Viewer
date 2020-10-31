@@ -50,6 +50,8 @@ public:
 
 	int id;
 
+	bool selected;
+
 private:
 	GameObject*					parent;
 	std::string					name;

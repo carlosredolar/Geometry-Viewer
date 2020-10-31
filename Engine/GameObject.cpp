@@ -4,11 +4,11 @@
 #include "Component_Texture.h"
 #include "Component.h"
 
-GameObject::GameObject(const char* name, GameObject* parent, bool enabled) :name(name), parent(parent), enabled(enabled) {}
+GameObject::GameObject(const char* name, GameObject* parent, bool enabled) :name(name), parent(parent), enabled(enabled) { selected = false; }
 
 GameObject::~GameObject()
 {
-
+	
 }
 
 void GameObject::Update()
@@ -34,11 +34,21 @@ void GameObject::Update()
 void GameObject::Enable()
 {
 	enabled = true;
+
+	std::vector<GameObject*>::iterator gameObject = childs.begin();
+	for (; gameObject != childs.end(); ++gameObject) {
+		(*gameObject)->Enable();
+	}
 }
 
 void GameObject::Disable()
 {
 	enabled = false;
+
+	std::vector<GameObject*>::iterator gameObject = childs.begin();
+	for (; gameObject != childs.end(); ++gameObject) {
+		(*gameObject)->Disable();
+	}
 }
 
 bool GameObject::IsEnabled()
