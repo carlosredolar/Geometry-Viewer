@@ -115,15 +115,15 @@ update_status ModuleGui::Update(float dt)
 			{
 				if (MenuItem("Cube"))
 				{
-					App->importer->LoadMesh("Assets/primitives/Cube.fbx");
+					App->importer->LoadMesh("Assets/Primitives/Cube.fbx");
 				}
 				if (MenuItem("Sphere"))
 				{
-					App->importer->LoadMesh("Assets/primitives/Sphere.fbx");
+					App->importer->LoadMesh("Assets/Primitives/Sphere.fbx");
 				}
 				if (MenuItem("Cylinder"))
 				{
-					App->importer->LoadMesh("Assets/primitives/Cylinder.fbx");
+					App->importer->LoadMesh("Assets/Primitives/Cylinder.fbx");
 				}
 				
 				ImGui::EndMenu();
