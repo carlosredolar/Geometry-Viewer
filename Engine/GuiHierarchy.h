@@ -17,11 +17,10 @@ public:
 	void Draw();
 	bool CleanUp();
 
-	void TreeNodeChild(GameObject* gO, int i);
+	void TreeNodeChild(GameObject* gO);
 
 private:
 	GameObject* rootNode;
-
 	ImGuiTreeNodeFlags base_flags;
 };
 #endif __GuiHierarchy_H__

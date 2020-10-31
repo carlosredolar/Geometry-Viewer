@@ -4,11 +4,11 @@
 #include "Component_Texture.h"
 #include "Component.h"
 
-GameObject::GameObject(const char* name, GameObject* parent, bool enabled) :name(name), parent(parent), enabled(enabled) {}
+GameObject::GameObject(const char* name, GameObject* parent, bool enabled) :name(name), parent(parent), enabled(enabled) { selected = false; }
 
 GameObject::~GameObject()
 {
-
+	
 }
 
 void GameObject::Update()

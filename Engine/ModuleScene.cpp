@@ -96,11 +96,6 @@ GameObject* ModuleScene::CreateGameObject(const char* name, GameObject* parent, 
 	newGameObject->id = currentID;
 	gameObjects.push_back(newGameObject);
 
-	//Log gameObject creation
-	std::string logText = "Created new GameObject called ";
-	logText += name;
-	LOG(logText.c_str());
-
 	return newGameObject;
 }
 
@@ -135,5 +130,19 @@ GameObject* ModuleScene::GetGameObject(int id) //This method is faster but it co
 		logText += id;
 		LOG(logText.c_str());
 		return nullptr;
+	}
+}
+
+void ModuleScene::SelectGameObject(GameObject* selected) 
+{
+	std::vector<GameObject*>::iterator currentGO = gameObjects.begin();
+
+	for (; currentGO != gameObjects.end(); currentGO++) {
+		if ((*currentGO) == selected)
+		{
+			(*currentGO)->selected = true;
+			App->gui->SelectGameObject((*currentGO));
+		}
+		else (*currentGO)->selected = false;
 	}
 }

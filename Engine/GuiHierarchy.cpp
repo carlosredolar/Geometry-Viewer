@@ -35,8 +35,8 @@ void GuiHierarchy::Draw()
 
 	if (TreeNode(rootNode->GetName()))
 	{
-		int i = 0;
-		TreeNodeChild(rootNode, i);
+		
+		TreeNodeChild(rootNode);
 
 		ImGui::TreePop();
 	}
@@ -44,28 +44,32 @@ void GuiHierarchy::Draw()
 	ImGui::End();
 }
 
-void GuiHierarchy::TreeNodeChild(GameObject* gO, int i)
+void GuiHierarchy::TreeNodeChild(GameObject* gO)
 {
 	if (gO->GetChilds()->size() > 0)
 	{
 		static int selection_mask = (1 << 2);
 		int node_clicked = -1;
-		for (int j = 0; j < gO->GetChilds()->size(); j++, ++i)
+		for (int j = 0; j < gO->GetChilds()->size(); j++)
 		{
 			GameObject* gOChild = gO->GetChilds()->at(j);
 			ImGuiTreeNodeFlags node_flags = base_flags; // Disable the default "open on single-click behavior" + set Selected flag according to our selection.
-			const bool is_selected = (selection_mask & (1 << i)) != 0;
+			const bool is_selected = (selection_mask & (1 << gOChild->id)) != 0;
 
-			if (is_selected) node_flags |= ImGuiTreeNodeFlags_Selected;
+			if (is_selected)
+			{
+				node_flags |= ImGuiTreeNodeFlags_Selected;
+				LOG("%i", gOChild->id);
+			}
 
-			if (gOChild->GetChilds()->size() > 0) 
+			if (gOChild->GetChilds()->size() > 0)
 			{
 				bool node_open = ImGui::TreeNodeEx((void*)(intptr_t)j, node_flags, gOChild->GetName(), j);
 				if (ImGui::IsItemClicked())
-					node_clicked = i;
+					node_clicked = gOChild->id;
 				if (node_open)
 				{
-					TreeNodeChild(gOChild, ++i);
+					TreeNodeChild(gOChild);
 					ImGui::TreePop();
 				}
 			}
@@ -74,18 +78,18 @@ void GuiHierarchy::TreeNodeChild(GameObject* gO, int i)
 				node_flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen; // ImGuiTreeNodeFlags_Bullet
 				bool node_open = ImGui::TreeNodeEx((void*)(intptr_t)j, node_flags, gOChild->GetName(), j);
 				if (ImGui::IsItemClicked())
-					node_clicked = i;
+					node_clicked = gOChild->id;
 			}
 
 		}
 		if (node_clicked != -1)
 		{
-			GameObject* selectedGO = App->scene->GetGameObject(node_clicked + 1);
+			GameObject* selectedGO = App->scene->GetGameObject(node_clicked);
 			std::string logMessage = selectedGO->GetName();
 			logMessage += " selected";
 			LOG(logMessage.c_str());
 
-			App->gui->SelectGameObject(selectedGO);
+			App->scene->SelectGameObject(selectedGO);
 
 			// Update selection state
 			// (process outside of tree loop to avoid visual inconsistencies during the clicking frame)

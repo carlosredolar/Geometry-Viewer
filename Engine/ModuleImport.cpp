@@ -78,7 +78,7 @@ bool ModuleImport::CleanUp() {
 	return true;
 }
 
-void ModuleImport::LoadMesh(char* filepath)
+void ModuleImport::LoadMesh(const char* filepath)
 {
 	char* buffer = nullptr;
 
@@ -264,4 +264,22 @@ uint ModuleImport::LoadDefaultTexture()
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 20, 20, 0, GL_RGBA, GL_UNSIGNED_BYTE, checkerImage);
 
 	return textID;
+}
+
+void ModuleImport::CreateMeshesExternal(const char* path)
+{
+	std::string normalizedPath = App->fm->NormalizePath(path);
+
+	std::string finalPath;
+
+	//TODO: Check if the current file is already loaded
+	if (App->fm->ImportFile(normalizedPath.c_str(), finalPath))
+	{
+		CreateMeshesInternal(finalPath.c_str());
+	}
+}
+
+void ModuleImport::CreateMeshesInternal(const char* path)
+{
+	LoadMesh(path);
 }

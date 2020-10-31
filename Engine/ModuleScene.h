@@ -19,6 +19,7 @@ public:
 	GameObject* CreateGameObject(const char* name, GameObject* parent, bool enabled);
 	GameObject* GetGameObject(const char* name);
 	GameObject* GetGameObject(int id);
+	void SelectGameObject(GameObject* selected);
 
 private:
 

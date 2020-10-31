@@ -120,7 +120,7 @@ update_status ModuleInput::PreUpdate(float dt)
 
 			case SDL_DROPFILE:
 				dropped_file_path = e.drop.file;
-				App->importer->LoadMesh(dropped_file_path);
+				App->importer->CreateMeshesExternal(dropped_file_path);
 				SDL_free(dropped_file_path);
 			break;
 		}
