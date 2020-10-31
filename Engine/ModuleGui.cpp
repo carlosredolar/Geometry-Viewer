@@ -4,7 +4,8 @@
 #include "GuiConfiguration.h"
 #include "GuiInspector.h"
 #include "GuiHierarchy.h"
-#include "ModuleScene.h"
+//#include "ModuleImport.h"
+//#include "ModuleScene.h"
 
 #include "ImGui/imconfig.h"
 #include "ImGui/imgui_internal.h"
@@ -91,6 +92,27 @@ update_status ModuleGui::Update(float dt)
 			}
 			ImGui::EndMenu();
 		}
+		if (BeginMenu("Add"))
+		{
+			if (BeginMenu("Primitives"))
+			{
+				if (MenuItem("Cube"))
+				{
+					App->importer->LoadMesh("Assets/Primitives/Cube.fbx");
+				}
+				if (MenuItem("Sphere"))
+				{
+					App->importer->LoadMesh("Assets/Primitives/Sphere.fbx");
+				}
+				if (MenuItem("Cylinder"))
+				{
+					App->importer->LoadMesh("Assets/Primitives/Cylinder.fbx");
+				}
+				
+				ImGui::EndMenu();
+			}
+			ImGui::EndMenu();
+		}
 		if (BeginMenu("Help"))
 		{
 			PushStyleColor(ImGuiCol_Text, ImVec4(0.972, 0.105, 0.105, 1.f));
@@ -134,6 +156,9 @@ update_status ModuleGui::Update(float dt)
 			ImGui::BulletText("SDL"); 
 			ImGui::SameLine();
 			ImGui::Text("%d.%d.%d", SDL_MAJOR_VERSION, SDL_MINOR_VERSION, SDL_PATCHLEVEL);
+			ImGui::BulletText("SDL Mixer ");
+			ImGui::SameLine();
+			ImGui::Text("2.0.0");
 			ImGui::BulletText("ImGui "); 
 			ImGui::SameLine();
 			ImGui::Text("%s", ImGui::GetVersion());
@@ -148,7 +173,10 @@ update_status ModuleGui::Update(float dt)
 			ImGui::Text("1.5");
 			ImGui::BulletText("Assimp "); 
 			ImGui::SameLine();
-			ImGui::Text("3.1.1");			
+			ImGui::Text("3.1.1");	
+			ImGui::BulletText("Devil ");
+			ImGui::SameLine();
+			ImGui::Text("1.7.8");
 
 			ImGui::Separator();
 

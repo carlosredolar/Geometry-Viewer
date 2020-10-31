@@ -32,16 +32,29 @@ public:
 	bool IsEnabled() override;
 
 	const char* GetName();
+	int GetVertices();
+	int GetIndices();
 
 	void CreateBuffers();
 
 	void Render();
 
+	void RenderVertexNormals(std::vector<float3> vertices, std::vector<float3> normals);
+	void RenderFaceNormals(std::vector<float3> vertices, std::vector<float3> normals);
+
 	void CleanUp();
+
+	bool enableVertexNormals = false;
+	bool enableFaceNormals = false;
 
 private:
 
+
+	uint idTextureImage;
+
+	
 	meshInfo* mesh;
+
 };
 
 #endif // !__COMPONENT_MESH_H__

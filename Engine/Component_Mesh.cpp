@@ -150,9 +150,75 @@ void Component_Mesh::Render()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_TEXTURE_COORD_ARRAY, 0);
+
+
+
+	if (enableVertexNormals) {
+
+		RenderVertexNormals(mesh->vertices, mesh->normals);
+	}
+
+	if (enableFaceNormals) {
+
+		RenderFaceNormals(mesh->vertices, mesh->normals);
+	}
+}
+
+void Component_Mesh::RenderVertexNormals(std::vector<float3> vertices, std::vector<float3> normals)
+{
+	glBegin(GL_LINES);
+	glColor3f(0.0f, 0.7f, 0.0f);
+
+	for (size_t i = 0; i < vertices.size(); i++)
+	{
+		float x = vertices[i].x;
+		float y = vertices[i].y;
+		float z = vertices[i].z;
+		glVertex3f(x, y, z);
+
+		float normal_x = normals[i].x/3;
+		float normal_y = normals[i].y/3;
+		float normal_z = normals[i].z/3;
+		glVertex3f(x + normal_x, y + normal_y, z + normal_z);
+	}
+	glColor3f(1.f, 1.f, 1.f);
+	glEnd();
+}
+
+void Component_Mesh::RenderFaceNormals(std::vector<float3> vertices, std::vector<float3> normals)
+{
+	glBegin(GL_LINES);
+	glColor3f(0.7f, 0.0f, 0.0f);
+
+	for (size_t i = 0; i < vertices.size()-2 ; i += 3)
+	{
+		float x = (vertices[i].x + vertices[i + 1].x + vertices[i + 2].x) / 3;
+		float y = (vertices[i].y + vertices[i + 1].y + vertices[i + 2].y) / 3;
+		float z = (vertices[i].z + vertices[i + 1].z + vertices[i + 2].z) / 3;
+		glVertex3f(x, y, z);
+
+		float normal_x = normals[i].x/3;
+		float normal_y = normals[i].y/3;
+		float normal_z = normals[i].z/3;
+		glVertex3f(x + normal_x, y + normal_y, z + normal_z);
+	}
+	glColor3f(1.f, 1.f, 1.f);
+	glEnd();
+
 }
 
 const char* Component_Mesh::GetName() 
 {
 	return mesh->name.c_str();
+
+}
+
+int Component_Mesh::GetVertices()
+{
+	return mesh->vertices.size();
+}
+
+int Component_Mesh::GetIndices()
+{
+	return mesh->indices.size();
 }
