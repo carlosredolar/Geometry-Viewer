@@ -3,6 +3,7 @@
 #include "GuiConsole.h"
 #include "GuiConfiguration.h"
 #include "GuiInspector.h"
+#include "ModuleImport.h"
 #include "ModuleScene.h"
 
 #include "ImGui/imconfig.h"
@@ -105,6 +106,27 @@ update_status ModuleGui::Update(float dt)
 			if (MenuItem("Configuration"))
 			{
 				ui_configuration->is_on = !ui_configuration->is_on;
+			}
+			ImGui::EndMenu();
+		}
+		if (BeginMenu("Add"))
+		{
+			if (BeginMenu("Primitives"))
+			{
+				if (MenuItem("Cube"))
+				{
+					App->importer->LoadMesh("Assets/primitives/Cube.fbx");
+				}
+				if (MenuItem("Sphere"))
+				{
+					App->importer->LoadMesh("Assets/primitives/Sphere.fbx");
+				}
+				if (MenuItem("Cylinder"))
+				{
+					App->importer->LoadMesh("Assets/primitives/Cylinder.fbx");
+				}
+				
+				ImGui::EndMenu();
 			}
 			ImGui::EndMenu();
 		}
