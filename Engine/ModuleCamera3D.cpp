@@ -1,5 +1,8 @@
 #include "Application.h"
 #include "ModuleCamera3D.h"
+#include "ModuleScene.h"
+
+#include "Component_Transform.h"
 
 ModuleCamera3D::ModuleCamera3D(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
@@ -44,20 +47,26 @@ update_status ModuleCamera3D::Update(float dt)
 	vec3 newPos(0, 0, 0);
 	float speed = 10.0f * dt;
 	
-	if(App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT)
+	if (App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT)
 		speed = 30.0f * dt;
 
 	float scroll_speed = speed * 4;
 
-	if(App->input->scrollUp) Position -= Z * scroll_speed;
+	if (App->input->scrollUp) Position -= Z * scroll_speed;
 	if (App->input->scrollDown) Position += Z * scroll_speed;
 
-
-	if(App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) newPos -= Z * speed;
-	if(App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) newPos += Z * speed;
+	if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) newPos -= Z * speed;
+	if (App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) newPos += Z * speed;
 
 	if (App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) newPos -= X * speed;
 	if (App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) newPos += X * speed;
+
+	if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN && App->scene->GetSelectedGameObject() != nullptr)
+	{
+		float3 objectPos = App->scene->GetSelectedGameObject()->GetComponent<Component_Transform>()->GetPosition();
+		Reference = vec3(objectPos.x, objectPos.y, objectPos.z);
+		LookAt(Reference);
+	}
 	
 	Position += newPos;
 	Reference += newPos;
@@ -92,14 +101,12 @@ update_status ModuleCamera3D::Update(float dt)
 				Y = cross(Z, X);
 			}
 		}
+
+		Reference = Position - Z * length(Position);
 	}
 
 	if (App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT)
 	{
-		if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN) {
-			LookAt(vec3(0, 0, 0));
-		}
-
 		if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT)
 		{
 			int dx = -App->input->GetMouseXMotion();
