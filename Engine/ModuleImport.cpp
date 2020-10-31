@@ -93,7 +93,8 @@ void ModuleImport::LoadMesh(const char* filepath)
 		std::vector<Component_Mesh> loadedMeshes;
 		bool ret = true;
 
-		std::string filename = App->fm->ExtractFileName(filepath);
+		std::string filename;
+		App->fm->SplitFilePath(filepath, nullptr, &filename, nullptr);
 
 		GameObject* sceneGameObject = App->scene->CreateGameObject(filename.c_str(), nullptr, true);
 

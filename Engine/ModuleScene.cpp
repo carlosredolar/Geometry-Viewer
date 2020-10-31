@@ -146,3 +146,17 @@ void ModuleScene::SelectGameObject(GameObject* selected)
 		else (*currentGO)->selected = false;
 	}
 }
+
+GameObject* ModuleScene::GetSelectedGameObject()
+{
+	std::vector<GameObject*>::iterator currentGO = gameObjects.begin();
+
+	for (; currentGO != gameObjects.end(); currentGO++) {
+		if ((*currentGO)->selected)
+		{
+			return (*currentGO);
+		}
+	}
+
+	return nullptr;
+}
