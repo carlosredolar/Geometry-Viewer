@@ -130,27 +130,14 @@ update_status ModuleGui::Update(float dt)
 			}
 			ImGui::EndMenu();
 		}
-		if (BeginMenu("Help"))
-		{
-			PushStyleColor(ImGuiCol_Text, ImVec4(0.972, 0.105, 0.105, 1.f));
-
-			if (MenuItem("Our Github"))
-			{
-
-				// Github link:
-				ShellExecuteA(NULL, "open", "https://github.com/carlosredolar/R-Engine", NULL, NULL, SW_SHOWNORMAL);
-			}
-
-
-			PopStyleColor();
-			ImGui::EndMenu();
-		}
 		if (BeginMenu("About"))
 		{
 			ImGui::TextColored(ImVec4(0.95f, 0.5f, 0.07f, 1.0f), "R-Engine");
 			ImGui::Separator();
 
-			ImGui::SameLine();
+			if (ImGui::SmallButton("Github page")) {
+				ShellExecuteA(NULL, "open", "https://github.com/carlosredolar/R-Engine", NULL, NULL, SW_SHOWNORMAL);
+			}
 			ImGui::TextWrapped("3D Game Engine");
 			ImGui::TextWrapped("By");
 			ImGui::SameLine();
@@ -163,7 +150,7 @@ update_status ModuleGui::Update(float dt)
 			if (ImGui::SmallButton("Carlos Redolar")) {
 				ShellExecuteA(NULL, "open", "https://github.com/carlosredolar", NULL, NULL, SW_SHOWNORMAL);
 			}
-
+			
 			ImGui::Separator();
 
 			GLint gl_major_version, gl_minor_version;
