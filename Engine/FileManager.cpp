@@ -587,3 +587,12 @@ std::string FileManager::GetUniqueName(const char* path, const char* name) const
 	}
 	return finalName;
 }
+
+std::string FileManager::ExtractFileName(const std::string& fullPath)
+{
+	std::string removeSlash;
+	const size_t lastSlashIndex = fullPath.find_last_of("/\\");
+	removeSlash = fullPath.substr(lastSlashIndex + 1);
+	const size_t lastPointIndex = removeSlash.find_last_of(".");
+	return removeSlash.substr(0, lastPointIndex);
+}

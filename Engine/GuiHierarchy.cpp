@@ -56,11 +56,8 @@ void GuiHierarchy::TreeNodeChild(GameObject* gO)
 			ImGuiTreeNodeFlags node_flags = base_flags; // Disable the default "open on single-click behavior" + set Selected flag according to our selection.
 			const bool is_selected = (selection_mask & (1 << gOChild->id)) != 0;
 
-			if (is_selected)
-			{
+			if (is_selected && gOChild->selected)
 				node_flags |= ImGuiTreeNodeFlags_Selected;
-				LOG("%i", gOChild->id);
-			}
 
 			if (gOChild->GetChilds()->size() > 0)
 			{

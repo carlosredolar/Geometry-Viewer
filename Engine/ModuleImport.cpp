@@ -93,7 +93,9 @@ void ModuleImport::LoadMesh(const char* filepath)
 		std::vector<Component_Mesh> loadedMeshes;
 		bool ret = true;
 
-		GameObject* sceneGameObject = App->scene->CreateGameObject(scene->mRootNode->mName.C_Str(), nullptr, true);
+		std::string filename = App->fm->ExtractFileName(filepath);
+
+		GameObject* sceneGameObject = App->scene->CreateGameObject(filename.c_str(), nullptr, true);
 
 		//Loading and creating transform component
 		aiVector3D translation, scaling;

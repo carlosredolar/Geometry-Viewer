@@ -100,7 +100,7 @@ GameObject* ModuleScene::CreateGameObject(const char* name, GameObject* parent, 
 }
 
 //Get gameObject functions
-GameObject* ModuleScene::GetGameObject(const char* name) //This method is slower but more precise
+GameObject* ModuleScene::GetGameObject(const char* name) //This method could fail if 2 gameObjects are named the same
 {
 	std::vector<GameObject*>::iterator currentGO = gameObjects.begin();
 
@@ -116,7 +116,7 @@ GameObject* ModuleScene::GetGameObject(const char* name) //This method is slower
 	return nullptr;
 }
 
-GameObject* ModuleScene::GetGameObject(int id) //This method is faster but it could fail
+GameObject* ModuleScene::GetGameObject(int id) //This method is fast and precise
 {
 	GameObject* ret;
 	ret = gameObjects.at(id);
