@@ -34,11 +34,21 @@ void GameObject::Update()
 void GameObject::Enable()
 {
 	enabled = true;
+
+	std::vector<GameObject*>::iterator gameObject = childs.begin();
+	for (; gameObject != childs.end(); ++gameObject) {
+		(*gameObject)->Enable();
+	}
 }
 
 void GameObject::Disable()
 {
 	enabled = false;
+
+	std::vector<GameObject*>::iterator gameObject = childs.begin();
+	for (; gameObject != childs.end(); ++gameObject) {
+		(*gameObject)->Disable();
+	}
 }
 
 bool GameObject::IsEnabled()
