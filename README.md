@@ -24,9 +24,11 @@ Github profiles:
 
 **Mouse Wheel** - Zoom In/Out
 
-**Alt + Left Click** - Orbit around the selected object
+**Alt + Left Click** - Orbit camera around a reference point
 
-**F** - Focus the camera on the selected object
+**Right Click** - Rotate camera around camera position
+
+**F** - Focus the camera on an object if selected
 
 
 ## Engine Functionality
@@ -53,8 +55,6 @@ In this window we can see the GameObjects and their hierarchy, being able to sel
 
 ### File
 
-* **New:**
-
 * **Quit:** close the program
 
 ### View
@@ -67,10 +67,6 @@ In this window we can see the GameObjects and their hierarchy, being able to sel
 
 * **Primitives:** you can choose those primitives and load them on the scene as GameObjects
 
-### Help
-
-* **Our Github:** this button redirects you to our Github page
-
 ### About
 
-Here you can find some information about us (Github profile links) and about the project (license and software versions)
+Here you can find some information about us (Github links) and about the project (license and software versions)
