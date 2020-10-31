@@ -3,8 +3,9 @@
 #include "GuiConsole.h"
 #include "GuiConfiguration.h"
 #include "GuiInspector.h"
-#include "ModuleImport.h"
-#include "ModuleScene.h"
+#include "GuiHierarchy.h"
+//#include "ModuleImport.h"
+//#include "ModuleScene.h"
 
 #include "ImGui/imconfig.h"
 #include "ImGui/imgui_internal.h"
@@ -18,6 +19,7 @@ ModuleGui::ModuleGui(Application* app, bool start_enabled) : Module(app, start_e
 	ui_windows.push_back(ui_console = new GuiConsole());
 	ui_windows.push_back(ui_configuration = new GuiConfiguration());
 	ui_windows.push_back(ui_inspector = new GuiInspector());
+	ui_windows.push_back(ui_hierarchy = new GuiHierarchy());
 }
 
 ModuleGui::~ModuleGui()
@@ -37,6 +39,7 @@ bool ModuleGui::Start()
 	ui_console->Start();
 	ui_configuration->Start();
 	ui_inspector->Start();
+	ui_hierarchy->Start();
 
 	return true;
 }
@@ -54,25 +57,6 @@ update_status ModuleGui::Update(float dt)
 {
 	DockSpace(dockingwindow);
 
-	if (demo) {
-		ShowDemoWindow(&demo);
-	}
-
-	if (App->input->GetKey(SDL_SCANCODE_3) == KEY_DOWN) {
-		if (ui_inspector->is_on) ui_inspector->Select(App->scene->GetGameObject("Baker_house"));
-	}
-
-	// Window 2
-	// If nullptr is a bool, a close icon in the window appears
-	Begin("Hierarchy", nullptr, ImGuiWindowFlags_MenuBar);
-	
-	TextColored(ImVec4(1, 1, 0, 1), "Scene");
-	BeginChild("Scrolling");
-	for (int n = 0; n < 50; n++)
-		Text("%02d: Object", n);
-	EndChild();
-	End();
-
 	// Tool bar
 	if (BeginMainMenuBar())
 	{
@@ -81,7 +65,6 @@ update_status ModuleGui::Update(float dt)
 
 			if (MenuItem("New"))
 			{
-
 				// New file
 			}
 
@@ -217,6 +200,11 @@ update_status ModuleGui::Update(float dt)
 	return UPDATE_CONTINUE;
 }
 
+void ModuleGui::SelectGameObject(GameObject* gO)
+{
+	if (ui_inspector->is_on) ui_inspector->Select(gO);
+}
+
 update_status ModuleGui::PostUpdate(float dt)
 {
 	//Rendering
@@ -252,10 +240,16 @@ void ModuleGui::ConsoleLog(const char* text)
 	debug_console_buff.appendf(text);
 }
 
+void ModuleGui::CleanLog()
+{
+	debug_console_buff.clear();
+}
+
 void ModuleGui::DebugConsole()
 {
 	BeginChild("Console Log");
 	TextUnformatted(debug_console_buff.begin());
+	SetScrollHereY(1.0f);
 	EndChild();
 }
 

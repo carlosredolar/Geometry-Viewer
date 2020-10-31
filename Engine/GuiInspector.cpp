@@ -29,16 +29,15 @@ bool GuiInspector::CleanUp()
 
 void GuiInspector::Select(GameObject* selected) {
 	gameObjectSelected = selected;
-	strncpy(buf, gameObjectSelected->GetName(), 128);
-	transformGO = gameObjectSelected->GetComponent<Component_Transform>();
-	meshGO = gameObjectSelected->GetComponent<Component_Mesh>();
-	textureGO = gameObjectSelected->GetComponent<Component_Texture>();
+	strncpy(buf, selected->GetName(), 128);
+	transformGO = selected->GetComponent<Component_Transform>();
+	meshGO = selected->GetComponent<Component_Mesh>();
+	textureGO = selected->GetComponent<Component_Texture>();
 }
 
 void GuiInspector::Draw()
 {
 	Begin("Inspector", &is_on);
-
 	if (gameObjectSelected != nullptr) {
 		static bool gameobjectCheck = gameObjectSelected->IsEnabled();
 		Checkbox("Active", &gameobjectCheck);
@@ -50,18 +49,18 @@ void GuiInspector::Draw()
 		if (CollapsingHeader("Transform")) 
 		{
 			float3 tempValues = transformGO->GetPosition();
-			static float pos[3] = { tempValues.x, tempValues.y, tempValues.z };
+			float pos[3] = { tempValues.x, tempValues.y, tempValues.z };
 			tempValues = transformGO->GetRotationEuler();
-			static float rot[3] = { tempValues.x, tempValues.y, tempValues.z };
+			float rot[3] = { tempValues.x, tempValues.y, tempValues.z };
 			tempValues = transformGO->GetScale();
-			static float scl[3] = { tempValues.x, tempValues.y, tempValues.z };
+			float scl[3] = { tempValues.x, tempValues.y, tempValues.z };
 			DragFloat3("Position", pos, 0.05f);
 			DragFloat3("Rotation", rot, 0.05f);
 			DragFloat3("Scale", scl, 0.05f);
-			float3 pos_ = { pos[0], pos[1], pos[2] };
-			float3 rot_ = { rot[0], rot[1], rot[2] };
-			float3 scl_ = { scl[0], scl[1], scl[2] };
-			transformGO->SetTransform(pos_, rot_, scl_);
+			//float3 pos_ = { pos[0], pos[1], pos[2] };
+			//float3 rot_ = { rot[0], rot[1], rot[2] };
+			//float3 scl_ = { scl[0], scl[1], scl[2] };
+			//transformGO->SetTransform(pos_, rot_, scl_);
 		}
 		if (meshGO)
 		{
@@ -96,9 +95,8 @@ void GuiInspector::Draw()
 			}
 		}
 
-
 		Text("Here goes the inspector with all the components");
-	}
 
+	}
 	End();
 }

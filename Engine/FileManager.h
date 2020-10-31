@@ -80,6 +80,7 @@ public:
 	std::string		GetExtensionFolder(const char* fileExtension);
 	std::string		GetPathRelativeToAssets(const char* originalPath) const;
 	PathNode		GetAllFiles(const char* directory, std::vector<std::string>* filter_ext = nullptr, std::vector<std::string>* ignore_ext = nullptr) const;
+	std::string		ExtractFileName(const std::string& fullPath);
 
 private:
 	int CheckPath(const char*);

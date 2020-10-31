@@ -78,7 +78,7 @@ bool ModuleImport::CleanUp() {
 	return true;
 }
 
-void ModuleImport::LoadMesh(char* filepath)
+void ModuleImport::LoadMesh(const char* filepath)
 {
 	char* buffer = nullptr;
 
@@ -93,7 +93,22 @@ void ModuleImport::LoadMesh(char* filepath)
 		std::vector<Component_Mesh> loadedMeshes;
 		bool ret = true;
 
-		GameObject* sceneGameObject = App->scene->CreateGameObject(scene->mRootNode->mName.C_Str(), nullptr, true);
+		std::string filename;
+		App->fm->SplitFilePath(filepath, nullptr, &filename, nullptr);
+
+		GameObject* sceneGameObject = App->scene->CreateGameObject(filename.c_str(), nullptr, true);
+
+		//Loading and creating transform component
+		aiVector3D translation, scaling;
+		aiQuaternion rotation;
+
+		scene->mRootNode->mTransformation.Decompose(scaling, rotation, translation);
+		float3 pos(translation.x, translation.y, translation.z);
+		Quat rot(rotation.x, rotation.y, rotation.z, rotation.w);
+		float3 scale(scaling.x, scaling.y, scaling.z);
+
+		sceneGameObject->GetComponent<Component_Transform>()->SetTransform(pos, rot, scale);
+
 		ret = LoadSceneMeshes(scene, scene->mRootNode, sceneGameObject);
 
 		if (ret && loadedMeshes.size() > 0)LOG("Loaded %i mesh(es)!", loadedMeshes.size())
@@ -252,4 +267,22 @@ uint ModuleImport::LoadDefaultTexture()
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 20, 20, 0, GL_RGBA, GL_UNSIGNED_BYTE, checkerImage);
 
 	return textID;
+}
+
+void ModuleImport::CreateMeshesExternal(const char* path)
+{
+	std::string normalizedPath = App->fm->NormalizePath(path);
+
+	std::string finalPath;
+
+	//TODO: Check if the current file is already loaded
+	if (App->fm->ImportFile(normalizedPath.c_str(), finalPath))
+	{
+		CreateMeshesInternal(finalPath.c_str());
+	}
+}
+
+void ModuleImport::CreateMeshesInternal(const char* path)
+{
+	LoadMesh(path);
 }
