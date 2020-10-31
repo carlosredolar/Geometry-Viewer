@@ -63,10 +63,10 @@ update_status ModuleGui::Update(float dt)
 		if (BeginMenu("File"))
 		{
 
-			if (MenuItem("New"))
+			/*if (MenuItem("New"))
 			{
 				// New file
-			}
+			}*/
 
 			PushStyleColor(ImGuiCol_Text, ImVec4(0.972, 0.105, 0.105, 1.f));
 
