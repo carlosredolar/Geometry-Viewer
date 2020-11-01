@@ -46,11 +46,13 @@ public:
 	// Utility functions
 	bool AddPath(const char* path_or_zip);
 	bool Exists(const char* file) const;
+	bool ExistsFile(const char* file, const char* ext) const;
 	bool CreateDir(const char* dir);
 	bool IsDirectory(const char* file) const;
 
 	void DiscoverFiles(const char* directory, std::vector<std::string>& file_list, std::vector<std::string>& dir_list) const;
 	
+	std::string GetInternalFolder(const char* ext);
 
 	bool HasExtension(const char* path) const;
 	bool HasExtension(const char* path, std::string extension) const;

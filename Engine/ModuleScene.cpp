@@ -62,15 +62,15 @@ update_status ModuleScene::Update(float dt)
 		App->camera->LookAt(vec3(0, 0, 0));
 	}
 
-	if (App->input->GetKey(SDL_SCANCODE_DELETE) == KEY_DOWN) 
-	{
-		if (GetSelectedGameObject() != nullptr) 
-		{
-			GameObject* parent = GetSelectedGameObject()->GetParent();
-			DeleteGameObject(GetSelectedGameObject());
-			SelectGameObject(parent);
-		}
-	}
+	//if (App->input->GetKey(SDL_SCANCODE_DELETE) == KEY_DOWN) 
+	//{
+	//	if (GetSelectedGameObject() != nullptr) 
+	//	{
+	//		GameObject* parent = GetSelectedGameObject()->GetParent();
+	//		DeleteGameObject(GetSelectedGameObject());
+	//		SelectGameObject(parent);
+	//	}
+	//}
 
 	//Grid
 	Grid grid(20);

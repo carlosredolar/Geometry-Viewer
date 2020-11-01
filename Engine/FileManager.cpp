@@ -176,6 +176,19 @@ bool FileManager::Exists(const char* file) const
 	return PHYSFS_exists(file) != 0;
 }
 
+// Check if a file exists
+bool FileManager::ExistsFile(const char* file, const char* ext) const
+{
+	std::string tocompare = MESHESPATH;
+	if (strcmp(ext, "png") == 0 || strcmp(ext, "jpg") == 0) 
+	{
+		tocompare = TEXTURESPATH;
+	}
+	tocompare += "/";
+	tocompare += file;
+	return PHYSFS_exists(tocompare.c_str()) != 0;
+}
+
 bool FileManager::CreateDir(const char* dir)
 {
 	if (IsDirectory(dir) == false)
@@ -586,4 +599,9 @@ std::string FileManager::GetUniqueName(const char* path, const char* name) const
 		}
 	}
 	return finalName;
+}
+
+std::string FileManager::GetInternalFolder(const char* ext) {
+	if (strcmp(ext, "png") == 0 || strcmp(ext, "jpg") == 0) return TEXTURESPATH;
+	return MESHESPATH;
 }

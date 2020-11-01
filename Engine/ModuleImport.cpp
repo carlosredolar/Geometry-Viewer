@@ -300,10 +300,24 @@ void ModuleImport::ImportExternalFiles(const char* path)
 
 	std::string finalPath;
 
-	//TODO: Check if the current file is already loaded
-	if (App->fm->ImportFile(normalizedPath.c_str(), finalPath))
+	std::string fileName;
+	std::string fileExtension;
+	App->fm->SplitFilePath(path, nullptr, &fileName, &fileExtension);
+	fileName += ".";
+	fileName += fileExtension;
+	if (!App->fm->ExistsFile(fileName.c_str(), fileExtension.c_str()))
 	{
-		ExtensionClassifier(finalPath.c_str());
+		if (App->fm->ImportFile(normalizedPath.c_str(), finalPath))
+		{
+			ExtensionClassifier(finalPath.c_str());
+		}
+	}
+	else
+	{
+		std::string internalPath = App->fm->GetInternalFolder(fileExtension.c_str());
+		internalPath += "/";
+		internalPath += fileName;
+		ExtensionClassifier(internalPath.c_str());
 	}
 }
 
