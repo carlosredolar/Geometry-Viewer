@@ -34,8 +34,16 @@ public:
 	void SetIdTexture(uint id);
 	void SetTexture(textureInfo* tex);
 
+	const char* GetName();
+	const char* GetPath();
+	const char* GetSize();
+	 
+	bool checkerActive;
+
 private:
 	textureInfo* texture;
+
+	std::string sizeTexture;
 };
 
 #endif // !__Component_Texture_H__

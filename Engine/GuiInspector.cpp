@@ -92,6 +92,18 @@ void GuiInspector::Draw()
 				bool textureCheck = textureGO->IsEnabled();
 				Checkbox("Texture Active", &textureCheck);
 				(textureCheck) ? textureGO->Enable() : textureGO->Disable();
+				Text("Texture Name: ");
+				SameLine();
+				TextColored(ImVec4(0.95f, 0.5f, 0.07f, 1.0f), textureGO->GetName());
+				Text("Texture Path: ");
+				SameLine();
+				TextColored(ImVec4(0.95f, 0.5f, 0.07f, 1.0f), textureGO->GetPath());
+				Text("Texture Size: ");
+				SameLine();
+				TextColored(ImVec4(0.95f, 0.5f, 0.07f, 1.0f), textureGO->GetSize());
+				bool checkerTextreCheck = textureGO->checkerActive;
+				Checkbox("Replace with checker texture", &checkerTextreCheck);
+				(checkerTextreCheck) ? textureGO->checkerActive = true : textureGO->checkerActive = false;
 			}
 		}
 

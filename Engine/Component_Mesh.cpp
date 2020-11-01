@@ -210,7 +210,6 @@ void Component_Mesh::RenderFaceNormals(std::vector<float3> vertices, std::vector
 const char* Component_Mesh::GetName() 
 {
 	return mesh->name.c_str();
-
 }
 
 int Component_Mesh::GetVertices()
