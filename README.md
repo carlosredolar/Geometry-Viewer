@@ -35,21 +35,20 @@ Github profiles:
 
 FBX models can be imported dragging and dropping them onto the engine. Textures (png and jpg) can be imported dragging and dropping them onto the engine and applied to an object if a GameObject is selected.
 
-
 ## Game Objects Inspector
 
 **Name:** selected object name
 
-**Transform:** shows selected object information (Position, rotation and scale)
+**Transform:** shows selected object information (position, rotation and scale)
 
 **Mesh:** can enable/disable vertex and face normals and shows the amount of vertices and indices of the object
 
-**Texture:** can enable/discable the object texture
+**Texture:** can enable/discable the object texture and shows texture name, path and size
 
 
 ## Hierarchy
 
-In this window we can see the GameObjects and their hierarchy, being able to select each one of them or delete the selected object with the DELETE button.
+In this window we can see the GameObjects and their hierarchy, being able to select each one of them and see all its information on inspector.
 
 ## Toolbars
 
