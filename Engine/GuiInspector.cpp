@@ -101,12 +101,8 @@ void GuiInspector::Draw()
 				Text("Texture Size: ");
 				SameLine();
 				TextColored(ImVec4(0.95f, 0.5f, 0.07f, 1.0f), textureGO->GetSize());
-				bool checkerTextreCheck = textureGO->checkerActive;
-				Checkbox("Replace with checker texture", &checkerTextreCheck);
-				(checkerTextreCheck) ? textureGO->checkerActive = true : textureGO->checkerActive = false;
 			}
 		}
-
 	}
 	End();
 }

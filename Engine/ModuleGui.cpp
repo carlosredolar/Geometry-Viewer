@@ -90,6 +90,14 @@ update_status ModuleGui::Update(float dt)
 			{
 				ui_configuration->is_on = !ui_configuration->is_on;
 			}
+			if (MenuItem("Inspector"))
+			{
+				ui_inspector->is_on = !ui_inspector->is_on;
+			}
+			if (MenuItem("Hierarchy"))
+			{
+				ui_hierarchy->is_on = !ui_hierarchy->is_on;
+			}
 			ImGui::EndMenu();
 		}
 		if (BeginMenu("Add"))

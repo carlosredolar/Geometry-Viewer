@@ -32,8 +32,6 @@ struct textureInfo
 
 	uint id;
 
-	uint checkerTexture;
-
 	int w, h;
 };
 
@@ -60,6 +58,4 @@ public:
 	textureInfo* LoadTexture(const char* path);
 	uint LoadDefaultTexture();
 	std::vector<textureInfo*> textures;
-
-	uint checkerTexture;
 };

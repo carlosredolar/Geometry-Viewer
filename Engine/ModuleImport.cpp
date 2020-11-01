@@ -60,8 +60,6 @@ bool ModuleImport::Init() {
 		ret = false;
 	}
 
-	checkerTexture = LoadTexture("Assets/Textures/CheckerTexture.jpg")->id;
-
 	return ret;
 }
 
@@ -252,8 +250,6 @@ textureInfo* ModuleImport::LoadTexture(const char* path)
 	ilLoadL(IL_TYPE_UNKNOWN, (const void*)buffer, bytesFile);
 	newTexture->id = ilutGLBindTexImage();
 
-	newTexture->checkerTexture = checkerTexture;
-	
 	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &newTexture->w);
 	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &newTexture->h);
 	

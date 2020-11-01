@@ -4,7 +4,7 @@
 
 Component_Texture::Component_Texture(GameObject* ownerGameObject, bool enabled) : Component(COMPONENT_TYPE::MESH, ownerGameObject, enabled)
 {
-	checkerActive = false;
+
 }
 
 Component_Texture::~Component_Texture()
@@ -40,8 +40,7 @@ void Component_Texture::CleanUp()
 
 uint Component_Texture::GetIdTexture()
 {
-	if (checkerActive) return texture->checkerTexture;
-	else return texture->id;
+	return texture->id;
 }
 
 void Component_Texture::SetIdTexture(uint id)

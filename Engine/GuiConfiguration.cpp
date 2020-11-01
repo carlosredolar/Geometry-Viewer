@@ -152,9 +152,9 @@ void GuiConfiguration::Draw()
 		if (Checkbox("Lightning", &lightning))
 		{
 			if (lightning)
-				glDisable(GL_LIGHTING);
-			else
 				glEnable(GL_LIGHTING);
+			else
+				glDisable(GL_LIGHTING);
 		}
 		if (Checkbox("Color material", &color_material))
 		{
@@ -166,9 +166,9 @@ void GuiConfiguration::Draw()
 		if (Checkbox("Texture 2D", &texture2D))
 		{
 			if (texture2D)
-				glDisable(GL_TEXTURE_2D);
-			else
 				glEnable(GL_TEXTURE_2D);
+			else
+				glDisable(GL_TEXTURE_2D);
 		}
 		if (Checkbox("Wireframe", &wireframe))
 		{

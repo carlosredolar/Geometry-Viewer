@@ -38,8 +38,6 @@ public:
 	const char* GetPath();
 	const char* GetSize();
 	 
-	bool checkerActive;
-
 private:
 	textureInfo* texture;
 

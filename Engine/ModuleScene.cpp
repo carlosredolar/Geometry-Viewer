@@ -23,7 +23,7 @@ bool ModuleScene::Start()
 	currentID = 0;
 	gameObjects.push_back(root);
 
-	App->camera->Position = vec3(0, 1, 4);
+	App->camera->Position = vec3(0, 3, 10);
 	App->camera->LookAt(vec3(0, 0, 0));
 
 	App->importer->LoadMesh("Assets/Meshes/BakerHouse.fbx");

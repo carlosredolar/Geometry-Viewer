@@ -33,9 +33,9 @@ public:
 	//3D Renderer
 	bool depth_test = false;
 	bool cull_face = false;
-	bool lightning = false;
+	bool lightning = true;
 	bool color_material = false;
-	bool texture2D = false;
+	bool texture2D = true;
 	bool wireframe = false;
 
 
