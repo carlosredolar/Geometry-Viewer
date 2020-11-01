@@ -24,6 +24,17 @@ struct meshInfo
 	std::vector<float2> textureCoords;
 };
 
+struct textureInfo
+{
+	std::string name;
+
+	std::string path;
+
+	uint id;
+
+	int w, h;
+};
+
 class ModuleImport : public Module
 {
 public:
@@ -35,15 +46,16 @@ public:
 	update_status PostUpdate(float dt);
 	bool CleanUp();
 
-	uint LoadTexture(const char* path);
-	uint LoadDefaultTexture();
-
-	void CreateMeshesExternal(const char* path);
-	void CreateMeshesInternal(const char* path);
+	void ImportExternalFiles(const char* path);
+	void ExtensionClassifier(const char* path);
 
 	void LoadMesh(const char* filepath);
 	bool LoadSceneMeshes(const aiScene* scene, const aiNode* parent, GameObject* gOParent);
 	bool LoadNodeMeshes(const aiScene* scene, const aiNode* node, GameObject* parent);
 	bool LoadVertexNormalsTexturesIndex(aiMesh* mesh, std::vector<float3>& vertices, std::vector<float3>& normals, std::vector<float2>& textureCoords, std::vector<uint>& indices);
 	std::vector<meshInfo*> meshes;
+	
+	textureInfo* LoadTexture(const char* path);
+	uint LoadDefaultTexture();
+	std::vector<textureInfo*> textures;
 };

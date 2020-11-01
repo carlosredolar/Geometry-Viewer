@@ -27,11 +27,11 @@ bool ModuleScene::Start()
 	App->camera->LookAt(vec3(0, 0, 0));
 
 	App->importer->LoadMesh("Assets/baker_house/BakerHouse.fbx");
-	uint bhTexture = App->importer->LoadTexture("Assets/baker_house/Baker_house.png");
+	textureInfo* bhTexture = App->importer->LoadTexture("Assets/baker_house/Baker_house.png");
 	Component_Texture* bhTex = (Component_Texture*)GetGameObject("Baker_house")->CreateComponent(Component::COMPONENT_TYPE::TEXTURE);
-	bhTex->SetIdTexture(bhTexture);
+	bhTex->SetTexture(bhTexture);
 	bhTex = (Component_Texture*)GetGameObject("Chimney")->CreateComponent(Component::COMPONENT_TYPE::TEXTURE);
-	bhTex->SetIdTexture(bhTexture);
+	bhTex->SetTexture(bhTexture);
 
 	return ret;
 }
@@ -39,7 +39,7 @@ bool ModuleScene::Start()
 // Load assets
 bool ModuleScene::CleanUp()
 {
-	LOG("Unloading Intro scene");
+	LOG("Unloading Scene");
 
 	return true;
 }

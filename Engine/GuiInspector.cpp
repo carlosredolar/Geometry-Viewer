@@ -39,7 +39,7 @@ void GuiInspector::Draw()
 {
 	Begin("Inspector", &is_on);
 	if (gameObjectSelected != nullptr) {
-		static bool gameobjectCheck = gameObjectSelected->IsEnabled();
+		bool gameobjectCheck = gameObjectSelected->IsEnabled();
 		Checkbox("Active", &gameobjectCheck);
 		(gameobjectCheck) ? gameObjectSelected->Enable() : gameObjectSelected->Disable();
 		SameLine();
@@ -66,7 +66,7 @@ void GuiInspector::Draw()
 		{
 			if (CollapsingHeader("Mesh"))
 			{
-				static bool meshCheck = meshGO->IsEnabled();
+				bool meshCheck = meshGO->IsEnabled();
 				Checkbox("Mesh Active", &meshCheck);
 				(meshCheck) ? meshGO->Enable() : meshGO->Disable();
 				strncpy(buf, meshGO->GetName(), 128);
@@ -77,10 +77,10 @@ void GuiInspector::Draw()
 				Text("Indices: ");
 				SameLine();
 				TextColored(ImVec4(0.95f, 0.5f, 0.07f, 1.0f), "%i", meshGO->GetIndices());
-				static bool vertexnormalsCheck = meshGO->enableVertexNormals;
+				bool vertexnormalsCheck = meshGO->enableVertexNormals;
 				Checkbox("Vertex Normals", &vertexnormalsCheck);
 				(vertexnormalsCheck) ? meshGO->enableVertexNormals = true : meshGO->enableVertexNormals = false;
-				static bool facenormalsCheck = meshGO->enableFaceNormals;
+				bool facenormalsCheck = meshGO->enableFaceNormals;
 				Checkbox("Face Normals", &facenormalsCheck);
 				(facenormalsCheck) ? meshGO->enableFaceNormals=true : meshGO->enableFaceNormals=false;
 			}
@@ -89,13 +89,11 @@ void GuiInspector::Draw()
 		{
 			if (CollapsingHeader("Texture"))
 			{
-				static bool textureCheck = textureGO->IsEnabled();
+				bool textureCheck = textureGO->IsEnabled();
 				Checkbox("Texture Active", &textureCheck);
 				(textureCheck) ? textureGO->Enable() : textureGO->Disable();
 			}
 		}
-
-		Text("Here goes the inspector with all the components");
 
 	}
 	End();

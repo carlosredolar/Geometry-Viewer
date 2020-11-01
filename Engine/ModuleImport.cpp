@@ -75,6 +75,16 @@ bool ModuleImport::CleanUp() {
 	//Detach the log stream
 	aiDetachAllLogStreams();
 
+	//Delete textures
+	std::vector<textureInfo*>::iterator currentT = textures.begin();
+	for (; currentT != textures.end(); currentT++) {
+		iluDeleteImage((*currentT)->id);
+	}
+	textures.clear();
+
+	//Delete meshes
+	meshes.clear();
+
 	return true;
 }
 
@@ -224,19 +234,29 @@ bool ModuleImport::LoadVertexNormalsTexturesIndex(aiMesh* mesh, std::vector<floa
 	return ret;
 }
 
-uint ModuleImport::LoadTexture(const char* path)
+textureInfo* ModuleImport::LoadTexture(const char* path)
 {
-	uint ret = -1;
+	textureInfo* newTexture = new textureInfo;
+
+	std::string textureName;
+	App->fm->SplitFilePath(path, nullptr, nullptr, &textureName);
+	newTexture->name = textureName;
+
+	newTexture->path = path;
+
 	char* buffer = nullptr;
-
 	uint bytesFile = App->fm->Load(path, &buffer);
-
 	ilLoadL(IL_TYPE_UNKNOWN, (const void*)buffer, bytesFile);
-	ret = ilutGLBindTexImage();
-
+	newTexture->id = ilutGLBindTexImage();
+	
+	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &newTexture->w);
+	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &newTexture->h);
+	
 	RELEASE_ARRAY(buffer);
 
-	return ret;
+	textures.push_back(newTexture);
+
+	return newTexture;
 }
 
 uint ModuleImport::LoadDefaultTexture()
@@ -269,7 +289,7 @@ uint ModuleImport::LoadDefaultTexture()
 	return textID;
 }
 
-void ModuleImport::CreateMeshesExternal(const char* path)
+void ModuleImport::ImportExternalFiles(const char* path)
 {
 	std::string normalizedPath = App->fm->NormalizePath(path);
 
@@ -278,11 +298,33 @@ void ModuleImport::CreateMeshesExternal(const char* path)
 	//TODO: Check if the current file is already loaded
 	if (App->fm->ImportFile(normalizedPath.c_str(), finalPath))
 	{
-		CreateMeshesInternal(finalPath.c_str());
+		ExtensionClassifier(finalPath.c_str());
 	}
 }
 
-void ModuleImport::CreateMeshesInternal(const char* path)
+void ModuleImport::ExtensionClassifier(const char* path)
 {
-	LoadMesh(path);
+	std::string extension;
+	App->fm->SplitFilePath(path, nullptr, nullptr, &extension);
+	if (strcmp(extension.c_str(), "fbx") == 0 || strcmp(extension.c_str(), "FBX") == 0)
+	{
+		LoadMesh(path);
+	}
+	else if (strcmp(extension.c_str(), "png") == 0 || strcmp(extension.c_str(), "jpg") == 0)
+	{
+		if (App->scene->GetSelectedGameObject() != nullptr)
+		{
+			if (App->scene->GetSelectedGameObject()->GetComponent<Component_Texture>() != nullptr)
+			{
+				App->scene->GetSelectedGameObject()->GetComponent<Component_Texture>()->SetTexture(LoadTexture(path));
+			}
+			else if (App->scene->GetSelectedGameObject()->GetComponent<Component_Mesh>() != nullptr)
+			{
+				((Component_Texture*)App->scene->GetSelectedGameObject()->CreateComponent(Component::COMPONENT_TYPE::TEXTURE))->SetTexture(LoadTexture(path));
+				App->gui->SelectGameObject(App->scene->GetSelectedGameObject());
+			}
+			else LOG("This GameOject doesn't have any mesh or texture components so the texture will not be applyed to anything.");
+		}
+		else LOG("There is no GameObject selected. Please select a GameObject and drop the texture again.");
+	}
 }

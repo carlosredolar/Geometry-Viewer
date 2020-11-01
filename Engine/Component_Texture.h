@@ -4,7 +4,8 @@
 #include "Component.h"
 #include "GameObject.h"
 #include "Globals.h"
-#include "MathGeoLib/include/MathGeoLib.h"
+
+struct textureInfo;
 
 class Component_Texture : public Component {
 public:
@@ -31,9 +32,10 @@ public:
 
 	uint GetIdTexture();
 	void SetIdTexture(uint id);
+	void SetTexture(textureInfo* tex);
 
 private:
-	uint idTextureImage;
+	textureInfo* texture;
 };
 
 #endif // !__Component_Texture_H__

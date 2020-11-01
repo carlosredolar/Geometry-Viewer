@@ -1,12 +1,6 @@
 #include "Component_Texture.h"
-#include "Glew/include/glew.h"
-#pragma comment (lib, "Glew/libx86/glew32.lib")
 
-#include <gl/GL.h>
-#include <gl/GLU.h>
-
-#pragma comment (lib, "glu32.lib")
-#pragma comment (lib, "opengl32.lib")
+#include "ModuleImport.h"
 
 Component_Texture::Component_Texture(GameObject* ownerGameObject, bool enabled) : Component(COMPONENT_TYPE::MESH, ownerGameObject, enabled)
 {
@@ -40,15 +34,20 @@ bool Component_Texture::IsEnabled()
 
 void Component_Texture::CleanUp() 
 {
-	idTextureImage = -1;
+	
 }
 
 uint Component_Texture::GetIdTexture()
 {
-	return idTextureImage;
+	return texture->id;
 }
 
 void Component_Texture::SetIdTexture(uint id)
 {
-	idTextureImage = id;
+	texture->id = id;
+}
+
+void Component_Texture::SetTexture(textureInfo* tex)
+{
+	texture = tex;
 }

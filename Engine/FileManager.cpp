@@ -60,7 +60,7 @@ bool FileManager::CleanUp()
 void FileManager::CreateFolderDirs()
 {
 	// If the standard folders do not exist, create them
-	std::vector<const char*> dirs = { ASSETSFOLDER, MESHESPATH, TEXTYRESPATH };
+	std::vector<const char*> dirs = { ASSETSFOLDER, MESHESPATH, TEXTURESPATH };
 
 	for (uint i = 0; i < dirs.size(); ++i)
 	{
@@ -468,13 +468,13 @@ std::string FileManager::GetExtensionFolder(const char* fileExtension)
 {
 	std::string extension = LowerCaseString(fileExtension);;
 
-	if (extension == "fbx")
+	if (extension == "fbx" || extension == "FBX")
 	{
 		return MESHESPATH;
 	}
-	else if (extension == "png")
+	else if (extension == "png" || extension == "jpg")
 	{
-		return TEXTYRESPATH;
+		return TEXTURESPATH;
 	}
 
 	return std::string("unknown");

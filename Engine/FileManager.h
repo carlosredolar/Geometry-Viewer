@@ -20,7 +20,7 @@ class Config;
 
 #define ASSETSFOLDER "/Assets"
 #define MESHESPATH "/Assets/Meshes"
-#define TEXTYRESPATH "/Assets/Textures"
+#define TEXTURESPATH "/Assets/Textures"
 
 class FileManager : public Module
 {
