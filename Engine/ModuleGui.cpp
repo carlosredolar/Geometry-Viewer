@@ -98,15 +98,15 @@ update_status ModuleGui::Update(float dt)
 			{
 				if (MenuItem("Cube"))
 				{
-					App->importer->LoadMesh("Assets/Primitives/Cube.fbx");
+					App->importer->LoadMesh("Assets/Meshes/Primitives/Cube.fbx");
 				}
 				if (MenuItem("Sphere"))
 				{
-					App->importer->LoadMesh("Assets/Primitives/Sphere.fbx");
+					App->importer->LoadMesh("Assets/Meshes/Primitives/Sphere.fbx");
 				}
 				if (MenuItem("Cylinder"))
 				{
-					App->importer->LoadMesh("Assets/Primitives/Cylinder.fbx");
+					App->importer->LoadMesh("Assets/Meshes/Primitives/Cylinder.fbx");
 				}
 				
 				ImGui::EndMenu();
@@ -171,7 +171,7 @@ update_status ModuleGui::Update(float dt)
 			ImGui::Spacing();
 			ImGui::TextWrapped("MIT License");
 			ImGui::Spacing();
-			ImGui::TextWrapped("Copyright(c) 2020 pauraurell & pgalmor");
+			ImGui::TextWrapped("Copyright(c) 2020 oscarroyo4 & carlosredolar");
 			ImGui::Spacing();
 			ImGui::TextWrapped("Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files(the Software), to deal "
 				"in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and /or sell "

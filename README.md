@@ -33,7 +33,7 @@ Github profiles:
 
 ## Engine Functionality
 
-FBX models can be imported dragging and dropping them onto the engine. Textures can be imported and applied to an object if a GameObject is selected while using drag&drop
+FBX models can be imported dragging and dropping them onto the engine. Textures (png and jpg) can be imported dragging and dropping them onto the engine and applied to an object if a GameObject is selected.
 
 
 ## Game Objects Inspector
@@ -49,7 +49,7 @@ FBX models can be imported dragging and dropping them onto the engine. Textures 
 
 ## Hierarchy
 
-In this window we can see the GameObjects and their hierarchy, being able to select each one of them or delete the selected object with the DELETE button
+In this window we can see the GameObjects and their hierarchy, being able to select each one of them or delete the selected object with the DELETE button.
 
 ## Toolbars
 

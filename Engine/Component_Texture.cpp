@@ -34,7 +34,8 @@ bool Component_Texture::IsEnabled()
 
 void Component_Texture::CleanUp() 
 {
-	
+	delete texture;
+	sizeTexture.clear();
 }
 
 uint Component_Texture::GetIdTexture()

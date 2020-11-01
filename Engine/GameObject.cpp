@@ -8,7 +8,47 @@ GameObject::GameObject(const char* name, GameObject* parent, bool enabled) :name
 
 GameObject::~GameObject()
 {
-	
+	//std::vector<Component*>::iterator component = components.begin();
+
+	//for (; component != components.end(); ++component) {
+	//	delete (*component);
+	//}
+
+	//components.clear();
+
+	//std::vector<GameObject*>::iterator gameObject = childs.begin();
+
+	//for (; gameObject != childs.end(); ++gameObject) {
+	//	delete (*gameObject);
+	//}
+
+	//childs.clear();
+
+	//parent = nullptr;
+	//name.clear();
+}
+
+void GameObject::DeleteComponents()
+{
+	std::vector<Component*>::iterator component = components.begin();
+
+	for (; component != components.end(); ++component) {
+		delete (*component);
+	}
+
+	components.clear();
+
+	std::vector<GameObject*>::iterator gameObject = childs.begin();
+
+	for (; gameObject != childs.end(); ++gameObject) {
+		(*gameObject)->DeleteComponents();
+		delete (*gameObject);
+	}
+
+	childs.clear();
+	parent->DeleteChild(this);
+	parent = nullptr;
+	name.clear();
 }
 
 void GameObject::Update()
@@ -166,7 +206,7 @@ void GameObject::GetChildsNewParent()
 	else
 	{
 		prnt = parent->GetParent();
-		while (prnt == nullptr && prnt->name != "root")
+		while (prnt == nullptr && prnt->name != "Scene")
 		{
 			prnt = prnt->GetParent();
 		}

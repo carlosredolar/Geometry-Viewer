@@ -23,6 +23,8 @@ public:
 	void SelectGameObject(GameObject* selected);
 	GameObject* GetSelectedGameObject();
 
+	bool DeleteGameObject(GameObject* todelete);
+
 private:
 
 	GameObject* root;

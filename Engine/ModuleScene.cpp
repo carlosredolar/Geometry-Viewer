@@ -26,8 +26,8 @@ bool ModuleScene::Start()
 	App->camera->Position = vec3(0, 1, 4);
 	App->camera->LookAt(vec3(0, 0, 0));
 
-	App->importer->LoadMesh("Assets/baker_house/BakerHouse.fbx");
-	textureInfo* bhTexture = App->importer->LoadTexture("Assets/baker_house/Baker_house.png");
+	App->importer->LoadMesh("Assets/Meshes/BakerHouse.fbx");
+	textureInfo* bhTexture = App->importer->LoadTexture("Assets/Textures/Baker_house.png");
 	Component_Texture* bhTex = (Component_Texture*)GetGameObject("Baker_house")->CreateComponent(Component::COMPONENT_TYPE::TEXTURE);
 	bhTex->SetTexture(bhTexture);
 	bhTex = (Component_Texture*)GetGameObject("Chimney")->CreateComponent(Component::COMPONENT_TYPE::TEXTURE);
@@ -62,8 +62,14 @@ update_status ModuleScene::Update(float dt)
 		App->camera->LookAt(vec3(0, 0, 0));
 	}
 
-	if (App->input->GetKey(SDL_SCANCODE_T) == KEY_DOWN) {
-		LOG("Console test");
+	if (App->input->GetKey(SDL_SCANCODE_DELETE) == KEY_DOWN) 
+	{
+		if (GetSelectedGameObject() != nullptr) 
+		{
+			GameObject* parent = GetSelectedGameObject()->GetParent();
+			DeleteGameObject(GetSelectedGameObject());
+			SelectGameObject(parent);
+		}
 	}
 
 	//Grid
@@ -159,4 +165,20 @@ GameObject* ModuleScene::GetSelectedGameObject()
 	}
 
 	return nullptr;
+}
+
+bool ModuleScene::DeleteGameObject(GameObject* todelete)
+{
+	//if (todelete->GetChilds()->size() > 0) 
+	//{
+	//	std::vector<GameObject*>::iterator currentGO = todelete->GetChilds()->begin();
+
+	//	for (; currentGO != gameObjects.end(); currentGO++) {
+	//		DeleteGameObject((*currentGO));
+	//	}
+	//}
+	todelete->DeleteComponents();
+
+	delete(todelete);
+	return true;
 }

@@ -48,6 +48,8 @@ public:
 	//Change game object's name. Passed by reference
 	void ChangeName(char* new_name);
 
+	void DeleteComponents();
+
 	int id;
 
 	bool selected;
