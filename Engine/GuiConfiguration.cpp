@@ -124,6 +124,13 @@ void GuiConfiguration::Draw()
 			else
 				SDL_SetWindowFullscreen(App->window->window, App->window->flags);
 		}
+		ImGui::Text("Theme: ");
+		SameLine();
+		if (ImGui::SmallButton("Dark")) ImGui::StyleColorsDark();
+		SameLine();
+		if (ImGui::SmallButton("Light")) ImGui::StyleColorsLight();
+		SameLine();
+		if (ImGui::SmallButton("Classic")) ImGui::StyleColorsClassic();	
 	}
 
 	if (CollapsingHeader("3D Renderer"))

@@ -33,7 +33,7 @@ Github profiles:
 
 ## Engine Functionality
 
-FBX models and textures can be imported dragging and dropping them directly.
+FBX models can be imported dragging and dropping them onto the engine. Textures can be imported and applied to an object if a GameObject is selected while using drag&drop
 
 
 ## Game Objects Inspector
