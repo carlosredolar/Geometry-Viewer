@@ -1,6 +1,5 @@
 #pragma once
 
-#include "p2List.h"
 #include "Globals.h"
 #include "Timer.h"
 #include "Module.h"
@@ -12,6 +11,8 @@
 #include "ModuleGui.h"
 #include "ModuleImport.h"
 #include "FileManager.h"
+
+#include <list>
 
 class Application
 {
@@ -31,7 +32,7 @@ private:
 	float	dt = 0;
 	float last_FPS = 0.0f;
 	float last_ms = 0.0f;
-	p2List<Module*> list_modules;
+	std::list<Module*> list_modules;
 
 public:
 
