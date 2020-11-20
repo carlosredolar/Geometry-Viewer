@@ -27,11 +27,6 @@ bool ModuleScene::Start()
 	App->camera->LookAt(vec3(0, 0, 0));
 
 	App->importer->LoadMesh("Assets/Meshes/BakerHouse.fbx");
-	textureInfo* bhTexture = App->importer->LoadTexture("Assets/Textures/Baker_house.png");
-	Component_Texture* bhTex = (Component_Texture*)GetGameObject("Baker_house")->CreateComponent(Component::COMPONENT_TYPE::TEXTURE);
-	bhTex->SetTexture(bhTexture);
-	bhTex = (Component_Texture*)GetGameObject("Chimney")->CreateComponent(Component::COMPONENT_TYPE::TEXTURE);
-	bhTex->SetTexture(bhTexture);
 
 	return ret;
 }

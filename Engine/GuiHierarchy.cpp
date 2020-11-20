@@ -82,9 +82,9 @@ void GuiHierarchy::TreeNodeChild(GameObject* gO)
 		if (node_clicked != -1)
 		{
 			GameObject* selectedGO = App->scene->GetGameObject(node_clicked);
-			std::string logMessage = selectedGO->GetName();
-			logMessage += " selected";
-			LOG(logMessage.c_str());
+			//std::string logMessage = selectedGO->GetName();
+			//logMessage += " selected";
+			//LOG(logMessage.c_str());
 
 			App->scene->SelectGameObject(selectedGO);
 

@@ -47,11 +47,11 @@ public:
 	bool CleanUp();
 
 	void ImportExternalFiles(const char* path);
-	void ExtensionClassifier(const char* path);
+	void ExtensionClassifier(const char* path, const char* originalPath = nullptr);
 
-	void LoadMesh(const char* filepath);
-	bool LoadSceneMeshes(const aiScene* scene, const aiNode* parent, GameObject* gOParent);
-	bool LoadNodeMeshes(const aiScene* scene, const aiNode* node, GameObject* parent);
+	void LoadMesh(const char* filepath, const char* originalPath = nullptr);
+	bool LoadSceneMeshes(const aiScene* scene, const aiNode* parent, GameObject* gOParent, const char* originalPath);
+	bool LoadNodeMeshes(const aiScene* scene, const aiNode* node, GameObject* parent, const char* originalPath);
 	bool LoadVertexNormalsTexturesIndex(aiMesh* mesh, std::vector<float3>& vertices, std::vector<float3>& normals, std::vector<float2>& textureCoords, std::vector<uint>& indices);
 	std::vector<meshInfo*> meshes;
 	

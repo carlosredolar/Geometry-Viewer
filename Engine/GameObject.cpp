@@ -59,35 +59,60 @@ void GameObject::Update()
 		std::vector<Component*>::iterator component = components.begin();
 
 		for (; component != components.end(); ++component) {
-			(*component)->Update();
+			if((*component)->IsEnabled()) (*component)->Update();
 		}
 
 		//Update childs
 		std::vector<GameObject*>::iterator gameObject = childs.begin();
 
 		for (; gameObject != childs.end(); ++gameObject) {
-			(*gameObject)->Update();
+			if ((*gameObject)->IsEnabled()) (*gameObject)->Update();
 		}
 	}
 }
 
 void GameObject::Enable()
 {
-	enabled = true;
+	if (!IsEnabled()) 
+	{
+		enabled = true;
 
-	std::vector<GameObject*>::iterator gameObject = childs.begin();
-	for (; gameObject != childs.end(); ++gameObject) {
-		(*gameObject)->Enable();
+		//Enable components
+		std::vector<Component*>::iterator component = components.begin();
+
+		for (; component != components.end(); ++component) {
+			(*component)->Enable();
+		}
+
+		//Enable children
+		std::vector<GameObject*>::iterator gameObject = childs.begin();
+
+		for (; gameObject != childs.end(); ++gameObject) {
+			(*gameObject)->Enable();
+		}
 	}
+	
 }
 
 void GameObject::Disable()
 {
-	enabled = false;
+	if (IsEnabled())
+	{
+		enabled = false;
 
-	std::vector<GameObject*>::iterator gameObject = childs.begin();
-	for (; gameObject != childs.end(); ++gameObject) {
-		(*gameObject)->Disable();
+		//Disable components
+		std::vector<Component*>::iterator component = components.begin();
+
+		for (; component != components.end(); ++component) {
+			(*component)->Disable();
+		}
+
+		//Disable children
+		std::vector<GameObject*>::iterator gameObject = childs.begin();
+
+		for (; gameObject != childs.end(); ++gameObject) {
+			(*gameObject)->Disable();
+		}
 	}
 }
 

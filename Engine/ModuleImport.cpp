@@ -88,7 +88,7 @@ bool ModuleImport::CleanUp() {
 	return true;
 }
 
-void ModuleImport::LoadMesh(const char* filepath)
+void ModuleImport::LoadMesh(const char* filepath, const char* originalPath)
 {
 	char* buffer = nullptr;
 
@@ -119,24 +119,25 @@ void ModuleImport::LoadMesh(const char* filepath)
 
 		sceneGameObject->GetComponent<Component_Transform>()->SetTransform(pos, rot, scale);
 
-		ret = LoadSceneMeshes(scene, scene->mRootNode, sceneGameObject);
+		ret = LoadSceneMeshes(scene, scene->mRootNode, sceneGameObject, originalPath);
 
 		if (ret && loadedMeshes.size() > 0)LOG("Loaded %i mesh(es)!", loadedMeshes.size())
 		aiReleaseImport(scene);
 	}
 }
 
-bool ModuleImport::LoadSceneMeshes(const aiScene* scene, const aiNode* parent, GameObject* gOParent)
+bool ModuleImport::LoadSceneMeshes(const aiScene* scene, const aiNode* parent, GameObject* gOParent, const char* originalPath)
 {
 	bool ret = false;
-	for (int i = 0; i < parent->mNumChildren; i++) ret = LoadNodeMeshes(scene, parent->mChildren[i], gOParent);
+	for (int i = 0; i < parent->mNumChildren; i++) ret = LoadNodeMeshes(scene, parent->mChildren[i], gOParent, originalPath);
 
 	return ret;
 }
 
-bool ModuleImport::LoadNodeMeshes(const aiScene* scene, const aiNode* node, GameObject* parent)
+bool ModuleImport::LoadNodeMeshes(const aiScene* scene, const aiNode* node, GameObject* parent, const char* originalPath)
 {
 	GameObject* newGameObject = App->scene->CreateGameObject(node->mName.C_Str(), parent, true);
+	aiString texture_path_to_read;
 
 	//Loading and creating transform component
 	aiVector3D translation, scaling;
@@ -148,6 +149,7 @@ bool ModuleImport::LoadNodeMeshes(const aiScene* scene, const aiNode* node, Game
 	float3 scale(scaling.x, scaling.y, scaling.z);
 
 	newGameObject->GetComponent<Component_Transform>()->SetTransform(pos, rot, scale);
+	App->scene->SelectGameObject(newGameObject);
 
 	//Loading mesh
 	for (int i = 0; i < node->mNumMeshes; i++)
@@ -163,7 +165,7 @@ bool ModuleImport::LoadNodeMeshes(const aiScene* scene, const aiNode* node, Game
 		if (nodeMesh->HasNormals()) normals.reserve(nodeMesh->mNumVertices); //Reserve normal space
 		textureCoords.reserve(nodeMesh->mNumVertices); //Reserve texture space
 		index.reserve(nodeMesh->mNumFaces * 3); //Reserve index space
-
+		
 		//Loading all
 		LoadVertexNormalsTexturesIndex(nodeMesh, vertex, normals, textureCoords, index);
 		if (vertex.size() == 0) { LOG("Error loading vertices in this mesh") return false; }
@@ -177,11 +179,31 @@ bool ModuleImport::LoadNodeMeshes(const aiScene* scene, const aiNode* node, Game
 		meshes.push_back(newMesh);
 		Component_Mesh* newMeshComponent = (Component_Mesh*)newGameObject->CreateComponent(Component::COMPONENT_TYPE::MESH);
 		newMeshComponent->GenerateMesh(newMesh, vertex, index, normals, textureCoords);
+
+		//Textures
+		aiMaterial* Object_material = scene->mMaterials[nodeMesh->mMaterialIndex];
+		//aiGetMaterialTexture(Object_material, aiTextureType_DIFFUSE, nodeMesh->mMaterialIndex, &texture_path_to_read);
+		Object_material->GetTexture(aiTextureType_DIFFUSE, 0, &texture_path_to_read);
+
+		std::string file_path(texture_path_to_read.C_Str());
+		std::string fileName;
+		std::string fileExtension;
+		App->fm->SplitFilePath(file_path.c_str(), nullptr, &fileName, &fileExtension);
+		if (originalPath != nullptr)
+		{
+			file_path = App->fm->NormalizePath(originalPath);
+			file_path.erase(file_path.find_last_of("/") + 1);
+			file_path = file_path + fileName + "." + fileExtension;
+		}
+		else 
+			file_path = App->fm->GetInternalFolder(fileExtension.c_str()) + "/" + fileName + "." + fileExtension;
+
+		if (texture_path_to_read.length > 0) {
+			ImportExternalFiles(file_path.c_str());
+		}
 	}
 
-	//Here we will load Materials
-
-	LoadSceneMeshes(scene, node, newGameObject);
+	LoadSceneMeshes(scene, node, newGameObject, originalPath);
 	return true;
 }
 
@@ -305,7 +327,7 @@ void ModuleImport::ImportExternalFiles(const char* path)
 	{
 		if (App->fm->ImportFile(normalizedPath.c_str(), finalPath))
 		{
-			ExtensionClassifier(finalPath.c_str());
+			ExtensionClassifier(finalPath.c_str(), path);
 		}
 	}
 	else
@@ -317,15 +339,15 @@ void ModuleImport::ImportExternalFiles(const char* path)
 	}
 }
 
-void ModuleImport::ExtensionClassifier(const char* path)
+void ModuleImport::ExtensionClassifier(const char* path, const char* originalPath)
 {
 	std::string extension;
 	App->fm->SplitFilePath(path, nullptr, nullptr, &extension);
 	if (strcmp(extension.c_str(), "fbx") == 0 || strcmp(extension.c_str(), "FBX") == 0)
 	{
-		LoadMesh(path);
+		LoadMesh(path, originalPath);
 	}
-	else if (strcmp(extension.c_str(), "png") == 0 || strcmp(extension.c_str(), "jpg") == 0)
+	else if (strcmp(extension.c_str(), "png") == 0 || strcmp(extension.c_str(), "jpg") == 0 || strcmp(extension.c_str(), "tga") == 0)
 	{
 		if (App->scene->GetSelectedGameObject() != nullptr)
 		{

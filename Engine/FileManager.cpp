@@ -98,34 +98,34 @@ uint FileManager::Load(const char* path, char** buffer) const
 {
 	uint ret = 0;
 
-	// The reading offset is set to the first byte of the file.
-	// Returns a filehandle on success that we will need for the PHYSFS_fileLength
-	PHYSFS_file* file = PHYSFS_openRead(path);
+	PHYSFS_file* fs_file = PHYSFS_openRead(path);
 
-	// Check for end-of-file state on a PhysicsFS filehandle.
-	if (!PHYSFS_eof(file))
+	if (fs_file != nullptr)
 	{
-		// Get total length of a file in bytes
-		uint lenght = PHYSFS_fileLength(file);
-		*buffer = new char[lenght];
+		PHYSFS_sint32 size = (PHYSFS_sint32)PHYSFS_fileLength(fs_file);
 
-		// Read data from a PhysicsFS firehandle. Returns a number of bytes read.
-		uint bytes = PHYSFS_readBytes(file, *buffer, lenght);
-
-		if (bytes != lenght)
+		if (size > 0)
 		{
-			LOG("%s", path, "ERROR: %s", PHYSFS_getLastError());
-			RELEASE_ARRAY(buffer);
+			*buffer = new char[size + 1];
+			uint readed = (uint)PHYSFS_read(fs_file, *buffer, 1, size);
+			if (readed != size)
+			{
+				LOG("File System error while reading from file %s: %s\n", path, PHYSFS_getLastError());
+				delete buffer;
+			}
+			else
+			{
+				ret = readed;
+				//Adding end of file at the end of the buffer. Loading a shader file does not add this for some reason
+				(*buffer)[size] = '\0';
+			}
 		}
-		else
-			ret = bytes;
+
+		if (PHYSFS_close(fs_file) == 0)
+			LOG("File System error while closing file %s: %s\n", path, PHYSFS_getLastError());
 	}
 	else
-		LOG("%s", path, "ERROR: %s", PHYSFS_getLastError());
-
-
-	// Close a PhysicsFS firehandle
-	PHYSFS_close(file);
+		LOG("File System error while opening file %s: %s\n", path, PHYSFS_getLastError());
 
 	return ret;
 }
@@ -180,7 +180,7 @@ bool FileManager::Exists(const char* file) const
 bool FileManager::ExistsFile(const char* file, const char* ext) const
 {
 	std::string tocompare = MESHESPATH;
-	if (strcmp(ext, "png") == 0 || strcmp(ext, "jpg") == 0) 
+	if (strcmp(ext, "png") == 0 || strcmp(ext, "jpg") || strcmp(ext, "tga") == 0)
 	{
 		tocompare = TEXTURESPATH;
 	}
@@ -485,7 +485,7 @@ std::string FileManager::GetExtensionFolder(const char* fileExtension)
 	{
 		return MESHESPATH;
 	}
-	else if (extension == "png" || extension == "jpg")
+	else if (extension == "png" || extension == "jpg" || extension == "tga")
 	{
 		return TEXTURESPATH;
 	}
@@ -602,6 +602,6 @@ std::string FileManager::GetUniqueName(const char* path, const char* name) const
 }
 
 std::string FileManager::GetInternalFolder(const char* ext) {
-	if (strcmp(ext, "png") == 0 || strcmp(ext, "jpg") == 0) return TEXTURESPATH;
+	if (strcmp(ext, "png") == 0 || strcmp(ext, "jpg") == 0 || strcmp(ext, "tga") == 0) return TEXTURESPATH;
 	return MESHESPATH;
 }
