@@ -16,21 +16,21 @@ void Component_Transform::SetTransform(float4x4 transform)
 	GenerateEulerFromRot();
 }
 
-void Component_Transform::SetTransform(float3 pos, Quat rotation, float3 scale)
+void Component_Transform::SetTransform(float3 pos, Quat rot, float3 scl)
 {
 	this->position = pos;
-	this->rotation = rotation;
-	this->scale = scale;
-	transform = float4x4::FromTRS(position, this->rotation, this->scale);
+	this->rotation = rot;
+	this->scale = scl;
+	SetTransform();
 	GenerateEulerFromRot();
 }
 
-void Component_Transform::SetTransform(float3 pos, float3 rotation, float3 scale)
+void Component_Transform::SetTransform(float3 pos, float3 rot, float3 scl)
 {
 	this->position = pos;
-	this->rotation.FromEulerXYZ(rotation.x, rotation.y, rotation.z);
-	this->scale = scale;
-	transform = float4x4::FromTRS(position, this->rotation, this->scale);
+	this->rotation = Quat::FromEulerXYZ(DegToRad(rot.x), DegToRad(rot.y), DegToRad(rot.z));
+	this->scale = scl;
+	SetTransform();
 	GenerateEulerFromRot();
 }
 
@@ -39,13 +39,36 @@ void Component_Transform::Update()
 
 }
 
-void Component_Transform::CleanUp() {
+void Component_Transform::CleanUp() 
+{
 
+}
+
+void Component_Transform::SetTransform()
+{
+	float3 pos = position;
+	Quat rot = rotation;
+	float3 scl = scale;
+
+	//Update childs transform
+	std::vector<GameObject*>::iterator gameObject = ownerGameObject->GetChilds()->begin();
+
+	for (; gameObject != ownerGameObject->GetChilds()->end(); ++gameObject) {
+		(*gameObject)->GetComponent<Component_Transform>()->SetTransform();
+	}
+
+	Component_Transform* parent = ownerGameObject->GetParent()->GetComponent<Component_Transform>();
+	if (parent) {
+		pos += parent->GetPosition();
+		rot = rotation * parent->GetRotation();
+		scl = scl.Mul(parent->GetScale());
+	}
+	transform = float4x4::FromTRS(pos, rot, scl);
 }
 
 float4x4 Component_Transform::GetTransform() const
 {
-	return transform;
+	return transform.Transposed();
 }
 
 float3 Component_Transform::GetPosition() const

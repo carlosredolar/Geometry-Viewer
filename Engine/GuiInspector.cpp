@@ -57,10 +57,10 @@ void GuiInspector::Draw()
 			DragFloat3("Position", pos, 0.05f);
 			DragFloat3("Rotation", rot, 0.05f);
 			DragFloat3("Scale", scl, 0.05f);
-			//float3 pos_ = { pos[0], pos[1], pos[2] };
-			//float3 rot_ = { rot[0], rot[1], rot[2] };
-			//float3 scl_ = { scl[0], scl[1], scl[2] };
-			//transformGO->SetTransform(pos_, rot_, scl_);
+			float3 pos_ = { pos[0], pos[1], pos[2] };
+			float3 rot_ = { rot[0], rot[1], rot[2] };
+			float3 scl_ = { scl[0], scl[1], scl[2] };
+			transformGO->SetTransform(pos_, rot_, scl_);
 		}
 		if (meshGO)
 		{

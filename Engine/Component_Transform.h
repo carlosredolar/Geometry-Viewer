@@ -30,6 +30,8 @@ public:
 	float3		GetRotationEuler() const;
 	float3		GetScale() const;
 
+	void		SetTransform();
+
 private:
 
 	void GenerateEulerFromRot();

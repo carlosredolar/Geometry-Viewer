@@ -1,5 +1,6 @@
 #include "Component_Mesh.h"
 #include "Component_Texture.h"
+#include "Component_Transform.h"
 #include "ModuleImport.h"
 #include "Glew/include/glew.h"
 #pragma comment (lib, "Glew/libx86/glew32.lib")
@@ -138,7 +139,13 @@ void Component_Mesh::Render()
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->idIndex);
 
+	float4x4 localTransform = this->ownerGameObject->GetComponent<Component_Transform>()->GetTransform();
+	glPushMatrix();
+	glMultMatrixf((float*)& localTransform);
+
 	glDrawElements(GL_TRIANGLES, mesh->indices.size(), GL_UNSIGNED_INT, NULL);
+
+	glPopMatrix();
 
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);
