@@ -24,20 +24,23 @@ public:
 
 	void CleanUp();
 
-	float4x4	GetTransform() const;
+	float4x4	GetLocalTransform();
+	float4x4	GetGlobalTransform();
+	void		UpdateLocalTransform();
+	void		UpdateGlobalTransform(float4x4);
+
 	float3		GetPosition() const;
 	Quat		GetRotation() const;
 	float3		GetRotationEuler() const;
 	float3		GetScale() const;
-
-	void		SetTransform();
 
 private:
 
 	void GenerateEulerFromRot();
 
 	//Transformation values
-	float4x4 transform;
+	float4x4 localTransform;
+	float4x4 globalTransform;
 	float3 position;
 	Quat rotation;
 	float3 scale;

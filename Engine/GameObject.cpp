@@ -67,6 +67,8 @@ void GameObject::Update()
 
 		for (; gameObject != childs.end(); ++gameObject) {
 			if ((*gameObject)->IsEnabled()) (*gameObject)->Update();
+
+			(*gameObject)->GetComponent<Component_Transform>()->UpdateGlobalTransform(GetComponent<Component_Transform>()->GetGlobalTransform());
 		}
 	}
 }

@@ -139,7 +139,7 @@ void Component_Mesh::Render()
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->idIndex);
 
-	float4x4 localTransform = this->ownerGameObject->GetComponent<Component_Transform>()->GetTransform();
+	float4x4 localTransform = this->ownerGameObject->GetComponent<Component_Transform>()->GetGlobalTransform().Transposed();
 	glPushMatrix();
 	glMultMatrixf((float*)& localTransform);
 

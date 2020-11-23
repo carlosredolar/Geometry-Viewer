@@ -19,7 +19,9 @@ bool ModuleScene::Start()
 
 	//Create root gameObject
 	root = new GameObject("Scene", nullptr, true);
+	root->CreateComponent(Component::COMPONENT_TYPE::TRANSFORM);
 	root->id = 0;
+
 	currentID = 0;
 	gameObjects.push_back(root);
 

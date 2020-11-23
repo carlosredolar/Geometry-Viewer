@@ -2,7 +2,11 @@
 
 Component_Transform::Component_Transform(GameObject* ownerGameObject, bool enabled) : Component(COMPONENT_TYPE::TRANSFORM, ownerGameObject, enabled)
 {
-
+	position = { 0,0,0 };
+	rotation = Quat::identity;
+	scale = { 1,1,1 };
+	UpdateLocalTransform();
+	globalTransform = localTransform;
 }
 
 Component_Transform::~Component_Transform()
@@ -21,7 +25,7 @@ void Component_Transform::SetTransform(float3 pos, Quat rot, float3 scl)
 	this->position = pos;
 	this->rotation = rot;
 	this->scale = scl;
-	SetTransform();
+	UpdateLocalTransform();
 	GenerateEulerFromRot();
 }
 
@@ -30,7 +34,7 @@ void Component_Transform::SetTransform(float3 pos, float3 rot, float3 scl)
 	this->position = pos;
 	this->rotation = Quat::FromEulerXYZ(DegToRad(rot.x), DegToRad(rot.y), DegToRad(rot.z));
 	this->scale = scl;
-	SetTransform();
+	UpdateLocalTransform();
 	GenerateEulerFromRot();
 }
 
@@ -44,31 +48,26 @@ void Component_Transform::CleanUp()
 
 }
 
-void Component_Transform::SetTransform()
+float4x4 Component_Transform::GetLocalTransform()
 {
-	float3 pos = position;
-	Quat rot = rotation;
-	float3 scl = scale;
-
-	//Update childs transform
-	std::vector<GameObject*>::iterator gameObject = ownerGameObject->GetChilds()->begin();
-
-	for (; gameObject != ownerGameObject->GetChilds()->end(); ++gameObject) {
-		(*gameObject)->GetComponent<Component_Transform>()->SetTransform();
-	}
-
-	Component_Transform* parent = ownerGameObject->GetParent()->GetComponent<Component_Transform>();
-	if (parent) {
-		pos += parent->GetPosition();
-		rot = rotation * parent->GetRotation();
-		scl = scl.Mul(parent->GetScale());
-	}
-	transform = float4x4::FromTRS(pos, rot, scl);
+	return localTransform;
 }
 
-float4x4 Component_Transform::GetTransform() const
+float4x4 Component_Transform::GetGlobalTransform()
 {
-	return transform.Transposed();
+	return globalTransform;
+}
+
+void Component_Transform::UpdateLocalTransform()
+{
+	localTransform = float4x4::FromTRS(position, rotation, scale);
+	//globalTransform = localTransform;
+}
+
+void Component_Transform::UpdateGlobalTransform(float4x4 parentGlobalTransform)
+{
+	localTransform = float4x4::FromTRS(position, rotation, scale);
+	globalTransform = parentGlobalTransform * localTransform;
 }
 
 float3 Component_Transform::GetPosition() const
