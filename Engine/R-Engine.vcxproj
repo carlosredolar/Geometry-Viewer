@@ -41,7 +41,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(ProjectDir)PhysFS\include;$(ProjectDir)MathGeoLib\include\Time;$(ProjectDir)MathGeoLib\include\Math;$(ProjectDir)MathGeoLib\include\Geometry;$(ProjectDir)MathGeoLib\include\Algorithm\Random;$(ProjectDir)MathGeoLib\include;$(ProjectDir)Glew\include;$(ProjectDir)DevIL\include;$(ProjectDir)SDL\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)PhysFS\include;$(ProjectDir)MathGeoLib\include\Time;$(ProjectDir)MathGeoLib\include\Math;$(ProjectDir)MathGeoLib\include\Geometry;$(ProjectDir)MathGeoLib\include\Algorithm\Random;$(ProjectDir)MathGeoLib\include;$(ProjectDir)Glew\include;$(ProjectDir)DevIL\include;$(ProjectDir)SDL\include;$(ProjectDir)parson;$(IncludePath)</IncludePath>
     <TargetName>$(ProjectName)</TargetName>
     <OutDir>$(SolutionDir)Build\Debug\</OutDir>
     <IntDir>$(SolutionDir)Intermediate\</IntDir>
@@ -115,6 +115,7 @@
     <ClInclude Include="ModuleCamera3D.h" />
     <ClInclude Include="ModuleGui.h" />
     <ClInclude Include="ModuleImport.h" />
+    <ClInclude Include="ModuleJson.h" />
     <ClInclude Include="ModuleRenderer3D.h" />
     <ClInclude Include="ModuleScene.h" />
     <ClInclude Include="p2List.h" />
@@ -187,6 +188,7 @@
     <ClCompile Include="ModuleGui.cpp" />
     <ClCompile Include="ModuleImport.cpp" />
     <ClCompile Include="ModuleInput.cpp" />
+    <ClCompile Include="ModuleJson.cpp" />
     <ClCompile Include="ModuleRenderer3D.cpp" />
     <ClCompile Include="ModuleScene.cpp" />
     <ClCompile Include="ModuleWindow.cpp" />
