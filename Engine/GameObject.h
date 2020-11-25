@@ -30,7 +30,7 @@ public:
 	void GetChildsNewParent();	//Send this game object childs to this parent
 
 	//Add a component to this game object
-	Component* CreateComponent(Component::COMPONENT_TYPE type);
+	Component* CreateComponent(ComponentType type);
 
 	//Check and add component
 	void CheckAddComponent(Component* new_comp);

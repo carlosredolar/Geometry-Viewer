@@ -11,7 +11,7 @@
 #pragma comment (lib, "glu32.lib")
 #pragma comment (lib, "opengl32.lib")
 
-Component_Mesh::Component_Mesh(GameObject* ownerGameObject, bool enabled) : Component(COMPONENT_TYPE::MESH, ownerGameObject, enabled)
+Component_Mesh::Component_Mesh(GameObject* ownerGameObject, bool enabled) : Component(ComponentType::MESH, ownerGameObject, enabled)
 {
 	mesh = nullptr;
 }
@@ -24,21 +24,6 @@ Component_Mesh::~Component_Mesh()
 void Component_Mesh::Update()
 {
 	if(IsEnabled()) Render();
-}
-
-void Component_Mesh::Enable()
-{
-	enabled = true;
-}
-
-void Component_Mesh::Disable()
-{
-	enabled = false;
-}
-
-bool Component_Mesh::IsEnabled()
-{
-	return enabled;
 }
 
 void Component_Mesh::CleanUp() {

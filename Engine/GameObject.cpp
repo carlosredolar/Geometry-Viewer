@@ -179,21 +179,21 @@ void GameObject::DeleteChild(GameObject * child)
 	}
 }
 
-Component* GameObject::CreateComponent(Component::COMPONENT_TYPE type)
+Component* GameObject::CreateComponent(ComponentType type)
 {
 	Component_Texture* componentTexture = nullptr;
 	Component_Mesh* componentMesh = nullptr;
 	switch (type)
 	{
-	case Component::COMPONENT_TYPE::TRANSFORM:
+	case ComponentType::TRANSFORM:
 		components.push_back(new Component_Transform(this));
 		break;
-	case Component::COMPONENT_TYPE::TEXTURE:
+	case ComponentType::TEXTURE:
 		componentTexture = new Component_Texture(this);
 		CheckAddComponent(componentTexture);
 		return componentTexture;
 		break;
-	case Component::COMPONENT_TYPE::MESH:
+	case ComponentType::MESH:
 		componentMesh = new Component_Mesh(this);
 		CheckAddComponent(componentMesh);
 		return componentMesh;

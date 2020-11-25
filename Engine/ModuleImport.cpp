@@ -30,8 +30,8 @@
 
 ModuleImport::ModuleImport(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
-}
 
+}
 
 ModuleImport::~ModuleImport()
 {
@@ -177,7 +177,7 @@ bool ModuleImport::LoadNodeMeshes(const aiScene* scene, const aiNode* node, Game
 		meshInfo* newMesh = new meshInfo;
 		newMesh->name = newGameObject->GetName();
 		meshes.push_back(newMesh);
-		Component_Mesh* newMeshComponent = (Component_Mesh*)newGameObject->CreateComponent(Component::COMPONENT_TYPE::MESH);
+		Component_Mesh* newMeshComponent = (Component_Mesh*)newGameObject->CreateComponent(ComponentType::MESH);
 		newMeshComponent->GenerateMesh(newMesh, vertex, index, normals, textureCoords);
 
 		//Textures
@@ -268,8 +268,8 @@ textureInfo* ModuleImport::LoadTexture(const char* path)
 	newTexture->path = path;
 
 	char* buffer = nullptr;
-	uint bytesFile = App->fm->Load(path, &buffer);
-	ilLoadL(IL_TYPE_UNKNOWN, (const void*)buffer, bytesFile);
+	uint size = App->fm->Load(path, &buffer);
+	ilLoadL(IL_TYPE_UNKNOWN, buffer, size);
 	newTexture->id = ilutGLBindTexImage();
 
 	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &newTexture->w);
@@ -357,7 +357,7 @@ void ModuleImport::ExtensionClassifier(const char* path, const char* originalPat
 			}
 			else if (App->scene->GetSelectedGameObject()->GetComponent<Component_Mesh>() != nullptr)
 			{
-				((Component_Texture*)App->scene->GetSelectedGameObject()->CreateComponent(Component::COMPONENT_TYPE::TEXTURE))->SetTexture(LoadTexture(path));
+				((Component_Texture*)App->scene->GetSelectedGameObject()->CreateComponent(ComponentType::TEXTURE))->SetTexture(LoadTexture(path));
 				App->gui->SelectGameObject(App->scene->GetSelectedGameObject());
 			}
 			else LOG("This GameOject doesn't have any mesh or texture components so the texture will not be applyed to anything.");

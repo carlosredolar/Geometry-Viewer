@@ -47,8 +47,8 @@ public:
 	JsonArray AddArray(JsonArray array);
 
 private:
-	JSON_Object* _object;
-	JSON_Value* _root;
+	JSON_Object* object;
+	JSON_Value* root;
 };
 
 class JsonArray

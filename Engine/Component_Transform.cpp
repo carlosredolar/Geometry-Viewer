@@ -1,6 +1,6 @@
 #include "Component_Transform.h"
 
-Component_Transform::Component_Transform(GameObject* ownerGameObject, bool enabled) : Component(COMPONENT_TYPE::TRANSFORM, ownerGameObject, enabled)
+Component_Transform::Component_Transform(GameObject* ownerGameObject, bool enabled) : Component(ComponentType::TRANSFORM, ownerGameObject, enabled)
 {
 	position = { 0,0,0 };
 	rotation = Quat::identity;

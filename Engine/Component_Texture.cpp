@@ -2,7 +2,7 @@
 
 #include "ModuleImport.h"
 
-Component_Texture::Component_Texture(GameObject* ownerGameObject, bool enabled) : Component(COMPONENT_TYPE::MESH, ownerGameObject, enabled)
+Component_Texture::Component_Texture(GameObject* ownerGameObject, bool enabled) : Component(ComponentType::MESH, ownerGameObject, enabled)
 {
 
 }
@@ -15,21 +15,6 @@ Component_Texture::~Component_Texture()
 void Component_Texture::Update()
 {
 	
-}
-
-void Component_Texture::Enable()
-{
-	enabled = true;
-}
-
-void Component_Texture::Disable()
-{
-	enabled = false;
-}
-
-bool Component_Texture::IsEnabled()
-{
-	return enabled;
 }
 
 void Component_Texture::CleanUp() 

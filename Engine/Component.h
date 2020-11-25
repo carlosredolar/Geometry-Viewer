@@ -4,19 +4,20 @@
 
 class GameObject;
 
+
+enum ComponentType {
+	TRANSFORM,
+	MESH,
+	TEXTURE,
+	NONE
+};
+
 class Component {
 
 public:
 
-	static enum class COMPONENT_TYPE {
-		TRANSFORM,
-		MESH,
-		TEXTURE,
-		NONE
-	};
-
 	//Constructor
-	Component(COMPONENT_TYPE type, GameObject* ownerGameObject, bool enabled = true);
+	Component(ComponentType type, GameObject* ownerGameObject, bool enabled = true);
 
 	//Destructor
 	~Component();
@@ -34,15 +35,16 @@ public:
 	virtual bool IsEnabled();
 
 	//Get component type
-	COMPONENT_TYPE GetType();
+	ComponentType GetType();
 
 	//Public variables
-	bool enabled;
 	GameObject* ownerGameObject;
 
 private:
 
-	COMPONENT_TYPE	type;
+	bool enabled;
+
+	ComponentType	type;
 
 };
 
