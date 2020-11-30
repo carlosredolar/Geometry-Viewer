@@ -5,6 +5,7 @@
 #include <vector>
 #include "Component.h"
 #include <string>
+#include "MathGeoLib/include/MathGeoLib.h"
 
 class GameObject
 {
@@ -53,6 +54,10 @@ public:
 	int id;
 
 	bool selected;
+
+public:
+	OBB _OBB;
+	AABB _AABB;
 
 private:
 	GameObject*					parent;

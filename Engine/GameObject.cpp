@@ -70,6 +70,19 @@ void GameObject::Update()
 
 			(*gameObject)->GetComponent<Component_Transform>()->UpdateGlobalTransform(GetComponent<Component_Transform>()->GetGlobalTransform());
 		}
+
+		if ((*component)->GetType() == MESH) {
+			Component_Mesh* mesh = (Component_Mesh*)*component;
+			_OBB = mesh->GetAABB();
+			_OBB.Transform(GetComponent<*component>()->GetGlobalTransform());
+
+			_AABB.SetNegativeInfinity();
+			_AABB.Enclose(_OBB);
+
+			float3 cornerPoints[8];
+			_AABB.GetCornerPoints(cornerPoints);
+			App->renderer3D->DrawAABB(cornerPoints);
+		}
 	}
 }
 

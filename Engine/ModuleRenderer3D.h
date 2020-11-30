@@ -3,6 +3,7 @@
 #include "Globals.h"
 #include "glmath.h"
 #include "Light.h"
+#include "MathGeoLib/include/MathGeoLib.h"
 
 #define MAX_LIGHTS 8
 
@@ -18,6 +19,8 @@ public:
 	bool CleanUp();
 
 	void OnResize(int width, int height);
+
+	void DrawAABB(float3* aabb);
 
 public:
 

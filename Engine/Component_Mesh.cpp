@@ -64,6 +64,9 @@ void Component_Mesh::GenerateMesh(meshInfo* newMesh, std::vector<float3> vertice
 	mesh->textureCoords = textureCoords;
 
 	CreateBuffers();
+	GenerateAABB();
+	//_AABB.SetNegativeInfinity();
+	//_AABB.Enclose((float3*)mesh->vertices, size(mesh->vertices));
 }
 
 void Component_Mesh::CreateBuffers()
@@ -96,6 +99,17 @@ void Component_Mesh::CreateBuffers()
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
+}
+
+void Component_Mesh::GenerateAABB()
+{
+	_AABB.SetNegativeInfinity();
+	_AABB.Enclose((float3*)mesh->vertices, size(mesh->vertices));
+}
+
+AABB Component_Mesh::GetAABB()
+{
+	return _AABB;
 }
 
 void Component_Mesh::Render() 

@@ -47,6 +47,10 @@ public:
 	bool enableVertexNormals = false;
 	bool enableFaceNormals = false;
 
+	void GenerateAABB();
+	AABB GetAABB();
+	AABB _AABB;
+
 private:
 
 
