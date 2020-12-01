@@ -1,8 +1,11 @@
+#include "Application.h"
 #include "GameObject.h"
 #include "Component_Mesh.h"
 #include "Component_Transform.h"
 #include "Component_Texture.h"
 #include "Component.h"
+
+
 
 GameObject::GameObject(const char* name, GameObject* parent, bool enabled) :name(name), parent(parent), enabled(enabled) { selected = false; }
 
@@ -71,7 +74,7 @@ void GameObject::Update()
 			(*gameObject)->GetComponent<Component_Transform>()->UpdateGlobalTransform(GetComponent<Component_Transform>()->GetGlobalTransform());
 		}
 
-		if ((*component)->GetType() == MESH) {
+		if ((*component)->GetType() == Component::COMPONENT_TYPE::MESH) {
 			Component_Mesh* mesh = (Component_Mesh*)*component;
 			_OBB = mesh->GetAABB();
 			_OBB.Transform(GetComponent<*component>()->GetGlobalTransform());
