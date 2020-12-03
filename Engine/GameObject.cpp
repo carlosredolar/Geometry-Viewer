@@ -77,7 +77,7 @@ void GameObject::Update()
 		if ((*component)->GetType() == Component::COMPONENT_TYPE::MESH) {
 			Component_Mesh* mesh = (Component_Mesh*)*component;
 			_OBB = mesh->GetAABB();
-			_OBB.Transform(GetComponent<*component>()->GetGlobalTransform());
+			_OBB.Transform(GetComponent<Component_Transform>()->GetGlobalTransform());
 
 			_AABB.SetNegativeInfinity();
 			_AABB.Enclose(_OBB);
