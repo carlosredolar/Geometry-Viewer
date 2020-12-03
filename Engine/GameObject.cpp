@@ -3,6 +3,8 @@
 #include "Component_Mesh.h"
 #include "Component_Transform.h"
 #include "Component_Texture.h"
+#include "Component_Camera.h"
+
 #include "Component.h"
 
 
@@ -199,6 +201,7 @@ Component* GameObject::CreateComponent(Component::COMPONENT_TYPE type)
 {
 	Component_Texture* componentTexture = nullptr;
 	Component_Mesh* componentMesh = nullptr;
+	Component_Camera* componentCamera = nullptr;
 	switch (type)
 	{
 	case Component::COMPONENT_TYPE::TRANSFORM:
@@ -213,6 +216,9 @@ Component* GameObject::CreateComponent(Component::COMPONENT_TYPE type)
 		componentMesh = new Component_Mesh(this);
 		CheckAddComponent(componentMesh);
 		return componentMesh;
+		break;
+	case Component::COMPONENT_TYPE::CAMERA:
+		componentCamera = new Component_Camera();
 		break;
 	}
 }

@@ -12,6 +12,7 @@ public:
 		TRANSFORM,
 		MESH,
 		TEXTURE,
+		CAMERA,
 		NONE
 	};
 
@@ -39,10 +40,11 @@ public:
 	//Public variables
 	bool enabled;
 	GameObject* ownerGameObject;
+	COMPONENT_TYPE	type;
 
 private:
 
-	COMPONENT_TYPE	type;
+	
 
 };
 

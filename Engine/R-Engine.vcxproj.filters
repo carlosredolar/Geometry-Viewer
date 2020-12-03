@@ -147,6 +147,9 @@
     <ClInclude Include="GuiHierarchy.h">
       <Filter>Sources\Modules\Gui</Filter>
     </ClInclude>
+    <ClInclude Include="Component_Camera.h">
+      <Filter>Sources\GO&amp;Comp</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleCamera3D.cpp">
@@ -340,6 +343,9 @@
     </ClCompile>
     <ClCompile Include="GuiHierarchy.cpp">
       <Filter>Sources\Modules\Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="Component_Camera.cpp">
+      <Filter>Sources\GO&amp;Comp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
