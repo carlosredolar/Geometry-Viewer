@@ -41,7 +41,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(ProjectDir)PhysFS\include;$(ProjectDir)MathGeoLib\include\Time;$(ProjectDir)MathGeoLib\include\Math;$(ProjectDir)MathGeoLib\include\Geometry;$(ProjectDir)MathGeoLib\include\Algorithm\Random;$(ProjectDir)MathGeoLib\include;$(ProjectDir)Glew\include;$(ProjectDir)DevIL\include;$(ProjectDir)SDL\include;$(ProjectDir)parson;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)Libs\;$(IncludePath)</IncludePath>
     <TargetName>$(ProjectName)</TargetName>
     <OutDir>$(SolutionDir)Build\Debug\</OutDir>
     <IntDir>$(SolutionDir)Intermediate\</IntDir>

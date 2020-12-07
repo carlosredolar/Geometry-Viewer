@@ -2,6 +2,8 @@
 
 class Application;
 
+class JsonObj;
+
 class Module
 {
 private :
@@ -19,6 +21,11 @@ public:
 	virtual bool Init() 
 	{
 		return true; 
+	}
+
+	virtual bool LoadConfig(JsonObj& object)
+	{
+		return true;
 	}
 
 	virtual bool Start()

@@ -5,7 +5,21 @@
 #include "MathGeoLib/include/MathGeoLib.h"
 #include "Assimp/include/scene.h"
 
+class Resource;
+class ResourceModel;
+class ResourceMesh;
+class ResourceMaterial;
+class ResourceTexture;
+
+struct ModelNode;
+class JsonArray;
 class GameObject;
+struct GnTexture;
+class aiMesh;
+class GnMesh;
+class Transform;
+class Material;
+
 
 struct meshInfo 
 {

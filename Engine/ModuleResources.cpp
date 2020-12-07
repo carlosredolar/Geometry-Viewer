@@ -459,7 +459,7 @@ ResourceType ModuleResources::GetResourceTypeFromPath(const char* path)
 	App->fm->SplitFilePath(path, nullptr, nullptr, &extension);
 
 	if (extension == ".fbx") { return ResourceType::RESOURCE_MODEL; }
-	else if (extension == ".mesh") { return ResourceType::RESOURCE_MESH; }
+	else if (extension == ".meshr") { return ResourceType::RESOURCE_MESH; }
 	else if (extension == ".png") { return ResourceType::RESOURCE_TEXTURE; }
 }
 
@@ -475,15 +475,15 @@ const char* ModuleResources::GenerateLibraryPath(Resource* resource)
 	switch (resource->GetType())
 	{
 	case RESOURCE_MODEL:
-		sprintf_s(library_path, 128, "Library/Models/%d.model", resource->GetUID()); break;
+		sprintf_s(library_path, 128, "Library/Models/%d.modelr", resource->GetUID()); break;
 	case RESOURCE_MESH:
-		sprintf_s(library_path, 128, "Library/Meshes/%d.mesh", resource->GetUID()); break;
+		sprintf_s(library_path, 128, "Library/Meshes/%d.meshr", resource->GetUID()); break;
 	case RESOURCE_MATERIAL:
-		sprintf_s(library_path, 128, "Library/Materials/%d.material", resource->GetUID()); break;
+		sprintf_s(library_path, 128, "Library/Materials/%d.materialr", resource->GetUID()); break;
 	case RESOURCE_TEXTURE:
-		sprintf_s(library_path, 128, "Library/Textures/%d.dds", resource->GetUID()); break;
+		sprintf_s(library_path, 128, "Library/Textures/%d.texturer", resource->GetUID()); break;
 	case RESOURCE_SCENE:
-		sprintf_s(library_path, 128, "Library/Scenes/%d.scene", resource->GetUID()); break;
+		sprintf_s(library_path, 128, "Library/Scenes/%d.scener", resource->GetUID()); break;
 	default:
 		break;
 	}
@@ -535,11 +535,11 @@ void ModuleResources::AddFileExtension(std::string& file, ResourceType type)
 {
 	switch (type)
 	{
-	case RESOURCE_MODEL: file += ".model"; break;
-	case RESOURCE_MESH: file += ".mesh"; break;
-	case RESOURCE_MATERIAL: file += ".material"; break;
-	case RESOURCE_TEXTURE: file += ".dds"; break;
-	case RESOURCE_SCENE:  file += ".scene";	break;
+	case RESOURCE_MODEL: file += ".modelr"; break;
+	case RESOURCE_MESH: file += ".meshr"; break;
+	case RESOURCE_MATERIAL: file += ".materialr"; break;
+	case RESOURCE_TEXTURE: file += ".texturer"; break;
+	case RESOURCE_SCENE:  file += ".scener"; break;
 	default: break;
 	}
 }

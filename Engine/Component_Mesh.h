@@ -7,6 +7,7 @@
 #include "MathGeoLib/include/MathGeoLib.h"
 
 struct meshInfo;
+class ResourceMesh;
 
 class Component_Mesh : public Component {
 public:
@@ -21,15 +22,6 @@ public:
 
 	//Update
 	void Update() override;
-
-	//Enable Component
-	void Enable() override;
-
-	//Disable Component
-	void Disable() override;
-
-	//Check if component is enabled
-	bool IsEnabled() override;
 
 	const char* GetName();
 	int GetVertices();
