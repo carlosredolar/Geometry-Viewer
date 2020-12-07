@@ -9,7 +9,7 @@ Light::Light() : Component(), ref(-1), position(0.0f, 0.0f, 0.0f)
 	type = ComponentType::LIGHT;
 }
 
-Light::Light(GameObject* gameObject) : Component(gameObject), ref(-1), position(0.0f, 0.0f, 0.0f)
+Light::Light(GameObject* gameObject) : Component(LIGHT, gameObject), ref(-1), position(0.0f, 0.0f, 0.0f)
 {
 	type = ComponentType::LIGHT;
 }
@@ -45,7 +45,7 @@ void Light::Render()
 	}
 }
 
-void Light::OnEditor()
+void Light::OnGUI()
 {
 
 }

@@ -49,7 +49,7 @@ public:
 	//Get component type
 	ComponentType GetType();
 
-	virtual void OnEditor() = 0;
+	virtual void OnGUI() = 0;
 
 	void SetOwnerGameObject(GameObject* gameObject);
 	GameObject* GetOwnerGameObject();

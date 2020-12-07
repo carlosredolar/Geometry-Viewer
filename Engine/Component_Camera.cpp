@@ -53,7 +53,7 @@ void Component_Camera::Update()
 	App->renderer3D->DrawAABB(corner_points);
 }
 
-void Component_Camera::OnEditor()
+void Component_Camera::OnGUI()
 {
 	if (ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen))
 	{

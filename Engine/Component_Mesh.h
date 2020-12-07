@@ -29,7 +29,7 @@ public:
 	//Update
 	void Update() override;
 	void Render();
-	void OnEditor() override;
+	void OnGUI() override;
 
 	void RenderVertexNormals();
 	void RenderFaceNormals();

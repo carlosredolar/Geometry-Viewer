@@ -18,7 +18,7 @@ public:
 
 	//Update
 	void Update() override;
-	void OnEditor() override;
+	void OnGUI() override;
 
 	//Enable Component
 	void Enable() override;
