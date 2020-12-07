@@ -2,33 +2,44 @@
 #include "Module.h"
 #include "Globals.h"
 #include "Primitive.h"
-#include "ModuleImport.h"
-#include "glew.h"
+//#include "Glew/include/glew.h"
 #include "GameObject.h"
+
+#include "ImGui/imgui.h"
+#include "ImGuizmo/ImGuizmo.h"
+
+#include <vector>
 
 class ModuleScene : public Module
 {
 public:
-	ModuleScene(Application* app, bool start_enabled = true);
+	ModuleScene(bool start_enabled = true);
 	~ModuleScene();
 
 	bool Start();
+	bool LoadConfig(JsonObj& config) override;
 	update_status Update(float dt);
 	bool CleanUp();
 	GameObject* CreateGameObject(const char* name, GameObject* parent, bool enabled);
 	GameObject* GetGameObject(const char* name);
-	GameObject* GetGameObject(int id);
+	GameObject* GetGameObject(int UUID);
+	std::vector<GameObject*> GetAllGameObjects();
 
 	void SelectGameObject(GameObject* selected);
 	GameObject* GetSelectedGameObject();
 
 	bool DeleteGameObject(GameObject* todelete);
+	GameObject* GetRoot() { return root; }
 
+	bool Save(const char* file_path);
+	bool Load(const char* scene_file);
 private:
 
+	int currentID;
 	GameObject* root;
 	std::vector<GameObject*> gameObjects;
 	std::vector<int*> goID;
-	int currentID;
 
+	ImGuizmo::OPERATION mCurrentGizmoOperation;
+	ImGuizmo::MODE mCurrentGizmoMode;
 };

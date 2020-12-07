@@ -23,7 +23,7 @@ public:
 	~Component_Camera();
 
 	void Update() override;
-	void OnEditor() override;
+	void OnGUI() override;
 
 	void Save(JsonArray& save_array);
 	void Load(JsonObj& load_object);

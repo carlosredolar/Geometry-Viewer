@@ -13,9 +13,7 @@
 #pragma comment( lib, "PhysFS/libx86/physfs.lib" )
 
 struct SDL_RWops;
-
 struct aiFileIO;
-
 class Config;
 
 #define ASSETSFOLDER "/Assets"
@@ -71,6 +69,8 @@ public:
 
 	unsigned int Save(const char* file, const void* buffer, unsigned int size, bool append = false) const;
 	bool Remove(const char* file);
+	bool Delete(const char* file);
+	bool Rename(const char* old_name, const char* new_name);
 
 
 	// GET - - -
@@ -82,7 +82,9 @@ public:
 	std::string		GetExtensionFolder(const char* fileExtension);
 	std::string		GetPathRelativeToAssets(const char* originalPath) const;
 	PathNode		GetAllFiles(const char* directory, std::vector<std::string>* filter_ext = nullptr, std::vector<std::string>* ignore_ext = nullptr) const;
-	std::string		ExtractFileName(const std::string& fullPath);
+	std::string		ExtractFileName(const char* fullPath);
+	std::string		ExtractFileNameAndExtension(const char* fullPath);
+	std::string		ExtractFileExtension(const char* fullPath);
 
 private:
 	int CheckPath(const char*);

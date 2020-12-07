@@ -2,8 +2,10 @@
 #include "Component_Material.h"
 #include "Component_Transform.h"
 #include "ModuleImport.h"
+#include "ModuleJson.h"
 #include "Glew/include/glew.h"
-#pragma comment (lib, "Glew/libx86/glew32.lib")
+
+#include "Application.h"
 
 #include <gl/GL.h>
 #include <gl/GLU.h>
@@ -18,7 +20,11 @@ Component_Mesh::Component_Mesh(GameObject* ownerGameObject, bool enabled) : Comp
 
 Component_Mesh::~Component_Mesh()
 {
-	CleanUp();
+	if (mesh != nullptr)
+	{
+		App->resources->ReleaseResource(mesh->GetUID());
+		mesh = nullptr;
+	}
 }
 
 void Component_Mesh::Update()
@@ -26,109 +32,49 @@ void Component_Mesh::Update()
 	if(IsEnabled()) Render();
 }
 
-void Component_Mesh::CleanUp() {
-	mesh->vertices.clear();
-	mesh->indices.clear();
-	mesh->normals.clear();
-	mesh->textureCoords.clear();
-
-	glDeleteBuffers(1, &mesh->idVertex);
-	glDeleteBuffers(1, &mesh->idIndex);
-	glDeleteBuffers(1, &mesh->idNormals);
-	glDeleteBuffers(1, &mesh->idTextureCoords);
-
-	delete mesh;
-}
-
-void Component_Mesh::GenerateMesh(meshInfo* newMesh, std::vector<float3> vertices, std::vector<uint> indices, std::vector<float3> normals, std::vector<float2> textureCoords)
-{
-	mesh = newMesh;
-	mesh->vertices = vertices;
-	mesh->indices = indices;
-	mesh->normals = normals;
-	mesh->textureCoords = textureCoords;
-
-	CreateBuffers();
-}
-
-void Component_Mesh::CreateBuffers()
-{
-	if (!mesh->indices.empty() && !mesh->vertices.empty())
-	{
-		glGenBuffers(1, (GLuint*) & (mesh->idVertex));
-		glBindBuffer(GL_ARRAY_BUFFER, mesh->idVertex);
-		glBufferData(GL_ARRAY_BUFFER, mesh->vertices.size() * sizeof(float3), &mesh->vertices[0], GL_STATIC_DRAW);
-
-		glGenBuffers(1, (GLuint*) & (mesh->idIndex));
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->idIndex);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh->indices.size() * sizeof(uint), &mesh->indices[0], GL_STATIC_DRAW);
-
-		if (!mesh->normals.empty())
-		{
-			glGenBuffers(1, (GLuint*) & (mesh->idNormals));
-			glBindBuffer(GL_ARRAY_BUFFER, mesh->idNormals);
-			glBufferData(GL_ARRAY_BUFFER, mesh->normals.size() * sizeof(float3), &mesh->normals[0], GL_STATIC_DRAW);
-		}
-
-		if (!mesh->textureCoords.empty())
-		{
-			glGenBuffers(1, (GLuint*) & (mesh->idTextureCoords));
-			glBindBuffer(GL_ARRAY_BUFFER, mesh->idTextureCoords);
-			glBufferData(GL_ARRAY_BUFFER, mesh->textureCoords.size() * sizeof(float2), &mesh->textureCoords[0], GL_STATIC_DRAW);
-		}
-
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-	}
-}
-
 void Component_Mesh::Render() 
 {
 	//Render
 
-	Component_Material* texture = ownerGameObject->GetComponent<Component_Material>();
+	if (!App->resources->Exists(resourceUID)) {
+		mesh = nullptr;
+		return;
+	}
+
+	Component_Material* material = ownerGameObject->GetComponent<Component_Material>();
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 
-	if (mesh->idNormals != -1)
-		glEnableClientState(GL_NORMAL_ARRAY);
+	glEnableClientState(GL_NORMAL_ARRAY);
 
-	if (mesh->idTextureCoords != -1)
-		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-	if (texture && texture->IsEnabled())
+	if (material && material->IsEnabled())
 	{
 		glEnableClientState(GL_TEXTURE_2D);
 	}
 
-	glBindBuffer(GL_ARRAY_BUFFER, mesh->idVertex);
+	glBindBuffer(GL_ARRAY_BUFFER, mesh->verticesBuffer);
 	glVertexPointer(3, GL_FLOAT, 0, NULL);
 
-	if (mesh->idNormals != -1)
+	glBindBuffer(GL_ARRAY_BUFFER, mesh->normalsBuffer);
+	glNormalPointer(GL_FLOAT, 0, NULL);
+
+	glBindBuffer(GL_ARRAY_BUFFER, mesh->textureCoordsBuffer);
+	glTexCoordPointer(2, GL_FLOAT, 0, NULL);
+	
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->indicesBuffer);
+
+	if (material && material->IsEnabled())
 	{
-		glBindBuffer(GL_ARRAY_BUFFER, mesh->idNormals);
-		glNormalPointer(GL_FLOAT, 0, NULL);
+		material->BindTexture();
 	}
-
-	if (mesh->idTextureCoords != -1)
-	{
-		glBindBuffer(GL_ARRAY_BUFFER, mesh->idTextureCoords);
-		glTexCoordPointer(2, GL_FLOAT, 0, NULL);
-	}
-
-	if (texture && texture->IsEnabled())
-	{
-		glBindTexture(GL_TEXTURE_2D, texture->GetIdTexture());
-	}
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->idIndex);
-
+	
 	float4x4 localTransform = this->ownerGameObject->GetComponent<Component_Transform>()->GetGlobalTransform().Transposed();
 	glPushMatrix();
 	glMultMatrixf((float*)& localTransform);
 
-	glDrawElements(GL_TRIANGLES, mesh->indices.size(), GL_UNSIGNED_INT, NULL);
+	glDrawElements(GL_TRIANGLES, mesh->amountIndices, GL_UNSIGNED_INT, NULL);
 
 	glPopMatrix();
 
@@ -147,56 +93,93 @@ void Component_Mesh::Render()
 
 	if (enableVertexNormals) {
 
-		RenderVertexNormals(mesh->vertices, mesh->normals);
+		RenderVertexNormals();
 	}
 
 	if (enableFaceNormals) {
 
-		RenderFaceNormals(mesh->vertices, mesh->normals);
+		RenderFaceNormals();
 	}
 }
 
-void Component_Mesh::RenderVertexNormals(std::vector<float3> vertices, std::vector<float3> normals)
+void Component_Mesh::RenderVertexNormals()
 {
+	if (mesh->normalsBuffer == -1)
+		return;
+
+	float normalLenght = 0.5f;
+
+	//vertices normals
 	glBegin(GL_LINES);
-	glColor3f(0.0f, 0.7f, 0.0f);
-
-	for (size_t i = 0; i < vertices.size(); i++)
+	for (size_t i = 0, c = 0; i < mesh->amountVertices * 3; i += 3, c += 4)
 	{
-		float x = vertices[i].x;
-		float y = vertices[i].y;
-		float z = vertices[i].z;
-		glVertex3f(x, y, z);
+		glColor3f(0.0f, 0.85f, 0.85f);
+		//glColor4f(colors[c], colors[c + 1], colors[c + 2], colors[c + 3]);
+		glVertex3f(mesh->vertices[i], mesh->vertices[i + 1], mesh->vertices[i + 2]);
 
-		float normal_x = normals[i].x/3;
-		float normal_y = normals[i].y/3;
-		float normal_z = normals[i].z/3;
-		glVertex3f(x + normal_x, y + normal_y, z + normal_z);
+		glVertex3f(mesh->vertices[i] + (mesh->normals[i] * normalLenght),
+			mesh->vertices[i + 1] + (mesh->normals[i + 1] * normalLenght),
+			mesh->vertices[i + 2] + (mesh->normals[i + 2]) * normalLenght);
 	}
-	glColor3f(1.f, 1.f, 1.f);
+
+	glColor3f(1.0f, 1.0f, 1.0f);
 	glEnd();
 }
 
-void Component_Mesh::RenderFaceNormals(std::vector<float3> vertices, std::vector<float3> normals)
+void Component_Mesh::RenderFaceNormals()
 {
+	if (mesh->normalsBuffer == -1)
+		return;
+
+	float normalLenght = 0.5f;
+
+	//vertices normals
 	glBegin(GL_LINES);
-	glColor3f(0.7f, 0.0f, 0.0f);
-
-	for (size_t i = 0; i < vertices.size()-2 ; i += 3)
+	for (size_t i = 0; i < mesh->amountVertices * 3; i += 3)
 	{
-		float x = (vertices[i].x + vertices[i + 1].x + vertices[i + 2].x) / 3;
-		float y = (vertices[i].y + vertices[i + 1].y + vertices[i + 2].y) / 3;
-		float z = (vertices[i].z + vertices[i + 1].z + vertices[i + 2].z) / 3;
-		glVertex3f(x, y, z);
+		glColor3f(1.0f, 0.85f, 0.0f);
+		float vx = (mesh->vertices[i] + mesh->vertices[i + 3] + mesh->vertices[i + 6]) / 3;
+		float vy = (mesh->vertices[i + 1] + mesh->vertices[i + 4] + mesh->vertices[i + 7]) / 3;
+		float vz = (mesh->vertices[i + 2] + mesh->vertices[i + 5] + mesh->vertices[i + 8]) / 3;
 
-		float normal_x = normals[i].x/3;
-		float normal_y = normals[i].y/3;
-		float normal_z = normals[i].z/3;
-		glVertex3f(x + normal_x, y + normal_y, z + normal_z);
+		float nx = (mesh->normals[i] + mesh->normals[i + 3] + mesh->normals[i + 6]) / 3;
+		float ny = (mesh->normals[i + 1] + mesh->normals[i + 4] + mesh->normals[i + 7]) / 3;
+		float nz = (mesh->normals[i + 2] + mesh->normals[i + 5] + mesh->normals[i + 8]) / 3;
+
+		glVertex3f(vx, vy, vz);
+
+		glVertex3f(vx + (mesh->normals[i] * normalLenght),
+			vy + (mesh->normals[i + 1] * normalLenght),
+			vz + (mesh->normals[i + 2]) * normalLenght);
 	}
-	glColor3f(1.f, 1.f, 1.f);
-	glEnd();
 
+	glColor3f(1.0f, 1.0f, 1.0f);
+
+	glEnd();
+}
+
+void Component_Mesh::SetResourceUID(uint UID)
+{
+	resourceUID = UID;
+	mesh = (ResourceMesh*)App->resources->RequestResource(resourceUID);
+	if (mesh != nullptr)
+		GenerateAABB();
+}
+
+Resource* Component_Mesh::GetResource(ResourceType type)
+{
+	return mesh;
+}
+
+void Component_Mesh::GenerateAABB()
+{
+	AABB.SetNegativeInfinity();
+	AABB.Enclose((float3*)mesh->vertices, mesh->amountVertices);
+}
+
+AABB Component_Mesh::GetAABB()
+{
+	return AABB;
 }
 
 const char* Component_Mesh::GetName() 
@@ -206,10 +189,26 @@ const char* Component_Mesh::GetName()
 
 int Component_Mesh::GetVertices()
 {
-	return mesh->vertices.size();
+	return mesh->amountVertices;
 }
 
 int Component_Mesh::GetIndices()
 {
-	return mesh->indices.size();
+	return mesh->amountIndices;
+}
+
+void Component_Mesh::Save(JsonArray& save_array)
+{
+	JsonObj save_object;
+
+	save_object.AddInt("Type", type);
+	save_object.AddInt("MeshID", mesh->GetUID());
+
+	save_array.AddObject(save_object);
+}
+
+void Component_Mesh::Load(JsonObj& load_object)
+{
+	int meshUID = load_object.GetInt("MeshID");
+	SetResourceUID(meshUID);
 }

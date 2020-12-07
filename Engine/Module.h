@@ -50,6 +50,11 @@ public:
 		return UPDATE_CONTINUE;
 	}
 
+	virtual update_status OnFrameEnd() 
+	{
+		return UPDATE_CONTINUE;
+	}
+
 	virtual bool CleanUp() 
 	{ 
 		return true; 

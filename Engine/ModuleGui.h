@@ -11,11 +11,12 @@ class GuiConsole;
 class GuiConfiguration;
 class GuiInspector;
 class GuiHierarchy;
+class GuiImport;
 
 class ModuleGui : public Module
 {
 public:
-	ModuleGui(Application* app, bool start_enabled = true);
+	ModuleGui(bool start_enabled = true);
 	~ModuleGui();
 
 	bool Start();
@@ -23,15 +24,19 @@ public:
 	update_status PreUpdate(float dt);
 	update_status Update(float dt);
 	update_status PostUpdate(float dt);
+
+	update_status Draw();
+
 	bool CleanUp();
 
 	void SelectGameObject(GameObject* gO);
-	void ConsoleLog(const char* text);
+	void ConsoleLog(const char* text, int warningLevel);
 	void CleanLog();
 	void DebugConsole();
 
 	std::vector<GuiWindow*> ui_windows;
 	ImGuiTextBuffer debug_console_buff;
+	std::vector<ImVec4> debug_console_color_buff;
 
 private:
 	bool* dockingwindow;
@@ -42,4 +47,5 @@ private:
 	GuiConfiguration* ui_configuration = nullptr;
 	GuiInspector* ui_inspector = nullptr;
 	GuiHierarchy* ui_hierarchy = nullptr;
+	GuiImport* ui_import = nullptr;
 };

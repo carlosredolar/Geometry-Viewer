@@ -1,7 +1,5 @@
 #pragma once
-
 #include "Globals.h"
-#include "Timer.h"
 #include "Time.h"
 #include "Module.h"
 #include "ModuleWindow.h"
@@ -15,6 +13,32 @@
 #include "ModuleResources.h"
 
 #include <stack>
+
+struct Specs
+{
+	int cpu_count;
+	int cache;
+	float ram;
+	const char* gpu;
+	const char* gpu_brand;
+	float vram_budget;
+	float vram_usage;
+	float vram_available;
+	float vram_reserved;
+
+	bool RDTSC = false;
+	bool MMX = false;
+	bool SSE = false;
+	bool SSE2 = false;
+	bool SSE3 = false;
+	bool SSE41 = false;
+	bool SSE42 = false;
+	bool AVX = false;
+	bool AVX2 = false;
+	bool AltiVec = false;
+
+	std::string caps;
+};
 
 class Application
 {
@@ -38,19 +62,17 @@ private:
 	int	   argc;
 	char** args;
 
-
-	Timer	ms_timer;
 	float	dt = 0;
 	float last_FPS = 0.0f;
-	float last_ms = 0.0f;
+	float capped_ms;
 
 	const char* config_path;
 
 	bool wantToSave;
 	bool wantToLoad;
 
-	const char* _file_to_load;
-	const char* _file_to_save;
+	const char* fileToLoad;
+	const char* fileToSave;
 
 	std::vector<Module*> list_modules;
 
@@ -76,11 +98,16 @@ public:
 	void Load(const char* filePath);
 
 	void AddModuleToTaskStack(Module* callback);
+	Specs GetSpecs();
 
 private:
 
 	void AddModule(Module* mod);
 	void PrepareUpdate();
 	void FinishUpdate();
+
+	void LoadSpecs();
+protected:
+	Specs specs;
 };
 extern Application* App;

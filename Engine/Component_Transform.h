@@ -17,6 +17,7 @@ public:
 
 	//Update
 	void Update() override;
+	void OnEditor() override;
 
 	void SetTransform(float4x4 transform);
 	void SetTransform(float3 pos, Quat rotation, float3 scale);

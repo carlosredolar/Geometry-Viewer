@@ -16,6 +16,8 @@ enum ResourceType
 	RESOURCE_UNKNOWN
 };
 
+// Base Resource class
+
 class Resource
 {
 public:
@@ -42,6 +44,8 @@ protected:
 	ResourceType type = RESOURCE_UNKNOWN;
 };
 
+//Resource Mesh
+
 class ResourceMesh : public Resource
 {
 public:
@@ -54,36 +58,43 @@ public:
 	void DeleteBuffers();
 
 public:
+	uint verticesBuffer = 0;
 	uint amountVertices = -1;
 	float* vertices = nullptr;
 
+	uint indicesBuffer = 0;
 	uint amountIndices = -1;
 	uint* indices = nullptr;
 
+	uint normalsBuffer = 0;
 	uint amountNormals = -1;
 	float* normals;
 
+	uint textureCoordsBuffer = 0;
 	uint amountTextureCoords = -1;
 	float* textureCoords = nullptr;
 
 	float* colors;
 
 private:
-	bool _buffers_created;
+	bool buffersCreated;
 };
 
 typedef unsigned char GLubyte;
+
+// Resource Texture
 
 class ResourceTexture : public Resource {
 public:
 	ResourceTexture(uint UID);
 	~ResourceTexture();
 
-	uint SaveMeta(JsonObj& baseObject, uint last_modification) override;
-	void Load(JsonObj& baseObject) override;
-
 	void GenerateBuffers();
 	void BindTexture();
+
+	void FillData(GLubyte* data, uint UUID, int width, int height);
+	uint SaveMeta(JsonObj& base_object, uint last_modification) override;
+	void Load(JsonObj& base_object) override;
 
 	uint GetID();
 	int GeWidth();
@@ -92,12 +103,16 @@ public:
 	uint GetGpuID();
 
 private:
-	uint id;
+	uint UUID;
 	int width;
 	int height;
 	GLubyte* data;
 	uint gpuID;
 };
+
+// Resource Model
+
+class Light;
 
 struct ModelNode
 {
@@ -126,41 +141,17 @@ public:
 	std::vector<uint> meshes;
 	std::vector<uint> materials;
 	std::vector<uint> textures;
-	//std::vector<Light> lights;
-	//std::vector<Component_Camera> Component_Cameras;
+	std::vector<Light*> lights;
 };
 
-class ModuleScene : public Module
-{
+// Resource Material
+
+class ResourceMaterial : public Resource {
 public:
-	ModuleScene(bool start_enabled = true);
-	~ModuleScene();
-
-	bool Start();
-	bool Init();
-	bool LoadConfig(JsonObj& config) override;
-	update_status Update(float dt);
-	void HandleInput();
-	bool CleanUp();
-
-	void AddGameObject(GameObject* gameObject);
-	void DeleteGameObject(GameObject* gameObject);
-	GameObject* GetRoot() { return root; }
-	std::vector<GameObject*> GetAllGameObjects();
-	void PreorderGameObjects(GameObject* gameObject, std::vector<GameObject*>& gameObjects);
-	void EditTransform();
-
-	bool ClearScene();
-
-	bool Save(const char* file_path);
-	bool Load(const char* scene_file);
+	ResourceMaterial(uint UID);
+	~ResourceMaterial();
 
 public:
-	bool show_grid;
-	GameObject* selectedGameObject;
-
-private:
-	GameObject* root;
-	ImGuizmo::OPERATION mCurrentGizmoOperation;
-	ImGuizmo::MODE mCurrentGizmoMode;
+	uint diffuseTextureUID;
+	Color diffuseColor;
 };

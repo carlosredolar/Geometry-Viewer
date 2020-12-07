@@ -54,7 +54,7 @@ void GuiHierarchy::TreeNodeChild(GameObject* gO)
 		{
 			GameObject* gOChild = gO->GetChilds()->at(j);
 			ImGuiTreeNodeFlags node_flags = base_flags; // Disable the default "open on single-click behavior" + set Selected flag according to our selection.
-			const bool is_selected = (selection_mask & (1 << gOChild->id)) != 0;
+			const bool is_selected = (selection_mask & (1 << gOChild->UUID)) != 0;
 
 			if (is_selected && gOChild->selected)
 				node_flags |= ImGuiTreeNodeFlags_Selected;
@@ -63,7 +63,7 @@ void GuiHierarchy::TreeNodeChild(GameObject* gO)
 			{
 				bool node_open = ImGui::TreeNodeEx((void*)(intptr_t)j, node_flags, gOChild->GetName(), j);
 				if (ImGui::IsItemClicked())
-					node_clicked = gOChild->id;
+					node_clicked = gOChild->UUID;
 				if (node_open)
 				{
 					TreeNodeChild(gOChild);
@@ -75,7 +75,7 @@ void GuiHierarchy::TreeNodeChild(GameObject* gO)
 				node_flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen; // ImGuiTreeNodeFlags_Bullet
 				bool node_open = ImGui::TreeNodeEx((void*)(intptr_t)j, node_flags, gOChild->GetName(), j);
 				if (ImGui::IsItemClicked())
-					node_clicked = gOChild->id;
+					node_clicked = gOChild->UUID;
 			}
 
 		}

@@ -25,12 +25,12 @@ void Component_Material::CleanUp()
 
 uint Component_Material::GetIdTexture()
 {
-	return texture->id;
+	return texture->UUID;
 }
 
-void Component_Material::SetIdTexture(uint id)
+void Component_Material::SetIdTexture(uint UUID)
 {
-	texture->id = id;
+	texture->UUID = UUID;
 }
 
 void Component_Material::SetTexture(textureInfo* tex)

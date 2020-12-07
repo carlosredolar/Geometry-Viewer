@@ -10,7 +10,7 @@ typedef unsigned int GLuint;
 typedef unsigned int GLenum;
 typedef unsigned char GLubyte;
 typedef void* SDL_GLContext;
-class Camera;
+class Component_Camera;
 
 enum DisplayMode
 {
@@ -37,8 +37,8 @@ public:
 	void DrawAABB(float3* aabb);
 	DisplayMode GetDisplayMode();
 	void SetDisplayMode(DisplayMode display);
-	void SetMainCamera(Camera* camera);
-	Camera* GetMainCamera();
+	void SetMainCamera(Component_Camera* camera);
+	Component_Camera* GetMainCamera();
 	bool IsInsideCameraView(AABB aabb);
 
 	void SetCapActive(GLenum cap, bool active);
@@ -77,5 +77,5 @@ public:
 
 private:
 	bool debug;
-	Camera* _mainCamera;
+	Component_Camera* mainCamera;
 };

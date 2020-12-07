@@ -18,7 +18,7 @@
 #include <gl/GL.h>
 #include <gl/GLU.h>
 
-#include "DevIL/include/il.h"
+#include "Devil/include/IL/il.h"
 
 #pragma comment (lib, "glu32.lib")          /* link OpenGL Utility lib */
 #pragma comment (lib, "opengl32.lib")     /* link Microsoft OpenGL lib */
@@ -47,7 +47,7 @@ bool ModuleRenderer3D::Init()
 	context = SDL_GL_CreateContext(App->window->window);
 	if (context == NULL)
 	{
-		LOG("OpenGL context could not be created! SDL_Error: %s\n", SDL_GetError());
+		ERROR_LOG("OpenGL context could not be created! SDL_Error: %s\n", SDL_GetError());
 		ret = false;
 	}
 
@@ -55,7 +55,7 @@ bool ModuleRenderer3D::Init()
 
 	if (error != GL_NO_ERROR)
 	{
-		LOG("Error initializing glew library! %s", SDL_GetError());
+		ERROR_LOG("Error initializing glew library! %s", SDL_GetError());
 		ret = false;
 	}
 	else
@@ -67,7 +67,7 @@ bool ModuleRenderer3D::Init()
 	{
 		//Use Vsync
 		if (vsync && SDL_GL_SetSwapInterval(1) < 0)
-			LOG("Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
+			ERROR_LOG("Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
 
 		//Initialize Projection Matrix
 		glMatrixMode(GL_PROJECTION);
@@ -146,7 +146,7 @@ bool ModuleRenderer3D::Init()
 	return ret;
 }
 
-bool ModuleRenderer3D::LoadConfig(GnJSONObj& config)
+bool ModuleRenderer3D::LoadConfig(JsonObj& config)
 {
 	debug = config.GetBool("debug");
 	vsync = config.GetBool("vsync");
@@ -184,7 +184,6 @@ update_status ModuleRenderer3D::Update(float dt)
 {
 	update_status ret = UPDATE_CONTINUE;
 
-	//DrawDirectModeCube();
 	DrawRay();
 
 	return ret;
@@ -193,20 +192,24 @@ update_status ModuleRenderer3D::Update(float dt)
 // PostUpdate present buffer to screen
 update_status ModuleRenderer3D::PostUpdate(float dt)
 {
+	update_status ret = UPDATE_CONTINUE;
+
 	glBindVertexArray(0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	App->editor->Draw();
+	ret = App->gui->Draw();
 
 	SDL_GL_SwapWindow(App->window->window);
 
-	if (App->scene->selectedGameObject != nullptr && App->scene->selectedGameObject->to_delete)
+	GameObject* selectedGameObject = App->scene->GetSelectedGameObject();
+
+	if (selectedGameObject != nullptr && selectedGameObject->to_delete)
 	{
-		App->scene->DeleteGameObject(App->scene->selectedGameObject);
-		App->scene->selectedGameObject = nullptr;
+		App->scene->DeleteGameObject(selectedGameObject);
+		selectedGameObject = nullptr;
 	}
 
-	return UPDATE_CONTINUE;
+	return ret;
 }
 
 // Called before quitting
@@ -218,7 +221,7 @@ bool ModuleRenderer3D::CleanUp()
 	glDeleteTextures(1, &colorTexture);
 
 	SDL_GL_DeleteContext(context);
-	_mainCamera = nullptr;
+	mainCamera = nullptr;
 
 	return true;
 }
@@ -317,22 +320,22 @@ void ModuleRenderer3D::SetDisplayMode(DisplayMode display)
 	}
 }
 
-void ModuleRenderer3D::SetMainCamera(Camera * camera)
+void ModuleRenderer3D::SetMainCamera(Component_Camera * camera)
 {
-	_mainCamera = camera;
+	mainCamera = camera;
 }
 
-Camera* ModuleRenderer3D::GetMainCamera()
+Component_Camera* ModuleRenderer3D::GetMainCamera()
 {
-	return _mainCamera;
+	return mainCamera;
 }
 
 bool ModuleRenderer3D::IsInsideCameraView(AABB aabb)
 {
 	if (cullEditorCamera)
-		return _mainCamera->ContainsAABB(aabb) || App->camera->GetCamera()->ContainsAABB(aabb);
+		return mainCamera->ContainsAABB(aabb) || App->camera->GetCamera()->ContainsAABB(aabb);
 	else
-		return _mainCamera->ContainsAABB(aabb);
+		return mainCamera->ContainsAABB(aabb);
 }
 
 void ModuleRenderer3D::SetCapActive(GLenum cap, bool active)
@@ -555,7 +558,7 @@ void ModuleRenderer3D::DrawDirectModeCube()
 	glDeleteTextures(1, &textureID);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	ilBindImage(0);
-	//ilDeleteImages(1, &Lenna->id);
+	//ilDeleteImages(1, &Lenna->UUID);
 }
 
 void ModuleRenderer3D::BeginDebugDraw() {}

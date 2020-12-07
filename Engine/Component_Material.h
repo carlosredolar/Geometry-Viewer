@@ -18,6 +18,7 @@ public:
 
 	//Update
 	void Update() override;
+	void OnEditor() override;
 
 	//Enable Component
 	void Enable() override;
@@ -31,7 +32,7 @@ public:
 	void CleanUp();
 
 	uint GetIdTexture();
-	void SetIdTexture(uint id);
+	void SetIdTexture(uint UUID);
 	void SetTexture(textureInfo* tex);
 
 	const char* GetName();

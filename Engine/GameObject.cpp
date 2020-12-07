@@ -4,7 +4,7 @@
 #include "Component_Material.h"
 #include "Component.h"
 
-GameObject::GameObject(const char* name, GameObject* parent, bool enabled) :name(name), parent(parent), enabled(enabled) { selected = false; }
+GameObject::GameObject(const char* name, GameObject* parent, bool enabled) :name(name), parent(parent), enabled(enabled) { selected = false; to_delete = false; }
 
 GameObject::~GameObject()
 {
@@ -220,7 +220,7 @@ const char* const GameObject::GetName()
 	return name.c_str();
 }
 
-void GameObject::ChangeName(char* new_name)
+void GameObject::ChangeName(const char* new_name)
 {
 	name = new_name;
 }

@@ -1,7 +1,7 @@
 #include "Time.h"
 
-Clock Time::realClock;
-Clock Time::gameClock;
+rClock Time::realClock;
+rClock Time::gameClock;
 
 int Time::frameCount = 0;
 
@@ -15,13 +15,13 @@ void Time::Init()
 }
 
 
-Clock::Clock()
+rClock::rClock()
 {
 	timeScale = 1.0f;
 	paused = false;
 }
 
-void Clock::Start()
+void rClock::Start()
 {
 	paused = false;
 	started = true;
@@ -29,39 +29,39 @@ void Clock::Start()
 	timer.Start();
 }
 
-void Clock::Stop()
+void rClock::Stop()
 {
 	paused = false;
 	started = false;
 }
 
-void Clock::Pause()
+void rClock::Pause()
 {
 	paused = true;
 	timeScale = 0.0f;
 	timer.Stop();
 }
 
-void Clock::Resume()
+void rClock::Resume()
 {
 	paused = false;
 	timeScale = 1.0f;
 	timer.Resume();
 }
 
-void Clock::Reset()
+void rClock::Reset()
 {
 	timeScale = 1.0f;
 	paused = false;
 }
 
-void Clock::Step()
+void rClock::Step()
 {
 	dt = (float)deltaTimer.Read() / 1000 * timeScale;
 	deltaTimer.Start();
 }
 
-float Clock::timeSinceStartup()
+float rClock::timeSinceStartup()
 {
 	if (started)
 		return timer.ReadSec();
@@ -69,7 +69,7 @@ float Clock::timeSinceStartup()
 		return 0.0f;
 }
 
-float Clock::deltaTime()
+float rClock::deltaTime()
 {
 	return dt * timeScale;
 }

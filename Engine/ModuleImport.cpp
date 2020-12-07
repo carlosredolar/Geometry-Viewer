@@ -24,7 +24,7 @@
 
 #pragma comment (lib, "Assimp/Assimp/libx86/assimp.lib")
 
-#pragma comment (lib, "Devil/libx86/DevIL.lib")	
+#pragma comment (lib, "Devil/libx86/Devil.lib")	
 #pragma comment (lib, "Devil/libx86/ILU.lib")	
 #pragma comment (lib, "Devil/libx86/ILUT.lib")	
 
@@ -62,16 +62,16 @@ void ModelImporter::Import(char* fileBuffer, ResourceModel* model, uint size)
 			light.diffuse = Color(ai_light->mColorDiffuse.r, ai_light->mColorDiffuse.g, ai_light->mColorDiffuse.b);
 			model->lights.push_back(light);
 		}
-		for (size_t i = 0; i < scene->mNumComponent_Cameras; i++)
+		for (size_t i = 0; i < scene->mNumCameras; i++)
 		{
-			Component_Camera Component_Camera;
-			aiComponent_Camera* aiComponent_Camera = scene->mComponent_Cameras[i];
+			Camera camera;
+			aiCamera* aicamera = scene->mCameras[i];
 			//TODO: set aspect ratio
-			Component_Camera.SetHorizontalFieldOfView(aiComponent_Camera->mHorizontalFOV);
-			Component_Camera.SetPosition(float3(aiComponent_Camera->mPosition.x, aiComponent_Camera->mPosition.y, aiComponent_Camera->mPosition.z));
-			Component_Camera.SetNearPlaneDistance(aiComponent_Camera->mClipPlaneNear);
-			Component_Camera.SetFarPlaneDistance(aiComponent_Camera->mClipPlaneFar);
-			Component_Camera.SetReference(float3(aiComponent_Camera->mLookAt.x, aiComponent_Camera->mLookAt.y, aiComponent_Camera->mLookAt.z));
+			camera.SetHorizontalFieldOfView(aicamera->mHorizontalFOV);
+			camera.SetPosition(float3(aicamera->mPosition.x, aicamera->mPosition.y, aicamera->mPosition.z));
+			camera.SetNearPlaneDistance(aicamera->mClipPlaneNear);
+			camera.SetFarPlaneDistance(aicamera->mClipPlaneFar);
+			camera.SetReference(float3(aicamera->mLookAt.x, aicamera->mLookAt.y, aicamera->mLookAt.z));
 		}
 		*/
 
@@ -91,12 +91,12 @@ uint64 ModelImporter::Save(ResourceModel* model, char** fileBuffer)
 {
 	char* buffer;
 
-	GnJSONObj base_object;
-	GnJSONArray nodes_array = base_object.AddArray("Nodes");
+	JsonObj base_object;
+	JsonArray nodes_array = base_object.AddArray("Nodes");
 
 	for (size_t i = 0; i < model->nodes.size(); i++)
 	{
-		GnJSONObj node_object;
+		JsonObj node_object;
 
 		node_object.AddString("Name", model->nodes[i].name.c_str());
 		node_object.AddInt("UID", model->nodes[i].UID);
@@ -132,7 +132,7 @@ void ModelImporter::ImportChildren(const aiScene* scene, aiNode* node, aiNode* p
 	ModelNode modelNode;
 
 	if (node == scene->mRootNode)
-		modelNode.name = FileSystem::GetFileName(model->assetsFile.c_str());
+		modelNode.name = App->fileManager->ExtractFileName(model->assetsFile.c_str());
 	else
 		modelNode.name = node->mName.C_Str();
 
@@ -177,18 +177,18 @@ void ModelImporter::ReimportFile(char* fileBuffer, ResourceModel* newModel, uint
 			{
 				newModel->nodes[n].meshID = oldModel.nodes[o].meshID;
 				std::string mesh_path = App->resources->GenerateLibraryPath(oldModel.nodes[o].meshID, ResourceType::RESOURCE_MESH);
-				if (FileSystem::Exists(mesh_path.c_str()))
+				if (App->fileManager->Exists(mesh_path.c_str()))
 				{
 					std::string temp_path = App->resources->GenerateLibraryPath(newModel->nodes[n].meshID, ResourceType::RESOURCE_MESH);
-					FileSystem::Rename(temp_path.c_str(), mesh_path.c_str());
+					App->fileManager->Rename(temp_path.c_str(), mesh_path.c_str());
 				}
 
 				newModel->nodes[n].materialID = oldModel.nodes[o].materialID;
 				std::string material_path = App->resources->GenerateLibraryPath(oldModel.nodes[o].materialID, ResourceType::RESOURCE_MATERIAL);
-				if (FileSystem::Exists(material_path.c_str()))
+				if (App->fileManager->Exists(material_path.c_str()))
 				{
 					std::string temp_path = App->resources->GenerateLibraryPath(newModel->nodes[n].materialID, ResourceType::RESOURCE_MATERIAL);
-					FileSystem::Rename(temp_path.c_str(), material_path.c_str());
+					App->fileManager->Rename(temp_path.c_str(), material_path.c_str());
 				}
 			}
 		}
@@ -203,11 +203,12 @@ void ModelImporter::LoadTransform(aiNode* node, ModelNode& modelNode)
 	node->mTransformation.Decompose(scaling, rotation, position);
 	//eulerRotation = rotation.GetEuler() * RADTODEG;
 
-	if (App->resources->modelImportingOptions.normalizeScales && scaling.x == 100 && scaling.y == 100 && scaling.z == 100) {
+	if (App->resources->modelImportingSettings.normalizeScales && scaling.x == 100 && scaling.y == 100 && scaling.z == 100) 
+	{
 		scaling.x = scaling.y = scaling.z = 1.0f;
 	}
 
-	scaling *= App->resources->modelImportingOptions.globalScale;
+	scaling *= App->resources->modelImportingSettings.globalScale;
 
 	modelNode.position = float3(position.x, position.y, position.z);
 	modelNode.rotation = Quat(rotation.x, rotation.y, rotation.z, rotation.w);
@@ -218,15 +219,15 @@ bool ModelImporter::Load(char* fileBuffer, ResourceModel* model, uint size)
 {
 	bool ret = true;
 
-	GnJSONObj model_data(fileBuffer);
-	GnJSONArray nodes_array = model_data.GetArray("Nodes");
+	JsonObj model_data(fileBuffer);
+	JsonArray nodes_array = model_data.GetArray("Nodes");
 
 	std::unordered_set<uint> meshes;
 	std::unordered_set<uint> materials;
 
 	for (size_t i = 0; i < nodes_array.Size(); i++)
 	{
-		GnJSONObj nodeObject = nodes_array.GetObjectAt(i);
+		JsonObj nodeObject = nodes_array.GetObjectAt(i);
 		ModelNode modelNode;
 		modelNode.name = nodeObject.GetString("Name", "No Name");
 		modelNode.UID = nodeObject.GetInt("UID");
@@ -277,32 +278,29 @@ bool ModelImporter::Load(char* fileBuffer, ResourceModel* model, uint size)
 GameObject* ModelImporter::ConvertToGameObject(ResourceModel * model)
 {
 	if (model == nullptr) {
-		LOG("Trying to load null model");
+		ERROR_LOG("Trying to load null model");
 		return nullptr;
 	}
 
 	std::vector<GameObject*> createdGameObjects;
 
-	GameObject* root = nullptr;
+	GameObject* root = App->scene->GetRoot();
 
 	for (size_t i = 0; i < model->nodes.size(); i++)
 	{
-		GameObject* gameObject = new GameObject();
-		gameObject->SetName(model->nodes[i].name.c_str());
+		GameObject* gameObject = new GameObject(model->nodes[i].name.c_str(), root);
 		gameObject->UUID = model->nodes[i].UID;
-		gameObject->GetTransform()->SetPosition(model->nodes[i].position);
-		gameObject->GetTransform()->SetRotation(model->nodes[i].rotation);
-		gameObject->GetTransform()->SetScale(model->nodes[i].scale);
+		gameObject->GetComponent<Component_Transform>()->SetTransform(model->nodes[i].position, model->nodes[i].rotation, model->nodes[i].scale);
 
 		if (model->nodes[i].meshID != -1)
 		{
-			GnMesh* mesh = (GnMesh*)gameObject->AddComponent(ComponentType::MESH);
+			Component_Mesh* mesh = (Component_Mesh*)gameObject->CreateComponent(ComponentType::MESH);
 			mesh->SetResourceUID(model->nodes[i].meshID);
 		}
 
 		if (model->nodes[i].materialID != -1)
 		{
-			Material* material = (Material*)gameObject->AddComponent(ComponentType::MATERIAL);
+			Component_Material* material = (Component_Material*)gameObject->CreateComponent(ComponentType::MATERIAL);
 			material->SetResourceUID(model->nodes[i].materialID);
 		}
 
@@ -313,8 +311,8 @@ GameObject* ModelImporter::ConvertToGameObject(ResourceModel * model)
 		{
 			if (createdGameObjects[j]->UUID == model->nodes[i].parentUID)
 			{
-				createdGameObjects[j]->AddChild(gameObject);
-				gameObject->SetParent(createdGameObjects[j]);
+				createdGameObjects[j]->AddGameObjectAsChild(gameObject);
+				gameObject->ChangeParent(createdGameObjects[j]);
 			}
 		}
 
@@ -329,13 +327,13 @@ GameObject* ModelImporter::ConvertToGameObject(ResourceModel * model)
 void ModelImporter::ExtractInternalResources(const char* path, std::vector<uint> & meshes, std::vector<uint> & materials)
 {
 	char* buffer = nullptr;
-	uint size = FileSystem::Load(path, &buffer);
-	GnJSONObj model_data(buffer);
-	GnJSONArray nodes_array = model_data.GetArray("Nodes");
+	uint size = App->fileManager->Load(path, &buffer);
+	JsonObj model_data(buffer);
+	JsonArray nodes_array = model_data.GetArray("Nodes");
 
 	for (size_t i = 0; i < nodes_array.Size(); i++)
 	{
-		GnJSONObj nodeObject = nodes_array.GetObjectAt(i);
+		JsonObj nodeObject = nodes_array.GetObjectAt(i);
 
 		int meshID = nodeObject.GetInt("MeshID");
 		if (meshID != -1)
@@ -363,13 +361,13 @@ void ModelImporter::ExtractInternalResources(const char* path, std::vector<uint>
 void ModelImporter::ExtractInternalResources(const char* meta_file, ResourceModel & model)
 {
 	char* buffer = nullptr;
-	uint size = FileSystem::Load(meta_file, &buffer);
-	GnJSONObj model_data(buffer);
-	GnJSONArray nodes_array = model_data.GetArray("Nodes");
+	uint size = App->fileManager->Load(meta_file, &buffer);
+	JsonObj model_data(buffer);
+	JsonArray nodes_array = model_data.GetArray("Nodes");
 
 	for (size_t i = 0; i < nodes_array.Size(); i++)
 	{
-		GnJSONObj nodeObject = nodes_array.GetObjectAt(i);
+		JsonObj nodeObject = nodes_array.GetObjectAt(i);
 		ModelNode modelNode;
 
 		modelNode.name = nodeObject.GetString("Name", "No Name");
@@ -386,10 +384,10 @@ bool ModelImporter::InternalResourcesExist(const char* path)
 	bool ret = true;
 
 	char* buffer;
-	FileSystem::Load(path, &buffer);
+	App->fileManager->Load(path, &buffer);
 
-	GnJSONObj meta_data(buffer);
-	GnJSONArray nodes_array = meta_data.GetArray("Nodes");
+	JsonObj meta_data(buffer);
+	JsonArray nodes_array = meta_data.GetArray("Nodes");
 
 	//generate an assets file if the original file is a meta file
 	std::string assets_file = path;
@@ -399,7 +397,7 @@ bool ModelImporter::InternalResourcesExist(const char* path)
 
 	for (size_t i = 0; i < nodes_array.Size(); i++)
 	{
-		GnJSONObj nodeObject = nodes_array.GetObjectAt(i);
+		JsonObj nodeObject = nodes_array.GetObjectAt(i);
 		std::string nodeName = nodeObject.GetString("Name", "No Name");
 
 		int meshID = nodeObject.GetInt("MeshID");
@@ -407,7 +405,7 @@ bool ModelImporter::InternalResourcesExist(const char* path)
 		{
 			std::string meshLibraryPath = nodeObject.GetString("mesh_library_path", "No path");
 
-			if (!FileSystem::Exists(meshLibraryPath.c_str())) {
+			if (!App->fileManager->Exists(meshLibraryPath.c_str())) {
 				ret = false;
 				LOG("Mesh: %d not found", meshID);
 				break;
@@ -423,7 +421,7 @@ bool ModelImporter::InternalResourcesExist(const char* path)
 		{
 			std::string materialLibraryPath = nodeObject.GetString("material_library_path", "No path");
 
-			if (!FileSystem::Exists(materialLibraryPath.c_str())) {
+			if (!App->fileManager->Exists(materialLibraryPath.c_str())) {
 				ret = false;
 				LOG("Material: %s not found", materialLibraryPath.c_str());
 				break;
@@ -471,10 +469,10 @@ void ModelImporter::ConvertToDesiredAxis(aiNode * node, ModelNode & modelNode)
 	float3x3 desiredBasis = float3x3::zero;
 
 	float3 desiredForwardAxis = float3::zero;
-	desiredForwardAxis[App->resources->modelImportingOptions.forwardAxis % 3] = App->resources->modelImportingOptions.forwardAxis;
+	desiredForwardAxis[App->resources->modelImportingSettings.forwardAxis % 3] = App->resources->modelImportingSettings.forwardAxis;
 
 	float3 desiredUpAxis = float3::zero;
-	desiredUpAxis[App->resources->modelImportingOptions.upAxis % 3] = App->resources->modelImportingOptions.upAxis;
+	desiredUpAxis[App->resources->modelImportingSettings.upAxis % 3] = App->resources->modelImportingSettings.upAxis;
 
 	float3 desiredCoordAxis = float3::zero;
 	desiredCoordAxis = desiredForwardAxis.Cross(desiredUpAxis);
@@ -510,23 +508,23 @@ void MeshImporter::Import(const aiMesh * aimesh, ResourceMesh * mesh)
 	timer.Start();
 
 	//vertex copying
-	mesh->vertices_amount = aimesh->mNumVertices;
-	mesh->vertices = new float[mesh->vertices_amount * 3]();
-	memcpy(mesh->vertices, aimesh->mVertices, sizeof(float) * mesh->vertices_amount * 3);
-	LOG("%s imported with %d vertices", aimesh->mName.C_Str(), mesh->vertices_amount);
+	mesh->amountVertices = aimesh->mNumVertices;
+	mesh->vertices = new float[mesh->amountVertices * 3]();
+	memcpy(mesh->vertices, aimesh->mVertices, sizeof(float) * mesh->amountVertices * 3);
+	LOG("%s imported with %d vertices", aimesh->mName.C_Str(), mesh->amountVertices);
 
 	//indices copying
 	if (aimesh->HasFaces())
 	{
-		mesh->indices_amount = aimesh->mNumFaces * 3;
-		mesh->indices = new uint[mesh->indices_amount]();
-		LOG("%s imported with %d indices", aimesh->mName.C_Str(), mesh->indices_amount);
+		mesh->amountIndices = aimesh->mNumFaces * 3;
+		mesh->indices = new uint[mesh->amountIndices]();
+		LOG("%s imported with %d indices", aimesh->mName.C_Str(), mesh->amountIndices);
 
 		for (size_t f = 0; f < aimesh->mNumFaces; f++)
 		{
 			if (aimesh->mFaces[f].mNumIndices != 3)
 			{
-				LOG_WARNING("WARNING, geometry face with != 3 indices!");
+				WARNING_LOG("WARNING, geometry face with != 3 indices!");
 			}
 			else
 			{
@@ -535,13 +533,13 @@ void MeshImporter::Import(const aiMesh * aimesh, ResourceMesh * mesh)
 		}
 	}
 
-	mesh->texcoords_amount = aimesh->mNumVertices;
-	mesh->texcoords = new float[mesh->vertices_amount * 2]();
-	mesh->colors = new float[mesh->indices_amount * 4]();
+	mesh->amountTextureCoords = aimesh->mNumVertices;
+	mesh->textureCoords = new float[mesh->amountVertices * 2]();
+	mesh->colors = new float[mesh->amountIndices * 4]();
 
 	if (aimesh->HasNormals())
 	{
-		mesh->normals_amount = aimesh->mNumVertices;
+		mesh->amountNormals = aimesh->mNumVertices;
 		mesh->normals = new float[aimesh->mNumVertices * 3]();
 	}
 
@@ -557,16 +555,16 @@ void MeshImporter::Import(const aiMesh * aimesh, ResourceMesh * mesh)
 			mesh->normals[n + 2] = aimesh->mNormals[v].z;
 		}
 
-		//texcoords copying
+		//textureCoords copying
 		if (aimesh->mTextureCoords[0])
 		{
-			mesh->texcoords[tx] = aimesh->mTextureCoords[0][v].x;
-			mesh->texcoords[tx + 1] = aimesh->mTextureCoords[0][v].y;
+			mesh->textureCoords[tx] = aimesh->mTextureCoords[0][v].x;
+			mesh->textureCoords[tx + 1] = aimesh->mTextureCoords[0][v].y;
 		}
 		else
 		{
-			mesh->texcoords[tx] = 0.0f;
-			mesh->texcoords[tx + 1] = 0.0f;
+			mesh->textureCoords[tx] = 0.0f;
+			mesh->textureCoords[tx + 1] = 0.0f;
 		}
 
 		//color copying
@@ -591,10 +589,10 @@ void MeshImporter::Import(const aiMesh * aimesh, ResourceMesh * mesh)
 
 uint64 MeshImporter::Save(ResourceMesh * mesh, char** fileBuffer)
 {
-	uint ranges[4] = { mesh->indices_amount, mesh->vertices_amount, mesh->normals_amount, mesh->texcoords_amount };
+	uint ranges[4] = { mesh->amountIndices, mesh->amountVertices, mesh->amountNormals, mesh->amountTextureCoords };
 
-	uint size = sizeof(ranges) + sizeof(uint) * mesh->indices_amount + sizeof(float) * mesh->vertices_amount * 3
-		+ sizeof(float) * mesh->normals_amount * 3 + sizeof(float) * mesh->texcoords_amount * 2;
+	uint size = sizeof(ranges) + sizeof(uint) * mesh->amountIndices + sizeof(float) * mesh->amountVertices * 3
+		+ sizeof(float) * mesh->amountNormals * 3 + sizeof(float) * mesh->amountTextureCoords * 2;
 
 	char* buffer = new char[size];
 	char* cursor = buffer;
@@ -604,23 +602,23 @@ uint64 MeshImporter::Save(ResourceMesh * mesh, char** fileBuffer)
 	cursor += bytes;
 
 	//store indices
-	bytes = sizeof(uint) * mesh->indices_amount;
+	bytes = sizeof(uint) * mesh->amountIndices;
 	memcpy(cursor, mesh->indices, bytes);
 	cursor += bytes;
 
 	//store vertices
-	bytes = sizeof(float) * mesh->vertices_amount * 3;
+	bytes = sizeof(float) * mesh->amountVertices * 3;
 	memcpy(cursor, mesh->vertices, bytes);
 	cursor += bytes;
 
 	//store normals
-	bytes = sizeof(float) * mesh->normals_amount * 3;
+	bytes = sizeof(float) * mesh->amountNormals * 3;
 	memcpy(cursor, mesh->normals, bytes);
 	cursor += bytes;
 
-	//store texcoords
-	bytes = sizeof(float) * mesh->texcoords_amount * 2;
-	memcpy(cursor, mesh->texcoords, bytes);
+	//store textureCoords
+	bytes = sizeof(float) * mesh->amountTextureCoords * 2;
+	memcpy(cursor, mesh->textureCoords, bytes);
 
 	*fileBuffer = buffer;
 
@@ -641,33 +639,33 @@ bool MeshImporter::Load(char* fileBuffer, ResourceMesh * mesh, uint size)
 	memcpy(ranges, cursor, bytes);
 	cursor += bytes;
 
-	mesh->indices_amount = ranges[0];
-	mesh->vertices_amount = ranges[1];
-	mesh->normals_amount = ranges[2];
-	mesh->texcoords_amount = ranges[3];
+	mesh->amountIndices = ranges[0];
+	mesh->amountVertices = ranges[1];
+	mesh->amountNormals = ranges[2];
+	mesh->amountTextureCoords = ranges[3];
 
 	// Load indices
-	bytes = sizeof(uint) * mesh->indices_amount;
-	mesh->indices = new uint[mesh->indices_amount];
+	bytes = sizeof(uint) * mesh->amountIndices;
+	mesh->indices = new uint[mesh->amountIndices];
 	memcpy(mesh->indices, cursor, bytes);
 	cursor += bytes;
 
 	//load vertices
-	bytes = sizeof(float) * mesh->vertices_amount * 3;
-	mesh->vertices = new float[mesh->vertices_amount * 3];
+	bytes = sizeof(float) * mesh->amountVertices * 3;
+	mesh->vertices = new float[mesh->amountVertices * 3];
 	memcpy(mesh->vertices, cursor, bytes);
 	cursor += bytes;
 
 	//load normals
-	bytes = sizeof(float) * mesh->normals_amount * 3;
-	mesh->normals = new float[mesh->normals_amount * 3];
+	bytes = sizeof(float) * mesh->amountNormals * 3;
+	mesh->normals = new float[mesh->amountNormals * 3];
 	memcpy(mesh->normals, cursor, bytes);
 	cursor += bytes;
 
-	//load texcoords
-	bytes = sizeof(float) * mesh->texcoords_amount * 2;
-	mesh->texcoords = new float[mesh->texcoords_amount * 2];
-	memcpy(mesh->texcoords, cursor, bytes);
+	//load textureCoords
+	bytes = sizeof(float) * mesh->amountTextureCoords * 2;
+	mesh->textureCoords = new float[mesh->amountTextureCoords * 2];
+	memcpy(mesh->textureCoords, cursor, bytes);
 	cursor += bytes;
 
 	LOG("%s loaded in %d ms", mesh->libraryFile.c_str(), timer.Read());
@@ -687,7 +685,7 @@ void TextureImporter::Init()
 	iluInit();
 
 	if (ilutRenderer(ILUT_OPENGL))
-		LOG("DevIL initted correctly");
+		LOG("Devil initted correctly");
 }
 
 void TextureImporter::Import(char* fileBuffer, ResourceTexture * texture, uint size)
@@ -711,7 +709,7 @@ void TextureImporter::Import(char* fileBuffer, ResourceTexture * texture, uint s
 		//return;
 	}
 
-	ILenum file_format = GetFileFormat(texture->assetsFile.c_str());
+	ILenum file_format = ExtractFileExtension(texture->assetsFile.c_str());
 
 	if (ilLoadL(file_format, fileBuffer, size) == IL_FALSE)
 	{
@@ -748,12 +746,12 @@ uint TextureImporter::Save(ResourceTexture * texture, char** fileBuffer)
 
 	ilBindImage(texture->GetID());
 
-	TextureImportingOptions importingOptions = App->resources->textureImportingOptions;
+	TextureImportingSettings importingOptions = App->resources->textureImportingSettings;
 
 	if (importingOptions.flip)
 		iluFlipImage();
 
-	ApplyImportingOptions(App->resources->textureImportingOptions);
+	ApplyImportingSettings(App->resources->textureImportingSettings);
 
 	ilSetInteger(IL_DXTC_DATA_FORMAT, IL_DXT5);
 	size = ilSaveL(IL_DDS, nullptr, 0);
@@ -830,11 +828,11 @@ bool TextureImporter::Load(char* fileBuffer, ResourceTexture * texture, uint siz
 std::string TextureImporter::FindTexture(const char* texture_name, const char* model_directory)
 {
 	std::string path;
-	FileSystem::SplitFilePath(model_directory, &path);
+	App->fileManager->SplitFilePath(model_directory, &path);
 	std::string texture_path = path + texture_name;
 
 	//Check if the texture is in the same folder
-	if (FileSystem::Exists(texture_path.c_str()))
+	if (App->fileManager->Exists(texture_path.c_str()))
 	{
 		return texture_path.c_str();
 	}
@@ -842,7 +840,7 @@ std::string TextureImporter::FindTexture(const char* texture_name, const char* m
 	{
 		//Check if the texture is in a sub folder
 		texture_path = path + "Textures/" + texture_name;
-		if (FileSystem::Exists(texture_path.c_str()))
+		if (App->fileManager->Exists(texture_path.c_str()))
 		{
 			return texture_path.c_str();
 		}
@@ -850,7 +848,7 @@ std::string TextureImporter::FindTexture(const char* texture_name, const char* m
 		{
 			//Check if the texture is in the root textures folder
 			texture_path = std::string("Assets/Textures/") + texture_name;
-			if (FileSystem::Exists(texture_path.c_str()))
+			if (App->fileManager->Exists(texture_path.c_str()))
 			{
 				return texture_path.c_str();
 			}
@@ -866,10 +864,10 @@ void TextureImporter::UnloadTexture(uint imageID)
 	ilDeleteImages(1, &imageID);
 }
 
-ILenum TextureImporter::GetFileFormat(const char* file)
+ILenum TextureImporter::ExtractFileExtension(const char* file)
 {
 	ILenum file_format = IL_TYPE_UNKNOWN;
-	std::string format = FileSystem::GetFileFormat(file);
+	std::string format = App->fileManager->ExtractFileExtension(file);
 
 	if (format == ".png")
 		file_format = IL_PNG;
@@ -881,7 +879,7 @@ ILenum TextureImporter::GetFileFormat(const char* file)
 	return file_format;
 }
 
-void TextureImporter::ApplyImportingOptions(TextureImportingOptions importingOptions)
+void TextureImporter::ApplyImportingSettings(TextureImportingSettings importingOptions)
 {
 	if (importingOptions.flip)
 		iluFlipImage();
@@ -934,13 +932,13 @@ void MaterialImporter::Import(const aiMaterial * aimaterial, ResourceMaterial * 
 	if (path.length > 0)
 	{
 		std::string file_path = material->assetsFile;
-		path = FileSystem::GetFile(path.C_Str());
+		path = App->fileManager->ExtractFileName(path.C_Str());
 		file_path = TextureImporter::FindTexture(path.C_Str(), material->assetsFile.c_str());
 
 		if (file_path.size() > 0)
 		{
 			std::string meta_file = App->resources->GenerateMetaFile(file_path.c_str());
-			if (!FileSystem::Exists(meta_file.c_str()))
+			if (!App->fileManager->Exists(meta_file.c_str()))
 				material->diffuseTextureUID = App->resources->ImportFile(file_path.c_str());
 			else
 				material->diffuseTextureUID = App->resources->Find(file_path.c_str());
@@ -956,7 +954,7 @@ void MaterialImporter::Import(const aiMaterial * aimaterial, ResourceMaterial * 
 
 uint64 MaterialImporter::Save(ResourceMaterial * material, char** fileBuffer)
 {
-	GnJSONObj base_object;
+	JsonObj base_object;
 	base_object.AddInt("Diffuse Texture", material->diffuseTextureUID);
 
 	base_object.AddColor("diffuseColor", material->diffuseColor);
@@ -974,7 +972,7 @@ bool MaterialImporter::Load(const char* fileBuffer, ResourceMaterial * material,
 	Timer timer;
 	timer.Start();
 
-	GnJSONObj material_data(fileBuffer);
+	JsonObj material_data(fileBuffer);
 	material->diffuseTextureUID = material_data.GetInt("Diffuse Texture");
 
 
@@ -1001,21 +999,21 @@ bool MaterialImporter::DeleteTexture(const char* material_library_path)
 	bool ret = true;
 
 	char* buffer = nullptr;
-	FileSystem::Load(material_library_path, &buffer);
+	App->fileManager->Load(material_library_path, &buffer);
 
-	GnJSONObj material_data(buffer);
+	JsonObj material_data(buffer);
 
 	int diffuseTextureUID = material_data.GetInt("Diffuse Texture");
 	const char* texture_library_path = App->resources->Find(diffuseTextureUID);
 
 	if (texture_library_path != nullptr)
 	{
-		FileSystem::Delete(texture_library_path);
+		App->fileManager->Delete(texture_library_path);
 		App->resources->ReleaseResource(diffuseTextureUID);
 		App->resources->ReleaseResourceData(diffuseTextureUID);
 	}
 	else
-		LOG_WARNING("Texture: %s could not be deleted. Not found", material_library_path);
+		WARNING_LOG("Texture: %s could not be deleted. Not found", material_library_path);
 
 	material_data.Release();
 	RELEASE_ARRAY(buffer);
@@ -1026,9 +1024,9 @@ bool MaterialImporter::DeleteTexture(const char* material_library_path)
 const char* MaterialImporter::ExtractTexture(const char* material_library_path)
 {
 	char* buffer = nullptr;
-	FileSystem::Load(material_library_path, &buffer);
+	App->fileManager->Load(material_library_path, &buffer);
 
-	GnJSONObj material_data(buffer);
+	JsonObj material_data(buffer);
 
 	int diffuseTextureUID = material_data.GetInt("Diffuse Texture");
 	const char* texture_library_path = App->resources->Find(diffuseTextureUID);

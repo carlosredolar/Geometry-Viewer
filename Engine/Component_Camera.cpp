@@ -7,7 +7,7 @@
 #include "ModuleJson.h"
 
 Component_Camera::Component_Camera() : Component(), aspectRatio(AspectRatio::AR_16_9), fixedFOV(FIXED_HORIZONTAL_FOV) {
-	type = ComponentType::Component_Camera;
+	type = ComponentType::CAMERA;
 
 	frustum.type = FrustumType::PerspectiveFrustum;
 
@@ -22,9 +22,9 @@ Component_Camera::Component_Camera() : Component(), aspectRatio(AspectRatio::AR_
 	frustum.farPlaneDistance = 1000.0f;
 }
 
-Component_Camera::Component_Camera(GameObject * gameObject) : Component(ComponentType::Component_Camera, gameObject), aspectRatio(AspectRatio::AR_16_9)
+Component_Camera::Component_Camera(GameObject * gameObject) : Component(ComponentType::CAMERA, gameObject), aspectRatio(AspectRatio::AR_16_9)
 {
-	type = ComponentType::Component_Camera;
+	type = ComponentType::CAMERA;
 
 	frustum.type = FrustumType::PerspectiveFrustum;
 
@@ -55,7 +55,7 @@ void Component_Camera::Update()
 
 void Component_Camera::OnEditor()
 {
-	if (ImGui::CollapsingHeader("Component_Camera", ImGuiTreeNodeFlags_DefaultOpen))
+	if (ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen))
 	{
 		float horizontalFOV = frustum.horizontalFov * RADTODEG;
 		if (ImGui::DragFloat("Horizontal FOV", &horizontalFOV, 0.02f, 0.0f, 130.0f)) {
@@ -78,8 +78,8 @@ void Component_Camera::Save(JsonArray & save_array)
 	JsonObj save_object;
 
 	save_object.AddInt("Type", type);
-	bool mainComponent_Camera = App->renderer3D->GetMainComponent_Camera() == this;
-	save_object.AddBool("Main Component_Camera", mainComponent_Camera);
+	bool mainCamera = App->renderer3D->GetMainCamera() == this;
+	save_object.AddBool("Main Component_Camera", mainCamera);
 
 	save_array.AddObject(save_object);
 }
@@ -87,7 +87,7 @@ void Component_Camera::Save(JsonArray & save_array)
 void Component_Camera::Load(JsonObj & load_object)
 {
 	if (load_object.GetBool("Main Component_Camera", false))
-		App->renderer3D->SetMainComponent_Camera(this);
+		App->renderer3D->SetMainCamera(this);
 }
 
 void Component_Camera::SetFixedFOV(FixedFOV g_fixedFOV)

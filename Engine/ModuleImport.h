@@ -1,9 +1,8 @@
 #pragma once
 #include "Globals.h"
-#include "Module.h"
 
-#include "MathGeoLib/include/MathGeoLib.h"
-#include "Assimp/include/scene.h"
+#include <vector>
+#include <string>
 
 class Resource;
 class ResourceModel;
@@ -11,14 +10,20 @@ class ResourceMesh;
 class ResourceMaterial;
 class ResourceTexture;
 
+struct TextureImportingSettings;
 struct ModelNode;
 class JsonArray;
 class GameObject;
-struct Component_Material;
-class aiMesh;
 class Component_Mesh;
-class Transform;
-class Material;
+class Component_Transform;
+class Component_Material;
+
+class aiMesh;
+class aiScene;
+struct aiNode;
+class aiMaterial;
+
+typedef unsigned int ILenum;
 
 namespace ModelImporter
 {
@@ -56,8 +61,8 @@ namespace TextureImporter
 
 	std::string FindTexture(const char* texture_name, const char* model_directory);
 	void UnloadTexture(uint imageID);
-	ILenum GetFileFormat(const char* file);
-	void ApplyImportingOptions(TextureImportingOptions importingOptions);
+	ILenum ExtractFileExtension(const char* file);
+	void ApplyImportingSettings(TextureImportingSettings importingSettings);
 }
 
 namespace MaterialImporter
@@ -70,3 +75,60 @@ namespace MaterialImporter
 	bool DeleteTexture(const char* material_library_path);
 	const char* ExtractTexture(const char* material_library_path);
 }
+
+// Importing Options
+
+enum Axis
+{
+	X,
+	Y,
+	Z,
+	MINUS_X,
+	MINUS_Y,
+	MINUS_Z
+};
+
+struct ModelImportingSettings
+{
+	float globalScale = 1.0f;
+	Axis forwardAxis = Axis::Z;
+	Axis upAxis = Axis::Y;
+	bool normalizeScales = true;
+	bool ignoreCameras = true;
+	bool ignoreLights = true;
+};
+
+enum class TextureWrap
+{
+	CLAMP_TO_BORDER,
+	CLAMP,
+	REPEAT,
+	MIRRORED_REPEAT
+};
+
+enum class TextureFiltering
+{
+	NEAREST,
+	LINEAR
+};
+
+struct TextureImportingSettings
+{
+	TextureWrap textureWrap = TextureWrap::REPEAT;
+	TextureFiltering textureFiltering = TextureFiltering::NEAREST;
+	bool flip = false;
+	bool alienify = false;
+	bool blur_average = false;
+	bool blur_gaussian = false;
+	bool equalize = false;
+	bool negativity = false;
+	bool noise = false;
+	bool pixelize = false;
+	int pixelize_size = 1;
+	bool sharpening = false;
+	float sharpening_factor = 1.0f;
+	int sharpening_iterations = 1;
+	float noise_tolerance = 0.5f;
+	float gamma_correction = 1.0f;
+	float contrast = 1.0f;
+};

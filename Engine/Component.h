@@ -2,6 +2,9 @@
 #ifndef __COMPONENT_H__
 #define __COMPONENT_H__
 
+#include "Globals.h"
+#include <string>
+
 class GameObject;
 class JsonObj;
 class JsonArray;
@@ -13,7 +16,8 @@ enum ComponentType {
 	TRANSFORM,
 	MESH,
 	MATERIAL,
-	Component_Camera
+	CAMERA,
+	LIGHT
 };
 
 class Component {
@@ -57,7 +61,7 @@ protected:
 	GameObject* ownerGameObject;
 	ComponentType type;
 
-	uint _resourceUID;
+	uint resourceUID;
 };
 
 #endif // !__COMPONENT_H_

@@ -1,11 +1,11 @@
 #include "Application.h"
 #include "ModuleScene.h"
+#include "ModuleCamera3D.h"
 #include "Component_Material.h"
 
-#include "ImGui/imgui.h"
-
-ModuleScene::ModuleScene(Application* app, bool start_enabled) : Module(app, start_enabled)
+ModuleScene::ModuleScene(bool start_enabled) : Module(start_enabled)
 {
+	name = "scene";
 }
 
 ModuleScene::~ModuleScene()
@@ -20,15 +20,13 @@ bool ModuleScene::Start()
 	//Create root gameObject
 	root = new GameObject("Scene", nullptr, true);
 	root->CreateComponent(ComponentType::TRANSFORM);
-	root->id = 0;
+	root->UUID = 0;
 
 	currentID = 0;
 	gameObjects.push_back(root);
 
-	App->Component_Camera->Position = vec3(0, 3, 10);
-	App->Component_Camera->LookAt(vec3(0, 0, 0));
-
-	App->importer->LoadMesh("Assets/Meshes/BakerHouse.fbx");
+	App->camera->SetPosition(float3(0, 3, 10));
+	App->camera->LookAt(float3(0, 0, 0));
 
 	return ret;
 }
@@ -50,13 +48,12 @@ update_status ModuleScene::Update(float dt)
 	for (; currentGO != gameObjects.end(); currentGO++) {
 		(*currentGO)->Update();
 	}
-
-
+	
 	//Inputs
 	if (App->input->GetKey(SDL_SCANCODE_X) == KEY_DOWN) 
 	{
-		App->Component_Camera->Position = vec3(0, 1, 4);
-		App->Component_Camera->LookAt(vec3(0, 0, 0));
+		App->camera->SetPosition(float3(0, 1, 4));
+		App->camera->LookAt(float3(0, 0, 0));
 	}
 
 	//if (App->input->GetKey(SDL_SCANCODE_DELETE) == KEY_DOWN) 
@@ -96,7 +93,7 @@ GameObject* ModuleScene::CreateGameObject(const char* name, GameObject* parent, 
 
 	parent->AddGameObjectAsChild(newGameObject);
 	currentID++;
-	newGameObject->id = currentID;
+	newGameObject->UUID = currentID;
 	gameObjects.push_back(newGameObject);
 
 	return newGameObject;
@@ -119,10 +116,10 @@ GameObject* ModuleScene::GetGameObject(const char* name) //This method could fai
 	return nullptr;
 }
 
-GameObject* ModuleScene::GetGameObject(int id) //This method is fast and precise
+GameObject* ModuleScene::GetGameObject(int UUID) //This method is fast and precise
 {
 	GameObject* ret;
-	ret = gameObjects.at(id);
+	ret = gameObjects.at(UUID);
 
 	if (ret != nullptr) {
 		return ret;
@@ -130,7 +127,7 @@ GameObject* ModuleScene::GetGameObject(int id) //This method is fast and precise
 	else {
 		//Log gameObject searh error
 		std::string logText = "Not found gameObject with id: ";
-		logText += id;
+		logText += UUID;
 		LOG(logText.c_str());
 		return nullptr;
 	}
@@ -162,6 +159,11 @@ GameObject* ModuleScene::GetSelectedGameObject()
 	}
 
 	return nullptr;
+}
+
+std::vector<GameObject*> ModuleScene::GetAllGameObjects()
+{
+	return gameObjects;
 }
 
 bool ModuleScene::DeleteGameObject(GameObject* todelete)

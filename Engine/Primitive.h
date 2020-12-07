@@ -39,10 +39,10 @@ private:
 	std::vector<GLushort> index;
 };
 
-class Plane : public Primitive {
+class PPlane : public Primitive {
 public:
-	Plane();
-	~Plane();
+	PPlane();
+	~PPlane();
 
 	void Render();
 };

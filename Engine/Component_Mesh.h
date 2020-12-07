@@ -6,8 +6,11 @@
 #include "Globals.h"
 #include "MathGeoLib/include/MathGeoLib.h"
 
-struct meshInfo;
 class ResourceMesh;
+
+typedef float GLfloat;
+typedef unsigned short GLushort;
+typedef unsigned char GLubyte;
 
 class Component_Mesh : public Component {
 public:
@@ -18,35 +21,36 @@ public:
 	//Destructor
 	~Component_Mesh();
 
-	void GenerateMesh(meshInfo* newMesh, std::vector<float3> vertices, std::vector<uint> indices, std::vector<float3> normals, std::vector<float2> textureCoords);
+	void Save(JsonArray& save_array) override;
+	void Load(JsonObj& load_object) override;
+	void SetResourceUID(uint UID) override;
+	Resource* GetResource(ResourceType type) override;
 
 	//Update
 	void Update() override;
+	void Render();
+	void OnEditor() override;
+
+	void RenderVertexNormals();
+	void RenderFaceNormals();
+
+	void GenerateAABB();
+	AABB GetAABB();
 
 	const char* GetName();
 	int GetVertices();
 	int GetIndices();
 
-	void CreateBuffers();
-
-	void Render();
-
-	void RenderVertexNormals(std::vector<float3> vertices, std::vector<float3> normals);
-	void RenderFaceNormals(std::vector<float3> vertices, std::vector<float3> normals);
-
-	void CleanUp();
+public:
+	const char* name;
+	char* path;
 
 	bool enableVertexNormals = false;
 	bool enableFaceNormals = false;
-
 private:
-
-
-	uint idTextureImage;
-
 	
-	meshInfo* mesh;
-
+	AABB AABB;
+	ResourceMesh* mesh;
 };
 
 #endif // !__COMPONENT_MESH_H__

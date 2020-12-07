@@ -17,21 +17,21 @@ class ModuleInput : public Module
 {
 public:
 	
-	ModuleInput(Application* app, bool start_enabled = true);
+	ModuleInput(bool start_enabled = true);
 	~ModuleInput();
 
 	bool Init();
 	update_status PreUpdate(float dt);
 	bool CleanUp();
 
-	KEY_STATE GetKey(int id) const
+	KEY_STATE GetKey(int UUID) const
 	{
-		return keyboard[id];
+		return keyboard[UUID];
 	}
 
-	KEY_STATE GetMouseButton(int id) const
+	KEY_STATE GetMouseButton(int UUID) const
 	{
-		return mouse_buttons[id];
+		return mouse_buttons[UUID];
 	}
 
 	int GetMouseX() const

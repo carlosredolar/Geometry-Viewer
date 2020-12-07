@@ -46,12 +46,12 @@ public:
 	const char* const GetName();
 
 	//Change game object's name. Passed by reference
-	void ChangeName(char* new_name);
+	void ChangeName(const char* new_name);
 
 	void DeleteComponents();
 
-	int id;
-
+	uint UUID = 0;
+	bool to_delete;
 	bool selected;
 
 private:

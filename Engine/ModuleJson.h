@@ -2,6 +2,7 @@
 
 #include "Globals.h"
 #include "MathGeoLib/include/MathGeoLib.h"
+#include "Color.h"
 
 struct json_array_t;
 typedef json_array_t JSON_Array;
@@ -36,6 +37,7 @@ public:
 	const char* GetString(const char* name, const char* default);
 	float3 GetFloat3(const char* name, float3 default = float3(-1, -1, -1));
 	Quat GetQuaternion(const char* name, Quat default = Quat(-1, -1, -1, -1));
+	Color GetColor(const char* name, Color default = Color(0, 0, 0, 1));
 
 	void AddInt(const char* name, int number);
 	void AddFloat(const char* name, float number);
@@ -43,6 +45,7 @@ public:
 	void AddQuaternion(const char* name, Quat number);
 	void AddBool(const char* name, bool boolean);
 	void AddString(const char* name, const char* string);
+	void AddColor(const char* name, Color color);
 	JsonArray AddArray(const char* name);
 	JsonArray AddArray(JsonArray array);
 
@@ -70,7 +73,7 @@ public:
 	void AddString(const char* string);
 
 private:
-	JSON_Array* _array;
-	JSON_Value* _value;
-	bool _nested;
+	JSON_Array* array;
+	JSON_Value* value;
+	bool nested;
 };

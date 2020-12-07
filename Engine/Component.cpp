@@ -29,5 +29,5 @@ bool Component::IsEnabled()
 
 ComponentType Component::GetType()
 {
-	return ComponentType();
+	return type;
 }

@@ -4,8 +4,11 @@
 #include "GuiConfiguration.h"
 #include "GuiInspector.h"
 #include "GuiHierarchy.h"
+#include "GuiImport.h"
 //#include "ModuleImport.h"
 //#include "ModuleScene.h"
+
+#include "Glew/include/glew.h"
 
 #include "ImGui/imconfig.h"
 #include "ImGui/imgui_internal.h"
@@ -14,12 +17,13 @@
 
 using namespace ImGui;
 
-ModuleGui::ModuleGui(Application* app, bool start_enabled) : Module(app, start_enabled)
+ModuleGui::ModuleGui(bool start_enabled) : Module(start_enabled)
 {
 	ui_windows.push_back(ui_console = new GuiConsole());
 	ui_windows.push_back(ui_configuration = new GuiConfiguration());
 	ui_windows.push_back(ui_inspector = new GuiInspector());
 	ui_windows.push_back(ui_hierarchy = new GuiHierarchy());
+	ui_windows.push_back(ui_import = new GuiImport());
 }
 
 ModuleGui::~ModuleGui()
@@ -55,7 +59,16 @@ update_status ModuleGui::PreUpdate(float dt)
 
 update_status ModuleGui::Update(float dt) 
 {
-	DockSpace(dockingwindow);
+	update_status ret = UPDATE_CONTINUE;
+
+	ret = DockSpace(dockingwindow);
+	
+	return ret;
+}
+
+update_status ModuleGui::Draw()
+{
+	update_status ret = UPDATE_CONTINUE;
 
 	// Tool bar
 	if (BeginMainMenuBar())
@@ -82,7 +95,7 @@ update_status ModuleGui::Update(float dt)
 		}
 		if (BeginMenu("View"))
 		{
-			if (MenuItem("Console")) 
+			if (MenuItem("Console"))
 			{
 				ui_console->is_on = !ui_console->is_on;
 			}
@@ -106,17 +119,17 @@ update_status ModuleGui::Update(float dt)
 			{
 				if (MenuItem("Cube"))
 				{
-					App->importer->LoadMesh("Assets/Meshes/Primitives/Cube.fbx");
+					//App->importer->LoadMesh("Assets/Meshes/Primitives/Cube.fbx");
 				}
 				if (MenuItem("Sphere"))
 				{
-					App->importer->LoadMesh("Assets/Meshes/Primitives/Sphere.fbx");
+					//App->importer->LoadMesh("Assets/Meshes/Primitives/Sphere.fbx");
 				}
 				if (MenuItem("Cylinder"))
 				{
-					App->importer->LoadMesh("Assets/Meshes/Primitives/Cylinder.fbx");
+					//App->importer->LoadMesh("Assets/Meshes/Primitives/Cylinder.fbx");
 				}
-				
+
 				ImGui::EndMenu();
 			}
 			ImGui::EndMenu();
@@ -141,34 +154,34 @@ update_status ModuleGui::Update(float dt)
 			if (ImGui::SmallButton("Carlos Redolar")) {
 				ShellExecuteA(NULL, "open", "https://github.com/carlosredolar", NULL, NULL, SW_SHOWNORMAL);
 			}
-			
+
 			ImGui::Separator();
 
 			GLint gl_major_version, gl_minor_version;
 			glGetIntegerv(GL_MAJOR_VERSION, &gl_major_version);
 			glGetIntegerv(GL_MINOR_VERSION, &gl_minor_version);
 			ImGui::Text("3rd party libraries used: ");
-			ImGui::BulletText("SDL"); 
+			ImGui::BulletText("SDL");
 			ImGui::SameLine();
 			ImGui::Text("%d.%d.%d", SDL_MAJOR_VERSION, SDL_MINOR_VERSION, SDL_PATCHLEVEL);
 			ImGui::BulletText("SDL Mixer ");
 			ImGui::SameLine();
 			ImGui::Text("2.0.0");
-			ImGui::BulletText("ImGui "); 
+			ImGui::BulletText("ImGui ");
 			ImGui::SameLine();
 			ImGui::Text("%s", ImGui::GetVersion());
-			ImGui::BulletText("OpenGL "); 
+			ImGui::BulletText("OpenGL ");
 			ImGui::SameLine();
 			ImGui::Text("%d.%d", gl_major_version, gl_minor_version);
-			ImGui::BulletText("Glew ");	
+			ImGui::BulletText("Glew ");
 			ImGui::SameLine();
 			ImGui::Text("%d.%d.%d", GLEW_VERSION_MAJOR, GLEW_VERSION_MINOR, GLEW_VERSION_MICRO);
-			ImGui::BulletText("MathGeoLib"); 
+			ImGui::BulletText("MathGeoLib");
 			ImGui::SameLine();
 			ImGui::Text("1.5");
-			ImGui::BulletText("Assimp "); 
+			ImGui::BulletText("Assimp ");
 			ImGui::SameLine();
-			ImGui::Text("3.1.1");	
+			ImGui::Text("3.1.1");
 			ImGui::BulletText("Devil ");
 			ImGui::SameLine();
 			ImGui::Text("1.7.8");
@@ -192,7 +205,7 @@ update_status ModuleGui::Update(float dt)
 				"FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER "
 				"LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.");
 
-		
+
 			ImGui::EndMenu();
 		}
 
@@ -205,7 +218,11 @@ update_status ModuleGui::Update(float dt)
 			ui_windows[i]->Draw();
 	}
 
-	return UPDATE_CONTINUE;
+	//Rendering
+	Render();
+	ImGui_ImplOpenGL3_RenderDrawData(GetDrawData());
+
+	return ret;
 }
 
 void ModuleGui::SelectGameObject(GameObject* gO)
@@ -215,10 +232,6 @@ void ModuleGui::SelectGameObject(GameObject* gO)
 
 update_status ModuleGui::PostUpdate(float dt)
 {
-	//Rendering
-	Render();
-	ImGui_ImplOpenGL3_RenderDrawData(GetDrawData());
-
 	SDL_Window* backup_current_window = SDL_GL_GetCurrentWindow();
 	SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
 
@@ -243,20 +256,24 @@ bool ModuleGui::CleanUp()
 	return true;
 }
 
-void ModuleGui::ConsoleLog(const char* text)
+void ModuleGui::ConsoleLog(const char* text, int warningLevel)
 {
 	debug_console_buff.appendf(text);
+	if (warningLevel == 1) debug_console_color_buff.push_back(ImVec4(1.0f, 1.0f, 0.0f, 1.0f));
+	else if (warningLevel == 2) debug_console_color_buff.push_back(ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
+	else debug_console_color_buff.push_back(ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
 }
 
 void ModuleGui::CleanLog()
 {
 	debug_console_buff.clear();
+	debug_console_color_buff.clear();
 }
 
 void ModuleGui::DebugConsole()
 {
 	BeginChild("Console Log");
-	TextUnformatted(debug_console_buff.begin());
+	TextColored(*debug_console_color_buff.begin(), debug_console_buff.begin());
 	SetScrollHereY(1.0f);
 	EndChild();
 }
@@ -270,6 +287,7 @@ update_status ModuleGui::DockSpace(bool* p_open)
 	static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode;
 
 	ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+
 	if (opt_fullscreen)
 	{
 		ImGuiViewport* viewport = ImGui::GetMainViewport();

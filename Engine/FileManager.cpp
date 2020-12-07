@@ -561,6 +561,16 @@ bool FileManager::Remove(const char* file)
 	return ret;
 }
 
+bool FileManager::Delete(const char* file)
+{
+	if (PHYSFS_delete(file) != 0)
+		return true;
+	else {
+		ERROR_LOG("File System error while deleting file %s: %s", file, PHYSFS_getLastError());
+		return false;
+	}
+}
+
 uint64 FileManager::GetLastModTime(const char* filename)
 {
 	return PHYSFS_getLastModTime(filename);
@@ -601,7 +611,51 @@ std::string FileManager::GetUniqueName(const char* path, const char* name) const
 	return finalName;
 }
 
+std::string FileManager::ExtractFileExtension(const char* path)
+{
+	LOG("Getting file extension");
+	std::string filePath;
+	std::string extension;
+	SplitFilePath(path, &filePath, nullptr, &extension);
+	return extension;
+}
+
+std::string FileManager::ExtractFileNameAndExtension(const char* path)
+{
+	LOG("Getting file name and extension");
+	std::string file;
+	std::string filePath;
+	std::string extension;
+	SplitFilePath(path, &filePath, &file, &extension);
+	return file + "." + extension;
+}
+
+std::string FileManager::ExtractFileName(const char* path)
+{
+	LOG("Getting file name");
+	std::string file;
+	std::string filePath;
+	SplitFilePath(path, &filePath, &file);
+	return file;
+}
+
 std::string FileManager::GetInternalFolder(const char* ext) {
 	if (strcmp(ext, "png") == 0 || strcmp(ext, "jpg") == 0 || strcmp(ext, "tga") == 0) return TEXTURESPATH;
 	return MESHESPATH;
+}
+
+bool FileManager::Rename(const char* old_name, const char* new_name)
+{
+	LOG("Renaming file");
+	bool ret = true;
+
+	char* fileBuffer;
+	uint size = Load(old_name, &fileBuffer);
+
+	Save(new_name, fileBuffer, size);
+	ret = Delete(old_name);
+
+	RELEASE_ARRAY(fileBuffer);
+
+	return ret;
 }
