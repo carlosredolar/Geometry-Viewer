@@ -50,7 +50,6 @@ public:
 
 	void GenerateAABB();
 	void RenderAABB();
-	AABB GetAABB();
 	AABB _AABB;
 	OBB _OBB;
 

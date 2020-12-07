@@ -124,15 +124,11 @@ void Component_Mesh::GenerateAABB()
 	
 }
 
-AABB Component_Mesh::GetAABB()
-{
-	return _AABB;
-}
 
 void Component_Mesh::RenderAABB()
 {
 	float3 points[8];
-	_AABB.GetCornerPoints(points);
+	mesh->localAABB.GetCornerPoints(points);
 
 	glColor3f(0, 1, 0);
 	glLineWidth(1.5f);
