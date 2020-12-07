@@ -1,3 +1,4 @@
+#include "Application.h"
 #include "Component_Mesh.h"
 #include "Component_Texture.h"
 #include "Component_Transform.h"
@@ -11,9 +12,12 @@
 #pragma comment (lib, "glu32.lib")
 #pragma comment (lib, "opengl32.lib")
 
+#include "MathGeoLib/include/Math/float3.h"
+
 Component_Mesh::Component_Mesh(GameObject* ownerGameObject, bool enabled) : Component(COMPONENT_TYPE::MESH, ownerGameObject, enabled)
 {
 	mesh = nullptr;
+	type = COMPONENT_TYPE::MESH;
 }
 
 Component_Mesh::~Component_Mesh()
@@ -63,6 +67,10 @@ void Component_Mesh::GenerateMesh(meshInfo* newMesh, std::vector<float3> vertice
 	mesh->normals = normals;
 	mesh->textureCoords = textureCoords;
 
+	float3* ver = (float3*)&vertices;
+	mesh->localAABB.SetNegativeInfinity();
+	mesh->localAABB.Enclose(ver, vertices.size());
+
 	CreateBuffers();
 	GenerateAABB();
 	//_AABB.SetNegativeInfinity();
@@ -103,8 +111,17 @@ void Component_Mesh::CreateBuffers()
 
 void Component_Mesh::GenerateAABB()
 {
-	_AABB.SetNegativeInfinity();
-	_AABB.Enclose((float3*)mesh->vertices, size(mesh->vertices));
+	
+		
+
+		_OBB = mesh->localAABB;
+		//_OBB.Enclose(vertices, mesh->vertices.size());
+		_OBB.Transform(ownerGameObject->GetComponent<Component_Transform>()->GetGlobalTransform());
+
+		_AABB.SetNegativeInfinity();
+		_AABB.Enclose(_OBB);
+
+	
 }
 
 AABB Component_Mesh::GetAABB()
@@ -112,9 +129,56 @@ AABB Component_Mesh::GetAABB()
 	return _AABB;
 }
 
+void Component_Mesh::RenderAABB()
+{
+	float3 points[8];
+	_AABB.GetCornerPoints(points);
+
+	glColor3f(0, 1, 0);
+	glLineWidth(1.5f);
+	glDisable(GL_LIGHTING);
+	glBegin(GL_LINES);
+
+	glVertex3fv(&points[0].x);
+	glVertex3fv(&points[2].x);
+	glVertex3fv(&points[2].x);
+	glVertex3fv(&points[6].x);
+
+	glVertex3fv(&points[6].x);
+	glVertex3fv(&points[4].x);
+	glVertex3fv(&points[4].x);
+	glVertex3fv(&points[0].x);
+
+	glVertex3fv(&points[0].x);
+	glVertex3fv(&points[1].x);
+	glVertex3fv(&points[1].x);
+	glVertex3fv(&points[3].x);
+
+	glVertex3fv(&points[3].x);
+	glVertex3fv(&points[2].x);
+	glVertex3fv(&points[4].x);
+	glVertex3fv(&points[5].x);
+
+	glVertex3fv(&points[6].x);
+	glVertex3fv(&points[7].x);
+	glVertex3fv(&points[5].x);
+	glVertex3fv(&points[7].x);
+
+	glVertex3fv(&points[3].x);
+	glVertex3fv(&points[7].x);
+	glVertex3fv(&points[1].x);
+	glVertex3fv(&points[5].x);
+
+	glEnd();
+	glLineWidth(1);
+	glColor3f(1, 1, 1);
+	glEnable(GL_LIGHTING);
+}
+
 void Component_Mesh::Render() 
 {
 	//Render
+	RenderAABB();
 
 	Component_Texture* texture = ownerGameObject->GetComponent<Component_Texture>();
 

@@ -7,6 +7,7 @@ Component_Transform::Component_Transform(GameObject* ownerGameObject, bool enabl
 	scale = { 1,1,1 };
 	UpdateLocalTransform();
 	globalTransform = localTransform;
+	type = COMPONENT_TYPE::TRANSFORM;
 }
 
 Component_Transform::~Component_Transform()

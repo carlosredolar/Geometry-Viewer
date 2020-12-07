@@ -31,7 +31,7 @@ public:
 	void GetChildsNewParent();	//Send this game object childs to this parent
 
 	//Add a component to this game object
-	Component* CreateComponent(Component::COMPONENT_TYPE type);
+	Component* CreateComponent(COMPONENT_TYPE type);
 
 	//Check and add component
 	void CheckAddComponent(Component* new_comp);
@@ -55,9 +55,7 @@ public:
 
 	bool selected;
 
-public:
-	OBB _OBB;
-	AABB _AABB;
+
 
 private:
 	GameObject*					parent;

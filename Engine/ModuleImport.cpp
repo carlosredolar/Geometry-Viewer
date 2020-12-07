@@ -177,8 +177,10 @@ bool ModuleImport::LoadNodeMeshes(const aiScene* scene, const aiNode* node, Game
 		meshInfo* newMesh = new meshInfo;
 		newMesh->name = newGameObject->GetName();
 		meshes.push_back(newMesh);
-		Component_Mesh* newMeshComponent = (Component_Mesh*)newGameObject->CreateComponent(Component::COMPONENT_TYPE::MESH);
+		Component_Mesh* newMeshComponent = (Component_Mesh*)newGameObject->CreateComponent(COMPONENT_TYPE::MESH);
 		newMeshComponent->GenerateMesh(newMesh, vertex, index, normals, textureCoords);
+
+		//newMeshComponent->GenerateAABB();
 
 		//Textures
 		aiMaterial* Object_material = scene->mMaterials[nodeMesh->mMaterialIndex];
@@ -357,7 +359,7 @@ void ModuleImport::ExtensionClassifier(const char* path, const char* originalPat
 			}
 			else if (App->scene->GetSelectedGameObject()->GetComponent<Component_Mesh>() != nullptr)
 			{
-				((Component_Texture*)App->scene->GetSelectedGameObject()->CreateComponent(Component::COMPONENT_TYPE::TEXTURE))->SetTexture(LoadTexture(path));
+				((Component_Texture*)App->scene->GetSelectedGameObject()->CreateComponent(COMPONENT_TYPE::TEXTURE))->SetTexture(LoadTexture(path));
 				App->gui->SelectGameObject(App->scene->GetSelectedGameObject());
 			}
 			else LOG("This GameOject doesn't have any mesh or texture components so the texture will not be applyed to anything.");

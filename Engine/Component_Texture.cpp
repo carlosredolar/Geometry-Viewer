@@ -4,7 +4,7 @@
 
 Component_Texture::Component_Texture(GameObject* ownerGameObject, bool enabled) : Component(COMPONENT_TYPE::MESH, ownerGameObject, enabled)
 {
-
+	type = COMPONENT_TYPE::TEXTURE;
 }
 
 Component_Texture::~Component_Texture()

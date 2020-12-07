@@ -22,6 +22,8 @@ struct meshInfo
 
 	uint idTextureCoords;
 	std::vector<float2> textureCoords;
+
+	AABB localAABB;
 };
 
 struct textureInfo

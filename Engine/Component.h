@@ -4,17 +4,17 @@
 
 class GameObject;
 
+static enum class COMPONENT_TYPE {
+	TRANSFORM,
+	MESH,
+	TEXTURE,
+	CAMERA,
+	NONE
+};
+
 class Component {
 
 public:
-
-	static enum class COMPONENT_TYPE {
-		TRANSFORM,
-		MESH,
-		TEXTURE,
-		CAMERA,
-		NONE
-	};
 
 	//Constructor
 	Component(COMPONENT_TYPE type, GameObject* ownerGameObject, bool enabled = true);

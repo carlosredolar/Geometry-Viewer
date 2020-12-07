@@ -65,6 +65,20 @@ void GameObject::Update()
 
 		for (; component != components.end(); ++component) {
 			if((*component)->IsEnabled()) (*component)->Update();
+
+			/*if ((*component != nullptr) && (*component)->GetType() == COMPONENT_TYPE::MESH) {
+				Component_Mesh* mesh = (Component_Mesh*)*component;
+				_OBB = mesh->GetAABB();
+				_OBB.Transform(GetComponent<Component_Transform>()->GetGlobalTransform());
+
+				_AABB.SetNegativeInfinity();
+				_AABB.Enclose(_OBB);
+				mesh->GenerateAABB();
+
+				float3 cornerPoints[8];
+				_AABB.GetCornerPoints(cornerPoints);
+				App->renderer3D->DrawAABB(cornerPoints);
+			}*/
 		}
 
 		//Update childs
@@ -76,18 +90,7 @@ void GameObject::Update()
 			(*gameObject)->GetComponent<Component_Transform>()->UpdateGlobalTransform(GetComponent<Component_Transform>()->GetGlobalTransform());
 		}
 
-		if ((*component)->GetType() == Component::COMPONENT_TYPE::MESH) {
-			Component_Mesh* mesh = (Component_Mesh*)*component;
-			_OBB = mesh->GetAABB();
-			_OBB.Transform(GetComponent<Component_Transform>()->GetGlobalTransform());
-
-			_AABB.SetNegativeInfinity();
-			_AABB.Enclose(_OBB);
-
-			float3 cornerPoints[8];
-			_AABB.GetCornerPoints(cornerPoints);
-			App->renderer3D->DrawAABB(cornerPoints);
-		}
+		
 	}
 }
 
@@ -197,27 +200,27 @@ void GameObject::DeleteChild(GameObject * child)
 	}
 }
 
-Component* GameObject::CreateComponent(Component::COMPONENT_TYPE type)
+Component* GameObject::CreateComponent(COMPONENT_TYPE type)
 {
 	Component_Texture* componentTexture = nullptr;
 	Component_Mesh* componentMesh = nullptr;
 	Component_Camera* componentCamera = nullptr;
 	switch (type)
 	{
-	case Component::COMPONENT_TYPE::TRANSFORM:
+	case COMPONENT_TYPE::TRANSFORM:
 		components.push_back(new Component_Transform(this));
 		break;
-	case Component::COMPONENT_TYPE::TEXTURE:
+	case COMPONENT_TYPE::TEXTURE:
 		componentTexture = new Component_Texture(this);
 		CheckAddComponent(componentTexture);
 		return componentTexture;
 		break;
-	case Component::COMPONENT_TYPE::MESH:
+	case COMPONENT_TYPE::MESH:
 		componentMesh = new Component_Mesh(this);
 		CheckAddComponent(componentMesh);
 		return componentMesh;
 		break;
-	case Component::COMPONENT_TYPE::CAMERA:
+	case COMPONENT_TYPE::CAMERA:
 		componentCamera = new Component_Camera();
 		break;
 	}

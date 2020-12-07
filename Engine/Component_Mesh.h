@@ -6,6 +6,7 @@
 #include "Globals.h"
 #include "MathGeoLib/include/MathGeoLib.h"
 
+
 struct meshInfo;
 
 class Component_Mesh : public Component {
@@ -48,8 +49,10 @@ public:
 	bool enableFaceNormals = false;
 
 	void GenerateAABB();
+	void RenderAABB();
 	AABB GetAABB();
 	AABB _AABB;
+	OBB _OBB;
 
 private:
 
