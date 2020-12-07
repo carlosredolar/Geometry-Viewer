@@ -32,7 +32,7 @@ void GuiInspector::Select(GameObject* selected) {
 	strncpy(buf, selected->GetName(), 128);
 	transformGO = selected->GetComponent<Component_Transform>();
 	meshGO = selected->GetComponent<Component_Mesh>();
-	textureGO = selected->GetComponent<Component_Texture>();
+	textureGO = selected->GetComponent<Component_Material>();
 }
 
 void GuiInspector::Draw()

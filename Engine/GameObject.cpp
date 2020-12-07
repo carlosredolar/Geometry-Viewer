@@ -1,7 +1,7 @@
 #include "GameObject.h"
 #include "Component_Mesh.h"
 #include "Component_Transform.h"
-#include "Component_Texture.h"
+#include "Component_Material.h"
 #include "Component.h"
 
 GameObject::GameObject(const char* name, GameObject* parent, bool enabled) :name(name), parent(parent), enabled(enabled) { selected = false; }
@@ -181,15 +181,15 @@ void GameObject::DeleteChild(GameObject * child)
 
 Component* GameObject::CreateComponent(ComponentType type)
 {
-	Component_Texture* componentTexture = nullptr;
+	Component_Material* componentTexture = nullptr;
 	Component_Mesh* componentMesh = nullptr;
 	switch (type)
 	{
 	case ComponentType::TRANSFORM:
 		components.push_back(new Component_Transform(this));
 		break;
-	case ComponentType::TEXTURE:
-		componentTexture = new Component_Texture(this);
+	case ComponentType::MATERIAL:
+		componentTexture = new Component_Material(this);
 		CheckAddComponent(componentTexture);
 		return componentTexture;
 		break;

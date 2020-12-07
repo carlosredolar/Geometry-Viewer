@@ -127,7 +127,7 @@ public:
 	std::vector<uint> materials;
 	std::vector<uint> textures;
 	//std::vector<Light> lights;
-	//std::vector<Camera> cameras;
+	//std::vector<Component_Camera> Component_Cameras;
 };
 
 class ModuleScene : public Module

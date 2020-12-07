@@ -26,7 +26,7 @@ class FileManager : public Module
 {
 public:
 
-	FileManager(Application* app, bool start_enabled = true);
+	FileManager(bool start_enabled = true);
 	~FileManager();
 
 	// Called before render is available

@@ -3,13 +3,17 @@
 #define __COMPONENT_H__
 
 class GameObject;
-
+class JsonObj;
+class JsonArray;
+class Resource;
+enum ResourceType;
 
 enum ComponentType {
+	NONE,
 	TRANSFORM,
 	MESH,
-	TEXTURE,
-	NONE
+	MATERIAL,
+	Component_Camera
 };
 
 class Component {
@@ -17,6 +21,7 @@ class Component {
 public:
 
 	//Constructor
+	Component();
 	Component(ComponentType type, GameObject* ownerGameObject, bool enabled = true);
 
 	//Destructor
@@ -34,18 +39,25 @@ public:
 	//Check if component is enabled
 	virtual bool IsEnabled();
 
+	virtual void Save(JsonArray& save_array) {};
+	virtual void Load(JsonObj& load_object) {};
+
 	//Get component type
 	ComponentType GetType();
 
-	//Public variables
-	GameObject* ownerGameObject;
+	virtual void OnEditor() = 0;
 
-private:
+	void SetOwnerGameObject(GameObject* gameObject);
+	GameObject* GetOwnerGameObject();
+	virtual void SetResourceUID(uint UID);
+	virtual Resource* GetResource(ResourceType type) { return nullptr; };
 
+protected:
 	bool enabled;
+	GameObject* ownerGameObject;
+	ComponentType type;
 
-	ComponentType	type;
-
+	uint _resourceUID;
 };
 
 #endif // !__COMPONENT_H_

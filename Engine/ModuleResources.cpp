@@ -106,15 +106,15 @@ int ModuleResources::MetaUpToDate(const char* asset_path)
 	std::string meta_file = asset_path;
 	meta_file += ".meta";
 
-	if (App->fm->Exists(meta_file.c_str()))
+	if (App->fileManager->Exists(meta_file.c_str()))
 	{
 		char* buffer = nullptr;
-		uint size = App->fm->Load(meta_file.c_str(), &buffer);
+		uint size = App->fileManager->Load(meta_file.c_str(), &buffer);
 		JsonObj meta(buffer);
 
 		uint UID = meta.GetInt("UID");
 		int lastModifiedMeta = meta.GetInt("lastModified");
-		uint lastModified = App->fm->GetLastModTime(asset_path);
+		uint lastModified = App->fileManager->GetLastModTime(asset_path);
 
 		if (lastModifiedMeta != lastModified)
 			return UpdateMetaFile(asset_path);
@@ -136,12 +136,12 @@ int ModuleResources::UpdateMetaFile(const char* assets_file)
 	std::string meta_file = assets_file;
 	meta_file.append(".meta");
 
-	uint size = App->fm->Load(meta_file.c_str(), &buffer);
+	uint size = App->fileManager->Load(meta_file.c_str(), &buffer);
 	JsonObj meta(buffer);
 
 	uint UID = meta.GetInt("UID");
 	int lastModifiedMeta = meta.GetInt("lastModified");
-	//uint lastModified = App->fm->GetLastModTime(asset_path);
+	//uint lastModified = App->fileManager->GetLastModTime(asset_path);
 
 	//Find(UID);
 	return 0;
@@ -180,7 +180,7 @@ const char* ModuleResources::Find(uint UID)
 		std::string file = directories[i];
 		file += std::to_string(UID);
 		file += extensions[i];
-		if (App->fm->Exists(file.c_str()))
+		if (App->fileManager->Exists(file.c_str()))
 		{
 			char* final_file = new char[128];
 			strcpy(final_file, file.c_str());
@@ -205,7 +205,7 @@ uint ModuleResources::ImportFile(const char* assets_file)
 	uint ret = 0;
 
 	char* fileBuffer;
-	uint size = App->fm->Load(assets_file, &fileBuffer);
+	uint size = App->fileManager->Load(assets_file, &fileBuffer);
 
 	switch (type)
 	{
@@ -292,7 +292,7 @@ Resource* ModuleResources::CreateResource(const char* assetsPath, ResourceType t
 	uint UID = GenerateUID();
 
 	char* buffer;
-	uint size = App->fm->Load(assetsPath, &buffer);
+	uint size = App->fileManager->Load(assetsPath, &buffer);
 
 	switch (type)
 	{
@@ -425,7 +425,7 @@ bool ModuleResources::SaveResource(Resource* resource)
 
 	if (size > 0)
 	{
-		App->fm->Save(resource->libraryFile.c_str(), buffer, size);
+		App->fileManager->Save(resource->libraryFile.c_str(), buffer, size);
 		RELEASE_ARRAY(buffer);
 	}
 
@@ -438,13 +438,13 @@ bool ModuleResources::SaveResource(Resource* resource)
 bool ModuleResources::SaveMetaFile(Resource* resource)
 {
 	JsonObj base_object;
-	resource->SaveMeta(base_object, App->fm->GetLastModTime(resource->assetsFile.c_str()));
+	resource->SaveMeta(base_object, App->fileManager->GetLastModTime(resource->assetsFile.c_str()));
 
 	char* meta_buffer = NULL;
 	uint meta_size = base_object.Save(&meta_buffer);
 
 	std::string meta_file_name = resource->assetsFile + ".meta";
-	App->fm->Save(meta_file_name.c_str(), meta_buffer, meta_size);
+	App->fileManager->Save(meta_file_name.c_str(), meta_buffer, meta_size);
 
 	base_object.Release();
 	RELEASE_ARRAY(meta_buffer);
@@ -456,7 +456,7 @@ ResourceType ModuleResources::GetResourceTypeFromPath(const char* path)
 {
 
 	std::string extension;
-	App->fm->SplitFilePath(path, nullptr, nullptr, &extension);
+	App->fileManager->SplitFilePath(path, nullptr, nullptr, &extension);
 
 	if (extension == ".fbx") { return ResourceType::RESOURCE_MODEL; }
 	else if (extension == ".meshr") { return ResourceType::RESOURCE_MESH; }
@@ -511,7 +511,7 @@ const char* ModuleResources::GenerateAssetsPath(const char* path)
 	ResourceType type = GetResourceTypeFromPath(path);
 	std::string file;
 	std::string extension;
-	App->fm->SplitFilePath(path, nullptr, &file, &extension);
+	App->fileManager->SplitFilePath(path, nullptr, &file, &extension);
 	file += extension;
 
 	char* library_path = new char[128];

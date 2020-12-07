@@ -22,7 +22,7 @@ ModuleCamera3D::~ModuleCamera3D()
 // -----------------------------------------------------------------
 bool ModuleCamera3D::Start()
 {
-	LOG("Setting up the camera");
+	LOG("Setting up the Component_Camera");
 	bool ret = true;
 
 
@@ -33,7 +33,7 @@ bool ModuleCamera3D::Start()
 // -----------------------------------------------------------------
 bool ModuleCamera3D::CleanUp()
 {
-	LOG("Cleaning camera");
+	LOG("Cleaning Component_Camera");
 
 	return true;
 }
@@ -41,7 +41,7 @@ bool ModuleCamera3D::CleanUp()
 // -----------------------------------------------------------------
 update_status ModuleCamera3D::Update(float dt)
 {
-	// Implement a debug camera with keys and mouse
+	// Implement a debug Component_Camera with keys and mouse
 	// Now we can make this movememnt frame rate independant!
 
 	vec3 newPos(0, 0, 0);

@@ -14,62 +14,59 @@ class ResourceTexture;
 struct ModelNode;
 class JsonArray;
 class GameObject;
-struct GnTexture;
+struct Component_Material;
 class aiMesh;
-class GnMesh;
+class Component_Mesh;
 class Transform;
 class Material;
 
-
-struct meshInfo 
+namespace ModelImporter
 {
-	std::string name;
+	void Import(char* fileBuffer, ResourceModel* resource, uint size);
+	void ImportChildren(const aiScene* scene, aiNode* node, aiNode* parentNode, uint parentNodeUID, ResourceModel* model);
+	void ReimportFile(char* fileBuffer, ResourceModel* resource, uint size);
+	uint64 Save(ResourceModel* model, char** fileBuffer);
+	void LoadTransform(aiNode* node, ModelNode& modelNode);
+	bool Load(char* fileBuffer, ResourceModel* model, uint size);
 
-	uint idVertex;
-	std::vector<float3> vertices;
+	GameObject* ConvertToGameObject(ResourceModel* model);
+	void ExtractInternalResources(const char* path, std::vector<uint>& meshes, std::vector<uint>& materials);
+	void ExtractInternalResources(const char* meta_file, ResourceModel& model);
+	bool InternalResourcesExist(const char* path);
+	void ConvertToDesiredAxis(aiNode* node, ModelNode& modelNode);
+}
 
-	uint idIndex;
-	std::vector<uint> indices;
-
-	uint idNormals;
-	std::vector<float3> normals;
-
-	uint idTextureCoords;
-	std::vector<float2> textureCoords;
-};
-
-struct textureInfo
+namespace MeshImporter
 {
-	std::string name;
+	void Init();
+	void CleanUp();
 
-	std::string path;
+	void Import(const aiMesh* aimesh, ResourceMesh* mesh);
+	uint64 Save(ResourceMesh* mesh, char** fileBuffer);
+	bool Load(char* fileBuffer, ResourceMesh* mesh, uint size);
+}
 
-	uint id;
-
-	int w, h;
-};
-
-class ModuleImport : public Module
+namespace TextureImporter
 {
-public:
-	ModuleImport(Application* app, bool start_enabled = true);
-	~ModuleImport();
+	void Init();
 
-	bool Init();
-	update_status Update(float dt);
-	update_status PostUpdate(float dt);
-	bool CleanUp();
+	void Import(char* fileBuffer, ResourceTexture* resource, uint size);
+	uint Save(ResourceTexture* texture, char** fileBuffer);
+	bool Load(char* fileBuffer, ResourceTexture* texture, uint size);
 
-	void ImportExternalFiles(const char* path);
-	void ExtensionClassifier(const char* path, const char* originalPath = nullptr);
+	std::string FindTexture(const char* texture_name, const char* model_directory);
+	void UnloadTexture(uint imageID);
+	ILenum GetFileFormat(const char* file);
+	void ApplyImportingOptions(TextureImportingOptions importingOptions);
+}
 
-	void LoadMesh(const char* filepath, const char* originalPath = nullptr);
-	bool LoadSceneMeshes(const aiScene* scene, const aiNode* parent, GameObject* gOParent, const char* originalPath);
-	bool LoadNodeMeshes(const aiScene* scene, const aiNode* node, GameObject* parent, const char* originalPath);
-	bool LoadVertexNormalsTexturesIndex(aiMesh* mesh, std::vector<float3>& vertices, std::vector<float3>& normals, std::vector<float2>& textureCoords, std::vector<uint>& indices);
-	std::vector<meshInfo*> meshes;
-	
-	textureInfo* LoadTexture(const char* path);
-	uint LoadDefaultTexture();
-	std::vector<textureInfo*> textures;
-};
+namespace MaterialImporter
+{
+	void Import(const aiMaterial* aimaterial, ResourceMaterial* material);
+	uint64 Save(ResourceMaterial* material, char** fileBuffer);
+	bool Load(const char* fileBuffer, ResourceMaterial* material, uint size);
+	bool Unload(uint imageID);
+
+	bool DeleteTexture(const char* material_library_path);
+	const char* ExtractTexture(const char* material_library_path);
+}

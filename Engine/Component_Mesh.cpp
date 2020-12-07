@@ -1,5 +1,5 @@
 #include "Component_Mesh.h"
-#include "Component_Texture.h"
+#include "Component_Material.h"
 #include "Component_Transform.h"
 #include "ModuleImport.h"
 #include "Glew/include/glew.h"
@@ -87,7 +87,7 @@ void Component_Mesh::Render()
 {
 	//Render
 
-	Component_Texture* texture = ownerGameObject->GetComponent<Component_Texture>();
+	Component_Material* texture = ownerGameObject->GetComponent<Component_Material>();
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 

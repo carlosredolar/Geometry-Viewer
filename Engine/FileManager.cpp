@@ -4,7 +4,7 @@
 #include <fstream>
 #include <filesystem>
 
-FileManager::FileManager(Application* app, bool start_enabled) : Module(app, start_enabled)
+FileManager::FileManager(bool start_enabled) : Module(start_enabled)
 {
 
 	// Initialize the PhysicsFS library

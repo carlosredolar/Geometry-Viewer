@@ -1,5 +1,5 @@
 #pragma once
-#ifndef __Component_Texture_H__
+#ifndef __Component_Material_H__
 
 #include "Component.h"
 #include "GameObject.h"
@@ -7,14 +7,14 @@
 
 struct textureInfo;
 
-class Component_Texture : public Component {
+class Component_Material : public Component {
 public:
 
 	//Constructor
-	Component_Texture(GameObject* ownerGameObject, bool enabled = true);
+	Component_Material(GameObject* ownerGameObject, bool enabled = true);
 
 	//Destructor
-	~Component_Texture();
+	~Component_Material();
 
 	//Update
 	void Update() override;
@@ -44,4 +44,4 @@ private:
 	std::string sizeTexture;
 };
 
-#endif // !__Component_Texture_H__
+#endif // !__Component_Material_H__

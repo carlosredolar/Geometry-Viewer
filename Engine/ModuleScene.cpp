@@ -1,6 +1,6 @@
 #include "Application.h"
 #include "ModuleScene.h"
-#include "Component_Texture.h"
+#include "Component_Material.h"
 
 #include "ImGui/imgui.h"
 
@@ -25,8 +25,8 @@ bool ModuleScene::Start()
 	currentID = 0;
 	gameObjects.push_back(root);
 
-	App->camera->Position = vec3(0, 3, 10);
-	App->camera->LookAt(vec3(0, 0, 0));
+	App->Component_Camera->Position = vec3(0, 3, 10);
+	App->Component_Camera->LookAt(vec3(0, 0, 0));
 
 	App->importer->LoadMesh("Assets/Meshes/BakerHouse.fbx");
 
@@ -55,8 +55,8 @@ update_status ModuleScene::Update(float dt)
 	//Inputs
 	if (App->input->GetKey(SDL_SCANCODE_X) == KEY_DOWN) 
 	{
-		App->camera->Position = vec3(0, 1, 4);
-		App->camera->LookAt(vec3(0, 0, 0));
+		App->Component_Camera->Position = vec3(0, 1, 4);
+		App->Component_Camera->LookAt(vec3(0, 0, 0));
 	}
 
 	//if (App->input->GetKey(SDL_SCANCODE_DELETE) == KEY_DOWN) 
