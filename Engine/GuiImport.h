@@ -2,8 +2,7 @@
 #define _WINDOW_IMPORT_H_
 #include "GuiWindow.h"
 #include "Resource.h"
-
-struct TextureImportingSettings;
+#include "ModuleImport.h"
 
 class GuiImport : public GuiWindow {
 public:

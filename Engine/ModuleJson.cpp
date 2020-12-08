@@ -1,6 +1,5 @@
 #include "ModuleJson.h"
-#include "parson/parson.h"
-#include "MathGeoLib/include/MathGeoLib.h"
+#include "Libs/parson/parson.h"
 
 //JsonObject ====================================================
 
@@ -25,9 +24,9 @@ JsonObj::JsonObj(const char* buffer) : object(nullptr)
 	}
 }
 
-JsonObj::JsonObj(JSON_Object* object) : root(nullptr)
+JsonObj::JsonObj(JSON_Object* obj) : root(nullptr)
 {
-	object = object;
+	object = obj;
 }
 
 JsonObj::~JsonObj()

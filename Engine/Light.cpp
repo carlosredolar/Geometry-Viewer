@@ -1,22 +1,17 @@
 #include "Globals.h"
 #include "Light.h"
 #include <gl/GL.h>
-
+#include "ImGui/imgui.h"
 #include "ModuleJson.h"
 
-Light::Light() : Component(), ref(-1), position(0.0f, 0.0f, 0.0f)
-{
-	type = ComponentType::LIGHT;
-}
+Light::Light() : Component(LIGHT, nullptr), ref(-1), position(0.0f, 0.0f, 0.0f)
+{}
 
 Light::Light(GameObject* gameObject) : Component(LIGHT, gameObject), ref(-1), position(0.0f, 0.0f, 0.0f)
-{
-	type = ComponentType::LIGHT;
-}
+{}
 
 Light::~Light()
-{
-}
+{}
 
 void Light::Init()
 {
@@ -47,7 +42,26 @@ void Light::Render()
 
 void Light::OnGUI()
 {
+	if (ImGui::CollapsingHeader("Light", ImGuiTreeNodeFlags_DefaultOpen))
+	{
+		float diffuse4f[4] = { diffuse.r, diffuse.g, diffuse.b, diffuse.a };
+		if (ImGui::DragFloat3("Diffuse", diffuse4f, 0.1f, 0.0f, 1.0f))
+		{
+			diffuse.r = diffuse4f[0];
+			diffuse.g = diffuse4f[1];
+			diffuse.b = diffuse4f[2];
+			diffuse.a = diffuse4f[3];
+		}
 
+		float ambient4f[4] = { ambient.r, ambient.g, ambient.b, ambient.a };
+		if (ImGui::DragFloat3("Ambient", ambient4f, 0.1f, 0.0f, 1.0f))
+		{
+			ambient.r = ambient4f[0];
+			ambient.g = ambient4f[1];
+			ambient.b = ambient4f[2];
+			ambient.a = ambient4f[3];
+		}
+	}
 }
 
 void Light::Save(JsonArray& save_array)

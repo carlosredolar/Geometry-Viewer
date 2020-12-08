@@ -5,8 +5,8 @@
 //#include "Glew/include/glew.h"
 #include "GameObject.h"
 
-#include "ImGui/imgui.h"
-#include "ImGuizmo/ImGuizmo.h"
+#include "Libs/ImGui/imgui.h"
+#include "Libs/ImGuizmo/ImGuizmo.h"
 
 #include <vector>
 
@@ -31,6 +31,8 @@ public:
 	bool DeleteGameObject(GameObject* todelete);
 	GameObject* GetRoot() { return root; }
 
+	bool ClearScene();
+
 	bool Save(const char* file_path);
 	bool Load(const char* scene_file);
 private:
@@ -42,4 +44,6 @@ private:
 
 	ImGuizmo::OPERATION mCurrentGizmoOperation;
 	ImGuizmo::MODE mCurrentGizmoMode;
+
+	bool show_grid = true;
 };

@@ -133,11 +133,11 @@ void Sphere::Render()
 
 //PLANE
 
-Plane::Plane() : Primitive() {}
+PPlane::PPlane() : Primitive() {}
 
-Plane::~Plane() {}
+PPlane::~PPlane() {}
 
-void Plane::Render()
+void PPlane::Render()
 {
 	float vertex[12] = {
 		0.0f ,0.0f, 0.0f,

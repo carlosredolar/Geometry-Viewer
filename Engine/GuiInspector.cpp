@@ -45,7 +45,8 @@ void GuiInspector::Draw()
 		SameLine();
 		InputText("Name", buf, ARRAYSIZE(buf));
 		gameObjectSelected->ChangeName(buf);
-
+		//Old system
+		/*
 		if (CollapsingHeader("Transform")) 
 		{
 			float3 tempValues = transformGO->GetPosition();
@@ -102,6 +103,13 @@ void GuiInspector::Draw()
 				SameLine();
 				TextColored(ImVec4(0.95f, 0.5f, 0.07f, 1.0f), textureGO->GetSize());
 			}
+		}
+		*/
+
+		gameObjectSelected->OnGUI();
+
+		if (ImGui::CollapsingHeader("Resources")) {
+			App->resources->OnGUI();
 		}
 	}
 	End();

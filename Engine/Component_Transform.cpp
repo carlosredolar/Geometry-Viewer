@@ -1,4 +1,5 @@
 #include "Component_Transform.h"
+#include "ImGui/imgui.h"
 
 Component_Transform::Component_Transform(GameObject* ownerGameObject, bool enabled) : Component(ComponentType::TRANSFORM, ownerGameObject, enabled)
 {
@@ -70,6 +71,14 @@ void Component_Transform::UpdateGlobalTransform(float4x4 parentGlobalTransform)
 	globalTransform = parentGlobalTransform * localTransform;
 }
 
+void Component_Transform::Reset()
+{
+	position = float3::zero;
+	rotation = Quat::identity;
+	scale = float3::one;
+	rotationEuler = float3::zero;
+}
+
 float3 Component_Transform::GetPosition() const
 {
 	return position;
@@ -94,4 +103,31 @@ void Component_Transform::GenerateEulerFromRot()
 {
 	rotationEuler = rotation.ToEulerXYZ();
 	rotationEuler *= RADTODEG;
+}
+
+void Component_Transform::OnGUI()
+{
+	if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
+	{
+		float pos[4] = { position.x, position.y, position.z, 1.0f };
+		float rot[4] = { rotationEuler.x, rotationEuler.y, rotationEuler.z, 1.0f };
+		float scl[4] = { scale.x, scale.y, scale.z, 1.0f };
+
+		ImGui::DragFloat3("Position", pos, 0.1f, -10000.0f, 10000.0f);
+		ImGui::DragFloat3("Rotation", rot, 0.1f, -360.0f, 360.0f);
+		ImGui::DragFloat3("Scale", scl, 0.01f, -10000.0f, 10000.0f);
+
+		float3 pos_ = { pos[0], pos[1], pos[2] };
+		float3 rot_ = { rot[0], rot[1], rot[2] };
+		float3 scl_ = { scl[0], scl[1], scl[2] };
+
+		SetTransform(pos_, rot_, scl_);
+
+		ImGui::Spacing();
+
+		if (ImGui::Button("Reset"))
+			Reset();
+
+		ImGui::Spacing();
+	}
 }

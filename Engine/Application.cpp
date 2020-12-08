@@ -38,8 +38,6 @@ Application::Application(int argc, char* args[]) : argc(argc), args(args), wantT
 	capped_ms = 1000 / cap;
 }
 
-Application* App = nullptr;
-
 Application::~Application()
 {
 	std::vector<Module*>::reverse_iterator item = list_modules.rbegin();
@@ -188,6 +186,11 @@ float Application::GetFPS()
 Specs Application::GetSpecs()
 {
 	return specs;
+}
+
+void Application::AddModuleToTaskStack(Module* callback)
+{
+	endFrameTasks.push(callback);
 }
 
 void Application::LoadSpecs()

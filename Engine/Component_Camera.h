@@ -18,7 +18,6 @@ enum AspectRatio {
 
 class Component_Camera : public Component {
 public:
-	Component_Camera();
 	Component_Camera(GameObject* gameObject);
 	~Component_Camera();
 

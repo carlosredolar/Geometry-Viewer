@@ -1,8 +1,7 @@
 #pragma once
-
 #include "Globals.h"
-#include "MathGeoLib/include/MathGeoLib.h"
 #include "Color.h"
+#include "Libs/MathGeoLib/include/MathGeoLib.h"
 
 struct json_array_t;
 typedef json_array_t JSON_Array;

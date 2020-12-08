@@ -24,6 +24,7 @@ public:
 	void SetTransform(float3 pos, float3 rotation, float3 scale);
 
 	void CleanUp();
+	void Reset();
 
 	float4x4	GetLocalTransform();
 	float4x4	GetGlobalTransform();

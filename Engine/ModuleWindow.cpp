@@ -4,6 +4,8 @@
 
 ModuleWindow::ModuleWindow(bool start_enabled) : Module(start_enabled)
 {
+	name = "window";
+
 	window = NULL;
 	screen_surface = NULL;
 }
@@ -66,10 +68,9 @@ bool ModuleWindow::Init()
 		{
 			//Get window surface
 			screen_surface = SDL_GetWindowSurface(window);
+			brightness = SDL_GetWindowBrightness(window);
 		}
 	}
-
-	brightness = SDL_GetWindowBrightness(App->window->window);
 
 	return ret;
 }

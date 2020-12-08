@@ -8,6 +8,7 @@
 #include "GameObject.h"
 #include "Component_Transform.h"
 
+#include "Libs/ImGuizmo/ImGuizmo.h"
 
 ModuleCamera3D::ModuleCamera3D(bool start_enabled) : Module(start_enabled)
 {
@@ -20,7 +21,7 @@ ModuleCamera3D::ModuleCamera3D(bool start_enabled) : Module(start_enabled)
 	position = float3(40.0f, 15.0f, 45.0f);
 	reference = float3(0.0f, 0.0f, 0.0f);
 
-	camera = new Component_Camera();
+	camera = new Component_Camera(nullptr);
 	camera->SetPosition(float3(position));
 	camera->SetReference(reference);
 	Look(reference);
@@ -217,6 +218,7 @@ void ModuleCamera3D::SetPosition(float3 newPosition)
 
 GameObject* ModuleCamera3D::PickGameObject()
 {
+	/*
 	float normalized_x = App->gui->mouseScenePosition.x / App->gui->image_size.x;
 	float normalized_y = App->gui->mouseScenePosition.y / App->gui->image_size.y;
 
@@ -276,7 +278,7 @@ GameObject* ModuleCamera3D::PickGameObject()
 			}
 		}
 	}
-
+	*/
 	return nullptr;
 }
 

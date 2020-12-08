@@ -6,6 +6,8 @@
 #include "Component.h"
 #include <string>
 
+#include "MathGeoLib/include/MathGeoLib.h"
+
 class GameObject
 {
 public:
@@ -20,6 +22,12 @@ public:
 	void Disable(); //Disable GameObject
 	bool IsEnabled(); //Return if enabled
 
+	void OnGUI();
+
+	void Save(JsonArray& save_array);
+	uint Load(JsonObj* object);
+	uint LoadNodeData(JsonObj* object);
+
 	GameObject* const GetParent() const; //Get it's parent
 	void AddGameObjectAsChild(GameObject* gameObject); //Add another GameObject as a child
 	void ChangeParent(GameObject* newParent); //Change parent
@@ -27,6 +35,7 @@ public:
 	std::vector<GameObject*>* const GetChilds(); //Get a pointer to this game object childs vector
 	void SeparateChild(GameObject* child); //Separate child from this game object
 	void DeleteChild(GameObject* child);//Delete child
+	void DeleteAllChilds();
 	void GetChildsNewParent();	//Send this game object childs to this parent
 
 	//Add a component to this game object
@@ -44,6 +53,8 @@ public:
 
 	//Get a reference to this game object name
 	const char* const GetName();
+	AABB GetAABB();
+	void CreateAABB();
 
 	//Change game object's name. Passed by reference
 	void ChangeName(const char* new_name);
@@ -60,6 +71,8 @@ private:
 	bool						enabled;
 	std::vector<Component*>		components;
 	std::vector<GameObject*>	childs;
+
+	AABB aABB;
 };
 
 template<typename Type>

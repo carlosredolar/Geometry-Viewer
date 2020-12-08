@@ -5,7 +5,11 @@
 #include "GameObject.h"
 #include "Globals.h"
 
-struct textureInfo;
+class ResourceMaterial;
+class ResourceTexture;
+class Component_Mesh;
+
+class JsonArray;
 
 class Component_Material : public Component {
 public:
@@ -18,31 +22,34 @@ public:
 
 	//Update
 	void Update() override;
-	void OnGUI() override;
-
-	//Enable Component
-	void Enable() override;
-
-	//Disable Component
-	void Disable() override;
-
-	//Check if component is enabled
-	bool IsEnabled() override;
 
 	void CleanUp();
 
 	uint GetIdTexture();
 	void SetIdTexture(uint UUID);
-	void SetTexture(textureInfo* tex);
+	void SetResourceUID(uint UID) override;
+
+	void Save(JsonArray& save_array) override;
+	void Load(JsonObj& load_object) override;
+	void OnGUI() override;
+
+	void BindTexture();
+
+	void SetTexture(ResourceTexture* texture);
+	void AssignCheckersImage();
+	ResourceTexture* GetDiffuseTexture();
 
 	const char* GetName();
 	const char* GetPath();
 	const char* GetSize();
 	 
 private:
-	textureInfo* texture;
+	bool checkers_image;
+	bool colored;
 
-	std::string sizeTexture;
+	ResourceMaterial* _resource;
+	ResourceTexture* _diffuseTexture;
+	uint checkersID;
 };
 
 #endif // !__Component_Material_H__

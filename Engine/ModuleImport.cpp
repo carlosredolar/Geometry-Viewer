@@ -14,19 +14,19 @@
 #include "Component_Camera.h"
 #include "ModuleJson.h"
 
-#include "Assimp/Assimp/include/cimport.h"
-#include "Assimp/Assimp/include/scene.h"
-#include "Assimp/Assimp/include/postprocess.h"
+#include "Libs/Assimp/include/cimport.h"
+#include "Libs/Assimp/include/scene.h"
+#include "Libs/Assimp/include/postprocess.h"
 
-#include "Devil/include/IL/il.h"
-#include "Devil/include/IL/ilu.h"
-#include "Devil/include/IL/ilut.h"
+#include "Libs/Devil/include/IL/il.h"
+#include "Libs/Devil/include/IL/ilu.h"
+#include "Libs/Devil/include/IL/ilut.h"
 
-#pragma comment (lib, "Assimp/Assimp/libx86/assimp.lib")
+#pragma comment (lib, "Libs/Assimp/libx86/assimp.lib")
 
-#pragma comment (lib, "Devil/libx86/Devil.lib")	
-#pragma comment (lib, "Devil/libx86/ILU.lib")	
-#pragma comment (lib, "Devil/libx86/ILUT.lib")	
+#pragma comment (lib, "Libs/Devil/libx86/Devil.lib")	
+#pragma comment (lib, "Libs/Devil/libx86/ILU.lib")	
+#pragma comment (lib, "Libs/Devil/libx86/ILUT.lib")	
 
 #pragma region ModelImporter
 

@@ -1,8 +1,10 @@
+#include "Application.h"
 #include "GameObject.h"
 #include "Component_Mesh.h"
 #include "Component_Transform.h"
 #include "Component_Material.h"
 #include "Component.h"
+#include "ImGui/imgui.h"
 
 GameObject::GameObject(const char* name, GameObject* parent, bool enabled) :name(name), parent(parent), enabled(enabled) { selected = false; to_delete = false; }
 
@@ -70,6 +72,11 @@ void GameObject::Update()
 
 			(*gameObject)->GetComponent<Component_Transform>()->UpdateGlobalTransform(GetComponent<Component_Transform>()->GetGlobalTransform());
 		}
+
+		//Draw AABB
+		float3 cornerPoints[8];
+		aABB.GetCornerPoints(cornerPoints);
+		App->renderer3D->DrawAABB(cornerPoints);
 	}
 }
 
@@ -86,7 +93,7 @@ void GameObject::Enable()
 			(*component)->Enable();
 		}
 
-		//Enable children
+		//Enable childs
 		std::vector<GameObject*>::iterator gameObject = childs.begin();
 
 		for (; gameObject != childs.end(); ++gameObject) {
@@ -109,7 +116,7 @@ void GameObject::Disable()
 			(*component)->Disable();
 		}
 
-		//Disable children
+		//Disable childs
 		std::vector<GameObject*>::iterator gameObject = childs.begin();
 
 		for (; gameObject != childs.end(); ++gameObject) {
@@ -123,9 +130,121 @@ bool GameObject::IsEnabled()
 	return enabled;
 }
 
+void GameObject::OnGUI()
+{
+	ImGui::Checkbox("Enabled", &enabled);
+	ImGui::SameLine();
+
+	static char buf[64] = "Name";
+	strcpy(buf, name.c_str());
+	if (ImGui::InputText("", &buf[0], IM_ARRAYSIZE(buf))) {}
+
+	for (size_t i = 0; i < components.size(); i++)
+	{
+		components[i]->OnGUI();
+	}
+
+	if (ImGui::CollapsingHeader("Debugging Information"))
+	{
+		if (parent != nullptr)
+			ImGui::Text("Parent: %s", parent->GetName());
+		else
+			ImGui::Text("No parent");
+
+		ImGui::Text("UUID: %d", UUID);
+	}
+}
+
+void GameObject::Save(JsonArray& save_array)
+{
+	JsonObj save_object;
+
+	save_object.AddInt("UUID", UUID);
+
+	if (parent != nullptr)
+		save_object.AddInt("Parent UUID", parent->UUID);
+	else
+		save_object.AddInt("Parent UUID", 0);
+
+	save_object.AddString("Name", name.c_str());
+
+	JsonArray componentsSave = save_object.AddArray("Components");
+
+	for (size_t i = 0; i < components.size(); i++)
+	{
+		components[i]->Save(componentsSave);
+	}
+
+	save_array.AddObject(save_object);
+
+	for (size_t i = 0; i < childs.size(); i++)
+	{
+		childs[i]->Save(save_array);
+	}
+}
+
+uint GameObject::Load(JsonObj* object)
+{
+	UUID = object->GetInt("UUID");
+	name = object->GetString("Name", "No Name");
+	uint parentUUID = object->GetInt("Parent UUID");
+
+	JsonArray componentsArray = object->GetArray("Components");
+
+	for (size_t i = 0; i < componentsArray.Size(); i++)
+	{
+		JsonObj componentObject = componentsArray.GetObjectAt(i);
+		Component* component = CreateComponent((ComponentType)componentObject.GetInt("Type"));
+		component->Load(componentObject);
+	}
+
+	return parentUUID;
+}
+
+uint GameObject::LoadNodeData(JsonObj* object)
+{
+	UUID = object->GetInt("UUID");
+	name = object->GetString("Name", "No Name");
+	uint parentUUID = object->GetInt("Parent UUID");
+
+	float3 position = object->GetFloat3("Position");
+	Quat rotation = object->GetQuaternion("Rotation");
+	float3 scale = object->GetFloat3("Scale");
+
+	GetComponent<Component_Transform>()->SetTransform(position, rotation, scale);
+
+	int meshID = object->GetInt("Mesh", -1);
+	if (meshID != -1) {
+		Component_Mesh* mesh = (Component_Mesh*)CreateComponent(ComponentType::MESH);
+		mesh->SetResourceUID(meshID);
+	}
+
+	int materialID = object->GetInt("Material", -1);
+	if (materialID != -1) {
+		Component_Material* material = (Component_Material*)CreateComponent(ComponentType::MATERIAL);
+		material->SetResourceUID(materialID);
+	}
+
+	return parentUUID;
+}
+
 GameObject* const GameObject::GetParent() const
 {
 	return parent;
+}
+
+void GameObject::CreateAABB()
+{
+	OBB oBB = GetComponent<Component_Mesh>()->GetAABB();
+	oBB.Transform(GetComponent<Component_Transform>()->GetGlobalTransform());
+
+	aABB.SetNegativeInfinity();
+	aABB.Enclose(oBB);
+}
+
+AABB GameObject::GetAABB()
+{
+	return aABB;
 }
 
 void GameObject::AddGameObjectAsChild(GameObject * gameObject)
@@ -139,9 +258,9 @@ void GameObject::AddGameObjectAsChild(GameObject * gameObject)
 	childs.push_back(gameObject);
 }
 
-void GameObject::ChangeParent(GameObject * new_parent)
+void GameObject::ChangeParent(GameObject * newparent)
 {
-	parent = new_parent;
+	parent = newparent;
 }
 
 std::vector<GameObject*>* const GameObject::GetChilds()
@@ -179,6 +298,17 @@ void GameObject::DeleteChild(GameObject * child)
 	}
 }
 
+void GameObject::DeleteAllChilds()
+{
+	for (size_t i = 0; i < childs.size(); i++)
+	{
+		childs[i]->DeleteAllChilds();
+		childs[i] = nullptr;
+	}
+
+	//this->~GameObject();
+}
+
 Component* GameObject::CreateComponent(ComponentType type)
 {
 	Component_Material* componentTexture = nullptr;
@@ -196,6 +326,7 @@ Component* GameObject::CreateComponent(ComponentType type)
 	case ComponentType::MESH:
 		componentMesh = new Component_Mesh(this);
 		CheckAddComponent(componentMesh);
+		CreateAABB();
 		return componentMesh;
 		break;
 	}

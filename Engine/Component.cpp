@@ -31,3 +31,17 @@ ComponentType Component::GetType()
 {
 	return type;
 }
+
+void Component::SetResourceUID(uint UID)
+{
+	resourceUID = UID;
+}
+
+void Component::SetOwnerGameObject(GameObject* gameObject)
+{
+	ownerGameObject = gameObject;
+}
+GameObject* Component::GetOwnerGameObject()
+{
+	return ownerGameObject;
+}

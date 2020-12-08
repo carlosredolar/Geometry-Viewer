@@ -25,8 +25,7 @@ class Component {
 public:
 
 	//Constructor
-	Component();
-	Component(ComponentType type, GameObject* ownerGameObject, bool enabled = true);
+	Component(ComponentType type, GameObject* ownerGameObject = nullptr, bool enabled = true);
 
 	//Destructor
 	~Component();

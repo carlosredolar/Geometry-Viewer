@@ -181,3 +181,94 @@ bool ModuleScene::DeleteGameObject(GameObject* todelete)
 	delete(todelete);
 	return true;
 }
+
+bool ModuleScene::ClearScene()
+{
+	bool ret = true;
+
+	root->DeleteAllChilds();
+	root = nullptr;
+
+	return ret;
+}
+
+bool ModuleScene::Save(const char* file_path)
+{
+	bool ret = true;
+
+	JsonObj save_file;
+
+	JsonArray gameObjects = save_file.AddArray("Game Objects");
+
+	root->Save(gameObjects);
+
+	char* buffer = NULL;
+	uint size = save_file.Save(&buffer);
+
+	App->fileManager->Save(file_path, buffer, size);
+
+	save_file.Release();
+	RELEASE_ARRAY(buffer);
+
+	return ret;
+}
+
+bool ModuleScene::Load(const char* scene_file)
+{
+	bool ret = true;
+
+	std::string extension = App->fileManager->ExtractFileExtension(scene_file);
+	if (extension != ".scene")
+	{
+		WARNING_LOG("%s is not a valid scene extension and can't be loaded", scene_file);
+		return false;
+	}
+
+	ClearScene();
+
+	char* buffer = NULL;
+	App->fileManager->Load(scene_file, &buffer);
+
+	JsonObj base_object(buffer);
+	JsonArray loadedGameObjects(base_object.GetArray("Game Objects"));
+
+	std::vector<GameObject*> createdObjects;
+
+	for (size_t i = 0; i < loadedGameObjects.Size(); i++)
+	{
+		//load game object
+		GameObject* gameObject = new GameObject(loadedGameObjects.GetObjectAt(i).GetString("Name", "GameObject"), App->scene->GetRoot());
+		uint parentUUID = gameObject->Load(&loadedGameObjects.GetObjectAt(i));
+		createdObjects.push_back(gameObject);
+
+		//check if it's the root game object
+		if (strcmp(gameObject->GetName(), "Root") == 0) {
+			root = gameObject;
+			SelectGameObject(root);
+		}
+
+		//Get game object's parent
+		for (size_t i = 0; i < createdObjects.size(); i++)
+		{
+			if (createdObjects[i]->UUID == parentUUID)
+			{
+				createdObjects[i]->AddGameObjectAsChild(gameObject);
+				gameObject->ChangeParent(createdObjects[i]);
+			}
+		}
+	}
+
+	//root->UpdateChildrenTransforms();
+
+	if (root != nullptr)
+		LOG("Scene: %s loaded successfully", scene_file);
+
+	return ret;
+}
+
+bool ModuleScene::LoadConfig(JsonObj & config)
+{
+	show_grid = config.GetBool("show_grid");
+
+	return true;
+}

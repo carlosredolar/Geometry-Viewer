@@ -1,10 +1,9 @@
 #pragma once
 #include "Globals.h"
 #include "ImGui/imgui.h"
-#include "ImGuizmo/ImGuizmo.h"
 #include <string>
-
-class JsonObj;
+#include "Color.h"
+#include "ModuleJson.h"
 
 enum ResourceType
 {
@@ -97,10 +96,11 @@ public:
 	void Load(JsonObj& base_object) override;
 
 	uint GetID();
-	int GeWidth();
+	int GetWidth();
 	int GetHeight();
 	GLubyte* GetData();
 	uint GetGpuID();
+	std::string GetPath();
 
 private:
 	uint UUID;
@@ -108,6 +108,7 @@ private:
 	int height;
 	GLubyte* data;
 	uint gpuID;
+	std::string path;
 };
 
 // Resource Model

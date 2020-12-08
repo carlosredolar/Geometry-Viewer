@@ -15,6 +15,8 @@ Resource::~Resource()
 	libraryFile.clear();
 }
 
+void Resource::Load(JsonObj& base_object) {}
+
 ResourceType Resource::GetType()
 {
 	return type;
@@ -228,7 +230,7 @@ uint ResourceTexture::GetID()
 	return UUID; 
 }
 
-int ResourceTexture::GeWidth() 
+int ResourceTexture::GetWidth() 
 { 
 	return width; 
 }
@@ -246,6 +248,11 @@ GLubyte* ResourceTexture::GetData()
 uint ResourceTexture::GetGpuID() 
 { 
 	return gpuID; 
+}
+
+std::string ResourceTexture::GetPath()
+{
+	return path;
 }
 
 // ResourceModel

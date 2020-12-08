@@ -197,6 +197,54 @@ int Component_Mesh::GetIndices()
 	return mesh->amountIndices;
 }
 
+void Component_Mesh::OnGUI()
+{
+	if (ImGui::CollapsingHeader("Mesh", ImGuiTreeNodeFlags_DefaultOpen))
+	{
+		ImGui::Checkbox(" Enabled", &enabled);
+
+		ImGui::Separator();
+		ImGui::Spacing();
+
+		std::string meshID = "Mesh: ";
+		meshID.append(mesh->name);
+		ImGui::Button(meshID.c_str());
+
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload * payload = ImGui::AcceptDragDropPayload("MESHES"))
+			{
+				IM_ASSERT(payload->DataSize == sizeof(int));
+				int payload_n = *(const int*)payload->Data;
+				SetResourceUID(payload_n);
+			}
+			ImGui::EndDragDropTarget();
+		}
+
+		ImGui::Spacing();
+
+		ImGui::Text("Assets path: %s", mesh->assetsFile.c_str());
+		ImGui::Text("Library path: %s", mesh->libraryFile.c_str());
+
+		ImGui::Spacing();
+		ImGui::Separator();
+		ImGui::Spacing();
+
+		ImGui::Text("Vertices: %d Indices: %d", mesh->amountVertices, mesh->amountIndices);
+		ImGui::Spacing();
+
+
+
+		ImGui::Spacing();
+
+		ImGui::Checkbox("Vertex Normals", &enableVertexNormals);
+		ImGui::SameLine();
+		ImGui::Checkbox("Face Normals", &enableFaceNormals);
+
+		ImGui::Spacing();
+	}
+}
+
 void Component_Mesh::Save(JsonArray& save_array)
 {
 	JsonObj save_object;

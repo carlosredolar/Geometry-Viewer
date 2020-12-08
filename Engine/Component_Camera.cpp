@@ -6,23 +6,24 @@
 #include "ModuleRenderer3D.h"
 #include "ModuleJson.h"
 
-Component_Camera::Component_Camera() : Component(), aspectRatio(AspectRatio::AR_16_9), fixedFOV(FIXED_HORIZONTAL_FOV) {
-	type = ComponentType::CAMERA;
+//Component_Camera::Component_Camera() : Component(), aspectRatio(AspectRatio::AR_16_9), fixedFOV(FIXED_HORIZONTAL_FOV) 
+//{
+//	type = ComponentType::CAMERA;
+//
+//	frustum.type = FrustumType::PerspectiveFrustum;
+//
+//	frustum.pos = float3(0.0f, 0.0f, -5.0f);
+//	frustum.up = float3(0.0f, 1.0f, 0.0f);
+//	frustum.front = float3(0.0f, 0.0f, 1.0f);
+//
+//	frustum.horizontalFov = 60.0f * DEGTORAD;
+//	AdjustFieldOfView();
+//
+//	frustum.nearPlaneDistance = 0.3f;
+//	frustum.farPlaneDistance = 1000.0f;
+//}
 
-	frustum.type = FrustumType::PerspectiveFrustum;
-
-	frustum.pos = float3(0.0f, 0.0f, -5.0f);
-	frustum.up = float3(0.0f, 1.0f, 0.0f);
-	frustum.front = float3(0.0f, 0.0f, 1.0f);
-
-	frustum.horizontalFov = 60.0f * DEGTORAD;
-	AdjustFieldOfView();
-
-	frustum.nearPlaneDistance = 0.3f;
-	frustum.farPlaneDistance = 1000.0f;
-}
-
-Component_Camera::Component_Camera(GameObject * gameObject) : Component(ComponentType::CAMERA, gameObject), aspectRatio(AspectRatio::AR_16_9)
+Component_Camera::Component_Camera(GameObject* gameObject) : Component(ComponentType::CAMERA, gameObject), aspectRatio(AspectRatio::AR_16_9)
 {
 	type = ComponentType::CAMERA;
 

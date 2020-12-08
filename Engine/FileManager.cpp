@@ -6,9 +6,11 @@
 
 FileManager::FileManager(bool start_enabled) : Module(start_enabled)
 {
+	name = "fileManager";
 
 	// Initialize the PhysicsFS library
-	PHYSFS_init(nullptr);
+	if (PHYSFS_init(nullptr) != 0)
+		LOG("PhysFS initted correctly");
 
 	// We only need this when compiling in debug. In Release we don't need it.
 	PHYSFS_mount(".", nullptr, 1);
@@ -16,7 +18,7 @@ FileManager::FileManager(bool start_enabled) : Module(start_enabled)
 	// Enable PhysFS writting
 	if (PHYSFS_setWriteDir(".") == 0)
 	{
-		LOG("PhysFS error while initializing writting dir: %s\n", PHYSFS_getLastError());
+		ERROR_LOG("PhysFS error while initializing writting dir: %s\n", PHYSFS_getLastError());
 	}
 
 	CreateFolderDirs();

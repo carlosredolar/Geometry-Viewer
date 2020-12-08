@@ -2,15 +2,15 @@
 #define __ModuleFileManager_H__
 
 #include "Module.h"
-#include "SDL/include/SDL.h"
+#include "Libs/SDL/include/SDL.h"
 #include "Defs.h"
-#include "PhysFS/include/physfs.h"
+#include "Libs/PhysFS/include/physfs.h"
 #include "PathNode.h"
 
 #include <vector>
 #include <string>
 
-#pragma comment( lib, "PhysFS/libx86/physfs.lib" )
+#pragma comment( lib, "Libs/PhysFS/libx86/physfs.lib" )
 
 struct SDL_RWops;
 struct aiFileIO;
