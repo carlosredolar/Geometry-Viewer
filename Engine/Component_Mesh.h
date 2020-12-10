@@ -37,12 +37,17 @@ public:
 
 	void CreateBuffers();
 
+	void GenerateAABB();
+	AABB GetAABB();
+
 	void Render();
 
 	void RenderVertexNormals(std::vector<float3> vertices, std::vector<float3> normals);
 	void RenderFaceNormals(std::vector<float3> vertices, std::vector<float3> normals);
 
 	void CleanUp();
+
+	AABB _AABB;
 
 	bool enableVertexNormals = false;
 	bool enableFaceNormals = false;

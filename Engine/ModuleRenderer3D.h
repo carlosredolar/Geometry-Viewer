@@ -19,6 +19,8 @@ public:
 
 	void OnResize(int width, int height);
 
+	void DrawAABB(float3* aabb);
+
 public:
 
 	Light lights[MAX_LIGHTS];

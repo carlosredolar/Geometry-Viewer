@@ -3,6 +3,8 @@
 #include "Component_Transform.h"
 #include "Component_Texture.h"
 #include "Component.h"
+#include "MathGeoLib/include/MathGeoLib.h"
+#include "Application.h"
 
 GameObject::GameObject(const char* name, GameObject* parent, bool enabled) :name(name), parent(parent), enabled(enabled) { selected = false; }
 
@@ -60,6 +62,18 @@ void GameObject::Update()
 
 		for (; component != components.end(); ++component) {
 			if((*component)->IsEnabled()) (*component)->Update();
+			if ((*component)->GetType() == Component::COMPONENT_TYPE::MESH) {
+				//GnMesh* mesh = (GnMesh*)*component;
+				_OBB = mesh->GetAABB();
+				_OBB.Transform(transform->GetGlobalTransform());
+
+				_AABB.SetNegativeInfinity();
+				_AABB.Enclose(_OBB);
+
+				float3 cornerPoints[8];
+				_AABB.GetCornerPoints(cornerPoints);
+				App->renderer3D->DrawAABB(cornerPoints);
+			}
 		}
 
 		//Update childs

@@ -147,6 +147,10 @@ update_status ModuleCamera3D::Update(float dt)
 	// Recalculate matrix -------------
 	CalculateViewMatrix();
 
+	//BOUNDING BOXES
+	float3 corner_points[8];
+	App->renderer3D->DrawAABB(corner_points);
+
 	return UPDATE_CONTINUE;
 }
 
