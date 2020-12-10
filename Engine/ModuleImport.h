@@ -12,7 +12,7 @@ struct meshInfo
 	std::string name;
 
 	uint idVertex;
-	std::vector<float3> vertices;
+	float3* vertices;
 
 	uint idIndex;
 	std::vector<uint> indices;

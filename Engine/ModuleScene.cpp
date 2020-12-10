@@ -19,7 +19,7 @@ bool ModuleScene::Start()
 
 	//Create root gameObject
 	root = new GameObject("Scene", nullptr, true);
-	root->CreateComponent(Component::COMPONENT_TYPE::TRANSFORM);
+	root->CreateComponent(COMPONENT_TYPE::TRANSFORM);
 	root->id = 0;
 
 	currentID = 0;
@@ -92,7 +92,7 @@ GameObject* ModuleScene::CreateGameObject(const char* name, GameObject* parent, 
 	GameObject* newGameObject = new GameObject(name, parent, enabled);
 
 	//Create component transform
-	newGameObject->CreateComponent(Component::COMPONENT_TYPE::TRANSFORM);
+	newGameObject->CreateComponent(COMPONENT_TYPE::TRANSFORM);
 
 	parent->AddGameObjectAsChild(newGameObject);
 	currentID++;

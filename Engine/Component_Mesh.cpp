@@ -64,7 +64,11 @@ void Component_Mesh::GenerateMesh(meshInfo* newMesh, std::vector<float3> vertice
 	mesh->textureCoords = textureCoords;
 
 	CreateBuffers();
-	GenerateAABB();
+	if (mesh != nullptr)
+	{
+		GenerateAABB();
+	}
+	
 }
 
 void Component_Mesh::CreateBuffers()
@@ -234,15 +238,16 @@ void Component_Mesh::GenerateAABB()
 {
 	_AABB.SetNegativeInfinity();
 
-	float3* vector;
+	/*float3* vector;
 	for (uint i = 0; i < mesh->vertices.size(); i++) {
 		// Vertex
-		vector->x = mesh->vertices[i].x;
-		vector->y = mesh->vertices[i].y;
-		vector->z = mesh->vertices[i].z;
+		vector += mesh->vertices[i];
+		//vector->y = mesh->vertices[i].y;
+		//vector->z = mesh->vertices[i].z;
 		//vertices.push_back(vector);
 	}
-	_AABB.Enclose((float3*)vector, vector->Length());
+	_AABB.Enclose(&vector, vector->Length());*/
+	_AABB.Enclose((float3*)mesh->vertices, mesh->vertices.size());
 }
 
 AABB Component_Mesh::GetAABB()

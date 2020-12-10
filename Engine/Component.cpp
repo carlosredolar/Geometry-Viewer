@@ -29,7 +29,7 @@ bool Component::IsEnabled()
 	return enabled;
 }
 
-Component::COMPONENT_TYPE Component::GetType()
+COMPONENT_TYPE Component::GetType()
 {
-	return COMPONENT_TYPE();
+	return type;
 }
