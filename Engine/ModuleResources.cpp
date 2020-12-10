@@ -29,7 +29,7 @@ bool ModuleResources::Init()
 
 	//std::vector<std::string> files;
 	//std::vector<std::string> dirs;
-	//App->fileManager->DiscoverFilesRecursive("Library", files, dirs);
+	//FileManager::DiscoverFilesRecursive("Library", files, dirs);
 
 	CheckAssetsRecursive("Assets");
 
@@ -153,12 +153,12 @@ bool ModuleResources::MetaUpToDate(const char* assets_file, const char* meta_fil
 	bool ret = true;
 
 	char* buffer = nullptr;
-	uint size = App->fileManager->Load(meta_file, &buffer);
+	uint size = FileManager::Load(meta_file, &buffer);
 	JsonObj meta(buffer);
 
 	uint UID = meta.GetInt("UID");
 	int lastModifiedMeta = meta.GetInt("lastModified");
-	uint lastModified = App->fileManager->GetLastModTime(assets_file);
+	uint lastModified = FileManager::GetLastModTime(assets_file);
 
 	if (lastModifiedMeta == lastModified)
 	{
@@ -168,7 +168,7 @@ bool ModuleResources::MetaUpToDate(const char* assets_file, const char* meta_fil
 			library_path = Find(UID);
 
 		//check for the file itself to exist
-		if (!App->fileManager->Exists(library_path.c_str()))
+		if (!FileManager::Exists(library_path.c_str()))
 		{
 			ret = false;
 		}
@@ -196,7 +196,7 @@ bool ModuleResources::MetaUpToDate(const char* assets_file, const char* meta_fil
 int ModuleResources::GetUIDFromMeta(const char* meta_file)
 {
 	char* buffer = nullptr;
-	uint size = App->fileManager->Load(meta_file, &buffer);
+	uint size = FileManager::Load(meta_file, &buffer);
 	JsonObj meta(buffer);
 
 	int UID = meta.GetInt("UID", -1);
@@ -216,13 +216,13 @@ int ModuleResources::Find(const char* assets_file)
 
 	//First we loop through all loaded resources
 	for (resource_it; resource_it != resources.end(); resource_it++) {
-		if (resource_it->second->assetsFile == App->fileManager->LowerCaseString(assets_file))
+		if (resource_it->second->assetsFile == FileManager::LowerCaseString(assets_file))
 			return resource_it->first;
 	}
 
 	//If not found we loop through all not loaded but known resources
 	for (resources_data_it; resources_data_it != resources_data.end(); resources_data_it++) {
-		if (resources_data_it->second.assetsFile == App->fileManager->LowerCaseString(assets_file))
+		if (resources_data_it->second.assetsFile == FileManager::LowerCaseString(assets_file))
 			return resources_data_it->first;
 	}
 
@@ -242,7 +242,7 @@ const char* ModuleResources::Find(uint UID)
 		std::string file = directories[i];
 		file += std::to_string(UID);
 		file += extensions[i];
-		if (App->fileManager->Exists(file.c_str()))
+		if (FileManager::Exists(file.c_str()))
 		{
 			char* final_file = new char[256];
 			sprintf_s(final_file, 256, file.c_str());
@@ -286,7 +286,7 @@ uint ModuleResources::ImportFile(const char* assets_file)
 	/*
 	std::string meta_file = assets_file;
 	meta_file.append(".meta");
-	if(App->fileManager->Exists(meta_file.c_str()))
+	if(FileManager::Exists(meta_file.c_str()))
 		return GetUIDFromMeta(meta_file.c_str());
 	*/
 
@@ -295,8 +295,8 @@ uint ModuleResources::ImportFile(const char* assets_file)
 	Resource* resource = CreateResource(assets_file, type);
 	uint ret = 0;
 
-	char* fileBuffer;
-	uint size = App->fileManager->Load(assets_file, &fileBuffer);
+	char* fileBuffer = nullptr;
+	uint size = FileManager::Load(assets_file, &fileBuffer);
 
 	switch (type)
 	{
@@ -362,7 +362,7 @@ uint ModuleResources::ReimportFile(const char* assets_file)
 	Resource* resource = CreateResource(assets_file, type, ret);
 
 	char* fileBuffer;
-	uint size = App->fileManager->Load(assets_file, &fileBuffer);
+	uint size = FileManager::Load(assets_file, &fileBuffer);
 
 	if (size <= 0)
 	{
@@ -376,8 +376,8 @@ uint ModuleResources::ReimportFile(const char* assets_file)
 		ModelImporter::ReimportFile(fileBuffer, (ResourceModel*)resource, size);
 		break;
 	case ResourceType::RESOURCE_TEXTURE:
-		if (App->fileManager->Exists(resource->libraryFile.c_str()))
-			App->fileManager->Delete(resource->libraryFile.c_str());
+		if (FileManager::Exists(resource->libraryFile.c_str()))
+			FileManager::Delete(resource->libraryFile.c_str());
 
 		TextureImporter::Import(fileBuffer, (ResourceTexture*)resource, size);
 		break;
@@ -415,10 +415,10 @@ void ModuleResources::DragDropFile(const char* path)
 {
 	std::string file_to_import = path;
 
-	if (!App->fileManager->Exists(path))
+	if (!FileManager::Exists(path))
 	{
 		file_to_import = GenerateAssetsPath(path);
-		App->fileManager->DuplicateFile(path, file_to_import.c_str());
+		FileManager::DuplicateFile(path, file_to_import.c_str());
 	}
 
 	char* final_path = new char[sizeof(char) * file_to_import.size()];
@@ -445,13 +445,13 @@ bool ModuleResources::DeleteAsset(const char* assets_path)
 {
 	bool ret = true;
 
-	App->fileManager->Delete(assets_path);
+	FileManager::Delete(assets_path);
 
 	std::string meta_file = assets_path;
 	meta_file.append(".meta");
 
-	if (App->fileManager->Exists(meta_file.c_str()))
-		App->fileManager->Delete(meta_file.c_str());
+	if (FileManager::Exists(meta_file.c_str()))
+		FileManager::Delete(meta_file.c_str());
 
 	return ret;
 }
@@ -472,7 +472,7 @@ bool ModuleResources::DeleteResource(uint UID)
 	}
 
 	ReleaseResource(UID);
-	App->fileManager->Delete(resources_data[UID].libraryFile.c_str());
+	FileManager::Delete(resources_data[UID].libraryFile.c_str());
 	ReleaseResourceData(UID);
 
 	return ret;
@@ -508,7 +508,7 @@ bool ModuleResources::DeleteInternalResource(uint UID)
 	bool ret = true;
 
 	std::string library_path = Find(UID);
-	ret = App->fileManager->Delete(library_path.c_str());
+	ret = FileManager::Delete(library_path.c_str());
 
 	ReleaseResource(UID);
 
@@ -521,7 +521,7 @@ Resource* ModuleResources::LoadResource(uint UID, ResourceType type)
 	bool ret = true;
 
 	char* buffer = nullptr;
-	uint size = App->fileManager->Load(resource->libraryFile.c_str(), &buffer);
+	uint size = FileManager::Load(resource->libraryFile.c_str(), &buffer);
 
 	if (size >= 0)
 	{
@@ -624,8 +624,8 @@ Resource* ModuleResources::CreateResource(const char* assetsPath, ResourceType t
 	if (resource != nullptr)
 	{
 		resources[UID] = resource;
-		resources[UID]->name = App->fileManager->ExtractFileNameAndExtension(assetsPath);
-		resource->assetsFile = App->fileManager->LowerCaseString(assetsPath);
+		resources[UID]->name = FileManager::ExtractFileNameAndExtension(assetsPath);
+		resource->assetsFile = FileManager::LowerCaseString(assetsPath);
 		resource->libraryFile = GenerateLibraryPath(resource);
 
 		resources_data[UID].name = resources[UID]->name;
@@ -768,7 +768,7 @@ bool ModuleResources::SaveResource(Resource * resource)
 
 	if (size > 0)
 	{
-		App->fileManager->Save(resource->libraryFile.c_str(), buffer, size);
+		FileManager::Save(resource->libraryFile.c_str(), buffer, size);
 		RELEASE_ARRAY(buffer);
 	}
 
@@ -781,13 +781,13 @@ bool ModuleResources::SaveResource(Resource * resource)
 bool ModuleResources::SaveMetaFile(Resource * resource)
 {
 	JsonObj base_object;
-	resource->SaveMeta(base_object, App->fileManager->GetLastModTime(resource->assetsFile.c_str()));
+	resource->SaveMeta(base_object, FileManager::GetLastModTime(resource->assetsFile.c_str()));
 
 	char* meta_buffer = NULL;
 	uint meta_size = base_object.Save(&meta_buffer);
 
 	std::string meta_file_name = resource->assetsFile + ".meta";
-	App->fileManager->Save(meta_file_name.c_str(), meta_buffer, meta_size);
+	FileManager::Save(meta_file_name.c_str(), meta_buffer, meta_size);
 
 	base_object.Release();
 	RELEASE_ARRAY(meta_buffer);
@@ -803,7 +803,7 @@ bool ModuleResources::LoadMetaFile(Resource * resource)
 	meta_file.append(".meta");
 
 	char* buffer = nullptr;
-	App->fileManager->Load(meta_file.c_str(), &buffer);
+	FileManager::Load(meta_file.c_str(), &buffer);
 
 	JsonObj meta_data(buffer);
 
@@ -817,18 +817,18 @@ bool ModuleResources::LoadMetaFile(Resource * resource)
 
 ResourceType ModuleResources::GetTypeFromPath(const char* path)
 {
-	std::string extension = App->fileManager->ExtractFileExtension(path);
+	std::string extension = FileManager::ExtractFileExtension(path);
 
-	if (extension == ".fbx" || extension == ".modelr")
+	if (extension == "fbx" || extension == "modelr")
 		return ResourceType::RESOURCE_MODEL;
 
-	else if (extension == ".meshr")
+	else if (extension == "meshr")
 		return ResourceType::RESOURCE_MESH;
 
-	else if (extension == ".materialr")
+	else if (extension == "materialr")
 		return ResourceType::RESOURCE_MATERIAL;
 
-	else if (extension == ".png" || extension == ".jpg" || extension == ".tga" || extension == ".texturer")
+	else if (extension == "png" || extension == "jpg" || extension == "tga" || extension == "texturer")
 		return ResourceType::RESOURCE_TEXTURE;
 
 	else
@@ -916,7 +916,7 @@ std::string ModuleResources::GetLibraryFolder(const char* file_in_assets)
 const char* ModuleResources::GenerateAssetsPath(const char* path)
 {
 	ResourceType type = GetTypeFromPath(path);
-	std::string file = App->fileManager->ExtractFileName(path);
+	std::string file = FileManager::ExtractFileName(path);
 
 	char* library_path = new char[128];
 
@@ -963,7 +963,7 @@ void ModuleResources::CheckAssetsRecursive(const char* directory)
 	std::string dir((directory) ? directory : "");
 	dir += "/";
 
-	App->fileManager->DiscoverFiles(dir.c_str(), files, dirs);
+	FileManager::DiscoverFiles(dir.c_str(), files, dirs);
 
 	for (std::vector<std::string>::const_iterator it = dirs.begin(); it != dirs.end(); ++it)
 	{
@@ -984,7 +984,7 @@ void ModuleResources::CheckAssetsRecursive(const char* directory)
 		std::string meta = file;
 		meta.append(".meta");
 
-		if (App->fileManager->Exists(meta.c_str()))
+		if (FileManager::Exists(meta.c_str()))
 		{
 			if (!MetaUpToDate(file.c_str(), meta.c_str()))
 			{

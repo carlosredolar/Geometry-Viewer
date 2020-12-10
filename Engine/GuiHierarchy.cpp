@@ -46,11 +46,11 @@ void GuiHierarchy::Draw()
 
 void GuiHierarchy::TreeNodeChild(GameObject* gO)
 {
-	if (gO->GetChilds()->size() > 0)
+	if (gO->GetChildrenAmount() > 0)
 	{
 		static int selection_mask = (1 << 2);
 		int node_clicked = -1;
-		for (int j = 0; j < gO->GetChilds()->size(); j++)
+		for (int j = 0; j < gO->GetChildrenAmount(); j++)
 		{
 			GameObject* gOChild = gO->GetChilds()->at(j);
 			ImGuiTreeNodeFlags node_flags = base_flags; // Disable the default "open on single-click behavior" + set Selected flag according to our selection.
@@ -59,7 +59,7 @@ void GuiHierarchy::TreeNodeChild(GameObject* gO)
 			if (is_selected && gOChild->selected)
 				node_flags |= ImGuiTreeNodeFlags_Selected;
 
-			if (gOChild->GetChilds()->size() > 0)
+			if (gOChild->GetChildrenAmount() > 0)
 			{
 				bool node_open = ImGui::TreeNodeEx((void*)(intptr_t)j, node_flags, gOChild->GetName(), j);
 				if (ImGui::IsItemClicked())

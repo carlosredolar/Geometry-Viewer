@@ -36,6 +36,7 @@ bool ModuleGui::Start()
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableSetMousePos;
 
 	ImGui_ImplSDL2_InitForOpenGL(App->window->window, App->renderer3D->context);
 	ImGui_ImplOpenGL3_Init();
@@ -62,6 +63,8 @@ update_status ModuleGui::Update(float dt)
 	update_status ret = UPDATE_CONTINUE;
 
 	ret = DockSpace(dockingwindow);
+
+	ret = Draw();
 	
 	return ret;
 }
@@ -221,6 +224,7 @@ update_status ModuleGui::Draw()
 	//Rendering
 	Render();
 	ImGui_ImplOpenGL3_RenderDrawData(GetDrawData());
+	//UpdatePlatformWindows();
 
 	return ret;
 }
@@ -244,7 +248,7 @@ update_status ModuleGui::PostUpdate(float dt)
 
 bool ModuleGui::CleanUp() 
 {
-	for (int i = 0; i < ui_windows.capacity(); i++) //size instead of capacity
+	for (int i = 0; i < ui_windows.size(); i++) //size instead of capacity
 	{
 		//ui_windows[i]->is_on = false;
 		ui_windows[i]->~GuiWindow();
@@ -273,7 +277,9 @@ void ModuleGui::CleanLog()
 void ModuleGui::DebugConsole()
 {
 	BeginChild("Console Log");
-	TextColored(*debug_console_color_buff.begin(), debug_console_buff.begin());
+	//TextUnformatted(debug_console_buff.begin());
+	if (!debug_console_buff.empty()) TextColored(*debug_console_color_buff.begin(), debug_console_buff.begin());
+	NewLine();
 	SetScrollHereY(1.0f);
 	EndChild();
 }

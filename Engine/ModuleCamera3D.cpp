@@ -50,6 +50,7 @@ bool ModuleCamera3D::LoadConfig(JsonObj& config)
 	movementSpeed = config.GetFloat("move_speed");
 	dragSpeed = config.GetFloat("drag_speed");
 	orbitSpeed = config.GetFloat("orbit_speed");
+	panSpeed = config.GetFloat("pan_speed");
 	zoomSpeed = config.GetFloat("zoom_speed");
 	sensitivity = config.GetFloat("sensitivity");
 
@@ -79,16 +80,15 @@ update_status ModuleCamera3D::Update(float dt)
 	//	return UPDATE_CONTINUE;
 
 	float3 newPos = float3::zero;
-	int speed_multiplier = 1;
+	int speed = 1;
 
 	if (App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT)
-		speed_multiplier = 2;
+		speed = 2;
 
-	//Up/Down
-	if (App->input->GetKey(SDL_SCANCODE_O) == KEY_REPEAT)
-		newPos.y += movementSpeed * dt;
-	if (App->input->GetKey(SDL_SCANCODE_L) == KEY_REPEAT)
-		newPos.y -= movementSpeed * dt;
+	float scrollSpeed = speed * 4;
+
+	//if (App->input->scrollUp) Position -= Z * scrollSpeed;
+	//if (App->input->scrollDown) Position += Z * scrollSpeed;
 
 	if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN)
 	{
@@ -105,15 +105,15 @@ update_status ModuleCamera3D::Update(float dt)
 
 	//Forwards/Backwards
 	if ((App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) || (App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT))
-		newPos += camera->GetFrustum().front * movementSpeed * speed_multiplier * dt;
+		newPos += camera->GetFrustum().front * movementSpeed * speed * dt;
 	if ((App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) || (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT))
-		newPos -= camera->GetFrustum().front * movementSpeed * speed_multiplier * dt;
+		newPos -= camera->GetFrustum().front * movementSpeed * speed * dt;
 
 	//Left/Right
 	if ((App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) || (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT))
-		newPos += camera->GetFrustum().WorldRight() * movementSpeed * speed_multiplier * dt;
+		newPos += camera->GetFrustum().WorldRight() * movementSpeed * speed * dt;
 	if ((App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) || (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT))
-		newPos -= camera->GetFrustum().WorldRight() * movementSpeed * speed_multiplier * dt;
+		newPos -= camera->GetFrustum().WorldRight() * movementSpeed * speed * dt;
 
 	//Drag
 	if ((App->input->GetMouseButton(SDL_BUTTON_MIDDLE) == KEY_REPEAT))
@@ -128,9 +128,10 @@ update_status ModuleCamera3D::Update(float dt)
 	else if (App->input->GetMouseZ() < 0)
 		newPos -= camera->GetFrustum().front * zoomSpeed * dt;
 
-	if ((App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_REPEAT) ||
-		((App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT) && (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT)))
+	if ((App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT) && (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT))
 		Orbit(dt);
+	if (App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KEY_REPEAT)
+		Pan(dt);
 
 	if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN && !ImGuizmo::IsOver()/* && App->gui->MouseOnScene()*/)
 	{
@@ -181,6 +182,23 @@ void ModuleCamera3D::Orbit(float dt)
 	distance = y_rotation.Transform(distance);
 
 	position = distance + reference;
+	camera->SetPosition(position);
+	camera->Look(reference);
+}
+
+void ModuleCamera3D::Pan(float dt)
+{
+	int dx = -App->input->GetMouseXMotion();
+	int dy = -App->input->GetMouseYMotion();
+
+	Quat y_rotation(camera->GetFrustum().up, dx * dt * panSpeed * 0.1f);
+	Quat x_rotation(camera->GetFrustum().WorldRight(), dy * dt * panSpeed * 0.1f);
+
+	float3 distance = position - reference;
+	distance = x_rotation.Transform(distance);
+	distance = y_rotation.Transform(distance);
+
+	reference = position - distance;
 	camera->SetPosition(position);
 	camera->Look(reference);
 }

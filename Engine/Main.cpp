@@ -2,7 +2,7 @@
 #include "Application.h"
 #include "Globals.h"
 
-#include "SDL/include/SDL.h"
+#include "Libs/SDL/include/SDL.h"
 //#include "ImGui/imgui.h"
 
 #pragma comment( lib, "Libs/SDL/libx86/SDL2.lib" )
@@ -55,8 +55,8 @@ int main(int argc, char ** argv)
 			}
 			else
 			{
-				state = MAIN_UPDATE;
 				LOG("-------------- Application Update --------------");
+				state = MAIN_UPDATE;
 			}
 
 			break;

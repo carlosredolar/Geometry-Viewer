@@ -46,6 +46,7 @@ public:
 private:
 	void Move(const float3& Movement);
 	void Orbit(float dt);
+	void Pan(float dt);
 
 public:
 	Color background;
@@ -53,6 +54,7 @@ public:
 	float movementSpeed;
 	float dragSpeed;
 	float orbitSpeed;
+	float panSpeed;
 	float zoomSpeed;
 	float sensitivity;
 

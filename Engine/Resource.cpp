@@ -1,12 +1,13 @@
 #include "Resource.h"
 #include "Application.h"
 #include "ModuleJson.h"
-#include "glew/include/glew.h"
+#include "ModuleScene.h"
+#include "Libs/Glew/include/glew.h"
 
-Resource::Resource(uint uid, ResourceType type)
+Resource::Resource(uint UID, ResourceType TYPE)
 {
-	uid = uid;
-	type = type;
+	uid = UID;
+	type = TYPE;
 }
 
 Resource::~Resource()
@@ -70,12 +71,12 @@ void ResourceMesh::GenerateBuffers()
 	//normals
 	glGenBuffers(1, (GLuint*) & (normalsBuffer));
 	glBindBuffer(GL_NORMAL_ARRAY, normalsBuffer);
-	glBufferData(GL_NORMAL_ARRAY, sizeof(float) * amountVertices * 3, normals, GL_STATIC_DRAW);
+	glBufferData(GL_NORMAL_ARRAY, sizeof(float) * amountNormals * 3, normals, GL_STATIC_DRAW);
 
 	//textures
 	glGenBuffers(1, (GLuint*) & (textureCoordsBuffer));
 	glBindBuffer(GL_ARRAY_BUFFER, textureCoordsBuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * amountVertices * 2, textureCoords, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * amountTextureCoords * 2, textureCoords, GL_STATIC_DRAW);
 
 	//indices
 	glGenBuffers(1, (GLuint*) & (indicesBuffer));
@@ -109,7 +110,7 @@ void ResourceMesh::DeleteBuffers()
 // ResourceTexture
 
 ResourceTexture::ResourceTexture(uint UID) : Resource(UID, ResourceType::RESOURCE_TEXTURE),
-UUID(0), width(-1), height(-1), data(nullptr), gpuID(0)
+uuid(0), width(-1), height(-1), data(nullptr), gpuID(0)
 {}
 
 ResourceTexture::~ResourceTexture()
@@ -138,12 +139,12 @@ void ResourceTexture::BindTexture()
 	glBindTexture(GL_TEXTURE_2D, gpuID);
 }
 
-void ResourceTexture::FillData(GLubyte* data, uint UUID, int width, int height)
+void ResourceTexture::FillData(GLubyte* DATA, uint UUID, int WIDTH, int HEIGHT)
 {
-	data = data;
-	UUID = UUID;
-	width = width;
-	height = height;
+	data = DATA;
+	uuid = UUID;
+	width = WIDTH;
+	height = HEIGHT;
 }
 
 uint ResourceTexture::SaveMeta(JsonObj& base_object, uint last_modification)
@@ -227,7 +228,7 @@ void ResourceTexture::Load(JsonObj& base_object)
 
 uint ResourceTexture::GetID() 
 {
-	return UUID; 
+	return uuid; 
 }
 
 int ResourceTexture::GetWidth() 

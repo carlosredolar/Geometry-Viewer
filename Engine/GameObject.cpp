@@ -1,106 +1,99 @@
-#include "Application.h"
 #include "GameObject.h"
-#include "Component_Mesh.h"
-#include "Component_Transform.h"
-#include "Component_Material.h"
 #include "Component.h"
-#include "ImGui/imgui.h"
+#include "Component_Transform.h"
+#include "Component_Mesh.h"
+#include "Component_Material.h"
+#include "Component_Camera.h"
+#include "Libs/ImGui/imgui.h"
+#include "ModuleJson.h"
+#include "Application.h"
 
-GameObject::GameObject(const char* name, GameObject* parent, bool enabled) :name(name), parent(parent), enabled(enabled) { selected = false; to_delete = false; }
+#include "Libs/MathGeoLib/include/MathGeoLib.h"
+
+#include <vector>
+
+GameObject::GameObject(const char* _name, GameObject* _parent, bool _enabled) :name(_name), parent(_parent), enabled(_enabled)
+{
+	UUID = LCG().Int();
+	name = _name;
+	parent = _parent;
+	enabled = _enabled;
+	to_delete = false;
+	visible = false;
+}
+
+//GameObject::GameObject(Component_Mesh* mesh) : GameObject()
+//{
+//	SetName(mesh->name);
+//	AddComponent((Component*)mesh);
+//}
 
 GameObject::~GameObject()
 {
-	//std::vector<Component*>::iterator component = components.begin();
+	parent = nullptr;
 
-	//for (; component != components.end(); ++component) {
-	//	delete (*component);
-	//}
-
-	//components.clear();
-
-	//std::vector<GameObject*>::iterator gameObject = childs.begin();
-
-	//for (; gameObject != childs.end(); ++gameObject) {
-	//	delete (*gameObject);
-	//}
-
-	//childs.clear();
-
-	//parent = nullptr;
-	//name.clear();
-}
-
-void GameObject::DeleteComponents()
-{
-	std::vector<Component*>::iterator component = components.begin();
-
-	for (; component != components.end(); ++component) {
-		delete (*component);
+	for (size_t i = 0; i < components.size(); i++)
+	{
+		delete components[i];
+		components[i] = nullptr;
 	}
 
 	components.clear();
-
-	std::vector<GameObject*>::iterator gameObject = childs.begin();
-
-	for (; gameObject != childs.end(); ++gameObject) {
-		(*gameObject)->DeleteComponents();
-		delete (*gameObject);
-	}
-
 	childs.clear();
-	parent->DeleteChild(this);
-	parent = nullptr;
 	name.clear();
+	UUID = 0;
 }
 
 void GameObject::Update()
 {
-	if (IsEnabled()) 
+	if (enabled)
 	{
-		//Update components
-		std::vector<Component*>::iterator component = components.begin();
+		for (size_t i = 0; i < components.size(); i++)
+		{
+			//Update Components
+			if (components[i]->IsEnabled())
+			{
+				if (components[i]->GetType() == ComponentType::MESH)
+				{
+					Component_Mesh* mesh = (Component_Mesh*)components[i];
+					CreateAABB();
 
-		for (; component != components.end(); ++component) {
-			if((*component)->IsEnabled()) (*component)->Update();
+					if (App->renderer3D->IsInsideCameraView(aABB))
+						mesh->Update();
+				}
+				else
+				{
+					components[i]->Update();
+				}
+			}
 		}
 
-		//Update childs
-		std::vector<GameObject*>::iterator gameObject = childs.begin();
-
-		for (; gameObject != childs.end(); ++gameObject) {
-			if ((*gameObject)->IsEnabled()) (*gameObject)->Update();
-
-			(*gameObject)->GetComponent<Component_Transform>()->UpdateGlobalTransform(GetComponent<Component_Transform>()->GetGlobalTransform());
+		//Update Children
+		for (size_t i = 0; i < childs.size(); i++)
+		{
+			childs[i]->Update();
 		}
-
-		//Draw AABB
-		float3 cornerPoints[8];
-		aABB.GetCornerPoints(cornerPoints);
-		App->renderer3D->DrawAABB(cornerPoints);
+		GetComponent<Component_Transform>()->UpdateGlobalTransform(parent->GetComponent<Component_Transform>()->GetGlobalTransform());
 	}
 }
 
 void GameObject::Enable()
 {
-	if (!IsEnabled()) 
+	if (!IsEnabled())
 	{
 		enabled = true;
 
 		//Enable components
-		std::vector<Component*>::iterator component = components.begin();
-
-		for (; component != components.end(); ++component) {
-			(*component)->Enable();
+		for (int i = 0; 0 < components.size(); i++) {
+			components[i]->Enable();
 		}
 
-		//Enable childs
-		std::vector<GameObject*>::iterator gameObject = childs.begin();
-
-		for (; gameObject != childs.end(); ++gameObject) {
-			(*gameObject)->Enable();
+		//Enable children
+		for (int i = 0; 0 < childs.size(); i++) {
+			childs[i]->Enable();
 		}
 	}
-	
+
 }
 
 void GameObject::Disable()
@@ -110,17 +103,13 @@ void GameObject::Disable()
 		enabled = false;
 
 		//Disable components
-		std::vector<Component*>::iterator component = components.begin();
-
-		for (; component != components.end(); ++component) {
-			(*component)->Disable();
+		for (int i = 0; 0 < components.size(); i++) {
+			components[i]->Disable();
 		}
 
-		//Disable childs
-		std::vector<GameObject*>::iterator gameObject = childs.begin();
-
-		for (; gameObject != childs.end(); ++gameObject) {
-			(*gameObject)->Disable();
+		//Disable children
+		for (int i = 0; 0 < childs.size(); i++) {
+			childs[i]->Disable();
 		}
 	}
 }
@@ -155,7 +144,7 @@ void GameObject::OnGUI()
 	}
 }
 
-void GameObject::Save(JsonArray& save_array)
+void GameObject::Save(JsonArray & save_array)
 {
 	JsonObj save_object;
 
@@ -228,74 +217,167 @@ uint GameObject::LoadNodeData(JsonObj* object)
 	return parentUUID;
 }
 
-GameObject* const GameObject::GetParent() const
+//Component* GameObject::GetComponent(ComponentType component)
+//{
+//	for (size_t i = 0; i < components.size(); i++)
+//	{
+//		if (components[i]->GetType() == component)
+//		{
+//			return components[i];
+//		}
+//	}
+//
+//	return nullptr;
+//}
+
+std::vector<Component*> GameObject::GetComponents()
 {
-	return parent;
+	return components;
 }
 
-void GameObject::CreateAABB()
+std::vector<GameObject*>* GameObject::GetChilds()
 {
-	OBB oBB = GetComponent<Component_Mesh>()->GetAABB();
-	oBB.Transform(GetComponent<Component_Transform>()->GetGlobalTransform());
-
-	aABB.SetNegativeInfinity();
-	aABB.Enclose(oBB);
+	return &childs;
 }
+
+Component* GameObject::CreateComponent(ComponentType type)
+{
+	Component* component = nullptr;
+	Component_Transform* transform = GetComponent<Component_Transform>();
+	switch (type)
+	{
+	case TRANSFORM:
+		if (transform != nullptr)
+		{
+			RemoveComponent(transform);
+		}
+
+		transform = new Component_Transform(this);
+		component = transform;
+		break;
+	case MESH:
+		component = new Component_Mesh(this);
+		break;
+	case MATERIAL:
+		component = new Component_Material(this);
+		break;
+	case CAMERA:
+		component = new Component_Camera(this);
+		break;
+	case LIGHT:
+		component = new Light(this);
+		break;
+	default:
+		break;
+	}
+
+	components.push_back(component);
+
+	return component;
+}
+
+void GameObject::AddComponent(Component * component)
+{
+	components.push_back(component);
+	component->SetOwnerGameObject(this);
+}
+
+bool GameObject::RemoveComponent(Component * component)
+{
+	bool ret = false;
+
+	for (size_t i = 0; i < components.size(); i++)
+	{
+		if (components[i] == component) {
+			delete components[i];
+			components.erase(components.begin() + i);
+			component = nullptr;
+			ret = true;
+		}
+	}
+
+	return ret;
+}
+
+const char* GameObject::GetName() { return name.c_str(); }
+
+void GameObject::ChangeName(const char* g_name)
+{
+	name = g_name;
+}
+
+//void GameObject::SetTransform(Component_Transform g_transform)
+//{
+//	localTransform->Set(g_transform.GetLocalTransform());
+//	localTransform->UpdateLocalTransform();
+//	memcpy(transform, &g_transform, sizeof(g_transform));
+//}
+
+//Component_Transform* GameObject::GetTransform()
+//{
+//	return transform;
+//}
 
 AABB GameObject::GetAABB()
 {
 	return aABB;
 }
 
-void GameObject::AddGameObjectAsChild(GameObject * gameObject)
+bool GameObject::IsVisible()
 {
-	if(gameObject->parent != this)
+	return visible;
+}
+
+void GameObject::AddChild(GameObject * child)
+{
+	if (child != nullptr)
+		childs.push_back(child);
+
+	child->ChangeParent(this);
+}
+
+int GameObject::GetChildrenAmount()
+{
+	return childs.size();
+}
+
+GameObject* GameObject::GetChildAt(int index)
+{
+	return childs[index];
+}
+
+GameObject* GameObject::GetParent()
+{
+	return parent;
+}
+
+void GameObject::ChangeParent(GameObject * g_parent)
+{
+	parent = g_parent;
+}
+
+void GameObject::Reparent(GameObject * newParent)
+{
+	if (newParent != nullptr)
 	{
-		gameObject->parent->SeparateChild(gameObject);
-		gameObject->ChangeParent(this);
+		parent->RemoveChild(this);
+		parent = newParent;
+		newParent->AddChild(this);
 	}
-	
-	childs.push_back(gameObject);
 }
 
-void GameObject::ChangeParent(GameObject * newparent)
+bool GameObject::RemoveChild(GameObject * gameObject)
 {
-	parent = newparent;
-}
-
-std::vector<GameObject*>* const GameObject::GetChilds()
-{
-	return &childs;
-}
-
-void GameObject::SeparateChild(GameObject * child)
-{
-	std::vector<GameObject*>::iterator it;
-	if (child != nullptr) {
-		for (it = childs.begin(); it != childs.end(); ++it) {
-			if (*it == child)
-			{
-				childs.erase(it);
-				return;
-			}
+	bool ret = false;
+	for (size_t i = 0; i < childs.size(); i++)
+	{
+		if (childs[i] == gameObject)
+		{
+			childs.erase(childs.begin() + i);
+			ret = true;
 		}
 	}
-}
-
-void GameObject::DeleteChild(GameObject * child)
-{
-	std::vector<GameObject*>::iterator it;
-	if (child != nullptr) {
-		for (it = childs.begin(); it != childs.end(); ++it) {
-			if (*it == child)
-			{
-				(*it)->GetChildsNewParent();
-				childs.erase(it);
-				delete* it;
-				return;
-			}
-		}
-	}
+	return ret;
 }
 
 void GameObject::DeleteAllChilds()
@@ -306,73 +388,18 @@ void GameObject::DeleteAllChilds()
 		childs[i] = nullptr;
 	}
 
-	//this->~GameObject();
+	this->~GameObject();
 }
 
-Component* GameObject::CreateComponent(ComponentType type)
+void GameObject::CreateAABB()
 {
-	Component_Material* componentTexture = nullptr;
-	Component_Mesh* componentMesh = nullptr;
-	switch (type)
-	{
-	case ComponentType::TRANSFORM:
-		components.push_back(new Component_Transform(this));
-		break;
-	case ComponentType::MATERIAL:
-		componentTexture = new Component_Material(this);
-		CheckAddComponent(componentTexture);
-		return componentTexture;
-		break;
-	case ComponentType::MESH:
-		componentMesh = new Component_Mesh(this);
-		CheckAddComponent(componentMesh);
-		CreateAABB();
-		return componentMesh;
-		break;
-	}
-}
+	OBB oBB = GetComponent<Component_Mesh>()->GetAABB();
+	oBB.Transform(GetComponent<Component_Transform>()->GetGlobalTransform());
 
-void GameObject::CheckAddComponent(Component * newComp)
-{
-	for (auto it = components.begin(); it != components.end(); ++it)
-	{
-		if (*it != nullptr && *it == newComp)return;
-	}
-	components.push_back(newComp);
-}
+	aABB.SetNegativeInfinity();
+	aABB.Enclose(oBB);
 
-std::vector<Component*>* const GameObject::GetComponents()
-{
-	return &components;
-}
-
-const char* const GameObject::GetName()
-{
-	return name.c_str();
-}
-
-void GameObject::ChangeName(const char* new_name)
-{
-	name = new_name;
-}
-
-void GameObject::GetChildsNewParent()
-{
-	GameObject* prnt;
-	if (parent != nullptr)
-		prnt = parent;
-	else
-	{
-		prnt = parent->GetParent();
-		while (prnt == nullptr && prnt->name != "Scene")
-		{
-			prnt = prnt->GetParent();
-		}
-	}
-	std::vector<GameObject*>::iterator it = childs.begin();
-	for (; it != childs.end(); ++it)
-	{
-		prnt->AddGameObjectAsChild((*it));
-	}
-	childs.clear();
+	float3 cornerPoints[8];
+	aABB.GetCornerPoints(cornerPoints);
+	App->renderer3D->DrawAABB(cornerPoints);
 }

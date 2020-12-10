@@ -117,6 +117,7 @@ bool ModuleRenderer3D::Init()
 		lights[0].diffuse.Set(0.75f, 0.75f, 0.75f, 1.0f);
 		lights[0].SetPos(0.0f, 0.0f, 2.5f);
 		lights[0].Init();
+		lights[0].Active(true);
 
 		GLfloat MaterialAmbient[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 		glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, MaterialAmbient);
@@ -141,7 +142,10 @@ bool ModuleRenderer3D::Init()
 	LOG("OpenGL version supported %s", glGetString(GL_VERSION));
 	LOG("GLSL: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
 
-	GenerateBuffers();
+	//GenerateBuffers();
+	OnResize(SCREEN_WIDTH, SCREEN_HEIGHT);
+
+	mainCamera = new Component_Camera(nullptr);
 
 	return ret;
 }
@@ -184,7 +188,7 @@ update_status ModuleRenderer3D::Update(float dt)
 {
 	update_status ret = UPDATE_CONTINUE;
 
-	DrawRay();
+	//DrawRay();
 
 	return ret;
 }
@@ -197,7 +201,7 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	glBindVertexArray(0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	ret = App->gui->Draw();
+	//ret = App->gui->Draw();
 
 	SDL_GL_SwapWindow(App->window->window);
 

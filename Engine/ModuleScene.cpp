@@ -2,10 +2,14 @@
 #include "ModuleScene.h"
 #include "ModuleCamera3D.h"
 #include "Component_Material.h"
+#include "FileManager.h"
 
 ModuleScene::ModuleScene(bool start_enabled) : Module(start_enabled)
 {
 	name = "scene";
+
+	mCurrentGizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
+	mCurrentGizmoMode = ImGuizmo::MODE::WORLD;
 }
 
 ModuleScene::~ModuleScene()
@@ -20,10 +24,12 @@ bool ModuleScene::Start()
 	//Create root gameObject
 	root = new GameObject("Scene", nullptr, true);
 	root->CreateComponent(ComponentType::TRANSFORM);
-	root->UUID = 0;
 
-	currentID = 0;
-	gameObjects.push_back(root);
+	//currentID = 0;
+	//gameObjects.push_back(root);
+
+	GameObject* startCube = App->resources->RequestGameObject("Assets/Meshes/Primitives/Cube.fbx");
+	gameObjects.push_back(startCube);
 
 	App->camera->SetPosition(float3(0, 3, 10));
 	App->camera->LookAt(float3(0, 0, 0));
@@ -42,11 +48,9 @@ bool ModuleScene::CleanUp()
 // Update
 update_status ModuleScene::Update(float dt)
 {
-	//Update all gameObjects
-	std::vector<GameObject*>::iterator currentGO = gameObjects.begin();
-	
-	for (; currentGO != gameObjects.end(); currentGO++) {
-		(*currentGO)->Update();
+	//Update all gameObjects	
+	for (int i = 0; i < gameObjects.size(); i++) {
+		gameObjects[i]->Update();
 	}
 	
 	//Inputs
@@ -91,9 +95,7 @@ GameObject* ModuleScene::CreateGameObject(const char* name, GameObject* parent, 
 	//Create component transform
 	newGameObject->CreateComponent(ComponentType::TRANSFORM);
 
-	parent->AddGameObjectAsChild(newGameObject);
-	currentID++;
-	newGameObject->UUID = currentID;
+	parent->AddChild(newGameObject);
 	gameObjects.push_back(newGameObject);
 
 	return newGameObject;
@@ -102,11 +104,10 @@ GameObject* ModuleScene::CreateGameObject(const char* name, GameObject* parent, 
 //Get gameObject functions
 GameObject* ModuleScene::GetGameObject(const char* name) //This method could fail if 2 gameObjects are named the same
 {
-	std::vector<GameObject*>::iterator currentGO = gameObjects.begin();
-
-	for (; currentGO != gameObjects.end(); currentGO++) {
-		if (strcmp((*currentGO)->GetName(), name) == 0) {
-			return (*currentGO);
+	for (int i = 0; i < gameObjects.size(); i++) 
+	{		
+		if (strcmp(gameObjects[i]->GetName(), name) == 0) {
+			return gameObjects[i];
 		}
 	}
 	//Log gameObject searh error
@@ -135,26 +136,22 @@ GameObject* ModuleScene::GetGameObject(int UUID) //This method is fast and preci
 
 void ModuleScene::SelectGameObject(GameObject* selected) 
 {
-	std::vector<GameObject*>::iterator currentGO = gameObjects.begin();
-
-	for (; currentGO != gameObjects.end(); currentGO++) {
-		if ((*currentGO) == selected)
+	for (int i = 0; i < gameObjects.size(); i++) {
+		if (gameObjects[i] == selected)
 		{
-			(*currentGO)->selected = true;
-			App->gui->SelectGameObject((*currentGO));
+			gameObjects[i]->selected = true;
+			App->gui->SelectGameObject(gameObjects[i]);
 		}
-		else (*currentGO)->selected = false;
+		else gameObjects[i]->selected = false;
 	}
 }
 
 GameObject* ModuleScene::GetSelectedGameObject()
 {
-	std::vector<GameObject*>::iterator currentGO = gameObjects.begin();
-
-	for (; currentGO != gameObjects.end(); currentGO++) {
-		if ((*currentGO)->selected)
+	for (int i = 0; i < gameObjects.size(); i++) {
+		if (gameObjects[i]->selected)
 		{
-			return (*currentGO);
+			return gameObjects[i];
 		}
 	}
 
@@ -176,7 +173,7 @@ bool ModuleScene::DeleteGameObject(GameObject* todelete)
 	//		DeleteGameObject((*currentGO));
 	//	}
 	//}
-	todelete->DeleteComponents();
+	//todelete->DeleteComponents();
 
 	delete(todelete);
 	return true;
@@ -205,7 +202,7 @@ bool ModuleScene::Save(const char* file_path)
 	char* buffer = NULL;
 	uint size = save_file.Save(&buffer);
 
-	App->fileManager->Save(file_path, buffer, size);
+	FileManager::Save(file_path, buffer, size);
 
 	save_file.Release();
 	RELEASE_ARRAY(buffer);
@@ -217,7 +214,7 @@ bool ModuleScene::Load(const char* scene_file)
 {
 	bool ret = true;
 
-	std::string extension = App->fileManager->ExtractFileExtension(scene_file);
+	std::string extension = FileManager::ExtractFileExtension(scene_file);
 	if (extension != ".scene")
 	{
 		WARNING_LOG("%s is not a valid scene extension and can't be loaded", scene_file);
@@ -227,7 +224,7 @@ bool ModuleScene::Load(const char* scene_file)
 	ClearScene();
 
 	char* buffer = NULL;
-	App->fileManager->Load(scene_file, &buffer);
+	FileManager::Load(scene_file, &buffer);
 
 	JsonObj base_object(buffer);
 	JsonArray loadedGameObjects(base_object.GetArray("Game Objects"));
@@ -252,7 +249,7 @@ bool ModuleScene::Load(const char* scene_file)
 		{
 			if (createdObjects[i]->UUID == parentUUID)
 			{
-				createdObjects[i]->AddGameObjectAsChild(gameObject);
+				createdObjects[i]->AddChild(gameObject);
 				gameObject->ChangeParent(createdObjects[i]);
 			}
 		}

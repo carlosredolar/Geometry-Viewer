@@ -29,7 +29,8 @@ Component_Mesh::~Component_Mesh()
 
 void Component_Mesh::Update()
 {
-	if(IsEnabled()) Render();
+	if(IsEnabled()) 
+		Render();
 }
 
 void Component_Mesh::Render() 
@@ -41,18 +42,11 @@ void Component_Mesh::Render()
 		return;
 	}
 
-	Component_Material* material = ownerGameObject->GetComponent<Component_Material>();
-
 	glEnableClientState(GL_VERTEX_ARRAY);
 
 	glEnableClientState(GL_NORMAL_ARRAY);
 
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-	if (material && material->IsEnabled())
-	{
-		glEnableClientState(GL_TEXTURE_2D);
-	}
 
 	glBindBuffer(GL_ARRAY_BUFFER, mesh->verticesBuffer);
 	glVertexPointer(3, GL_FLOAT, 0, NULL);
@@ -65,31 +59,19 @@ void Component_Mesh::Render()
 	
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->indicesBuffer);
 
-	if (material && material->IsEnabled())
-	{
-		material->BindTexture();
-	}
-	
 	float4x4 localTransform = this->ownerGameObject->GetComponent<Component_Transform>()->GetGlobalTransform().Transposed();
 	glPushMatrix();
 	glMultMatrixf((float*)& localTransform);
 
+	Component_Material* material = ownerGameObject->GetComponent<Component_Material>();
+
+	if (material && material->IsEnabled())
+	{
+		glEnableClientState(GL_TEXTURE_2D);
+		material->BindTexture();
+	}
+	
 	glDrawElements(GL_TRIANGLES, mesh->amountIndices, GL_UNSIGNED_INT, NULL);
-
-	glPopMatrix();
-
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_NORMAL_ARRAY);
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-
-	glDisableClientState(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_TEXTURE_COORD_ARRAY, 0);
-
-
 
 	if (enableVertexNormals) {
 
@@ -100,6 +82,17 @@ void Component_Mesh::Render()
 
 		RenderFaceNormals();
 	}
+
+	glPopMatrix();
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_NORMAL_ARRAY, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_TEXTURE_COORD_ARRAY, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
 void Component_Mesh::RenderVertexNormals()

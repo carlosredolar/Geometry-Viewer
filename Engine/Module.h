@@ -10,7 +10,6 @@ private :
 	bool enabled;
 
 public:
-	Application* App;
 
 	Module(bool start_enabled = true)
 	{

@@ -67,11 +67,23 @@ public:
 
 	uint normalsBuffer = 0;
 	uint amountNormals = -1;
-	float* normals;
+	float* normals = nullptr;
 
 	uint textureCoordsBuffer = 0;
 	uint amountTextureCoords = -1;
 	float* textureCoords = nullptr;
+
+	//uint idVertex;
+	//std::vector<float3> vertices;
+
+	//uint idIndex;
+	//std::vector<uint> indices;
+
+	//uint idNormals;
+	//std::vector<float3> normals;
+
+	//uint idTextureCoords;
+	//std::vector<float2> textureCoords;
 
 	float* colors;
 
@@ -103,7 +115,7 @@ public:
 	std::string GetPath();
 
 private:
-	uint UUID;
+	uint uuid;
 	int width;
 	int height;
 	GLubyte* data;

@@ -43,7 +43,7 @@ void ModelImporter::Import(char* fileBuffer, ResourceModel* model, uint size)
 		for (size_t i = 0; i < scene->mNumMeshes; i++)
 		{
 			aiMesh* aimesh = scene->mMeshes[i];
-			model->meshes.push_back(App->resources->ImportInternalResource(model->assetsFile.c_str(), aimesh, ResourceType::RESOURCE_MESH));
+			model->meshes.push_back(App->resources->ImportInternalResource(aimesh->mName.C_Str(), aimesh, ResourceType::RESOURCE_MESH));
 		}
 
 		for (size_t i = 0; i < scene->mNumMaterials; i++)
@@ -132,7 +132,7 @@ void ModelImporter::ImportChildren(const aiScene* scene, aiNode* node, aiNode* p
 	ModelNode modelNode;
 
 	if (node == scene->mRootNode)
-		modelNode.name = App->fileManager->ExtractFileName(model->assetsFile.c_str());
+		modelNode.name = FileManager::ExtractFileName(model->assetsFile.c_str());
 	else
 		modelNode.name = node->mName.C_Str();
 
@@ -177,18 +177,18 @@ void ModelImporter::ReimportFile(char* fileBuffer, ResourceModel* newModel, uint
 			{
 				newModel->nodes[n].meshID = oldModel.nodes[o].meshID;
 				std::string mesh_path = App->resources->GenerateLibraryPath(oldModel.nodes[o].meshID, ResourceType::RESOURCE_MESH);
-				if (App->fileManager->Exists(mesh_path.c_str()))
+				if (FileManager::Exists(mesh_path.c_str()))
 				{
 					std::string temp_path = App->resources->GenerateLibraryPath(newModel->nodes[n].meshID, ResourceType::RESOURCE_MESH);
-					App->fileManager->Rename(temp_path.c_str(), mesh_path.c_str());
+					FileManager::Rename(temp_path.c_str(), mesh_path.c_str());
 				}
 
 				newModel->nodes[n].materialID = oldModel.nodes[o].materialID;
 				std::string material_path = App->resources->GenerateLibraryPath(oldModel.nodes[o].materialID, ResourceType::RESOURCE_MATERIAL);
-				if (App->fileManager->Exists(material_path.c_str()))
+				if (FileManager::Exists(material_path.c_str()))
 				{
 					std::string temp_path = App->resources->GenerateLibraryPath(newModel->nodes[n].materialID, ResourceType::RESOURCE_MATERIAL);
-					App->fileManager->Rename(temp_path.c_str(), material_path.c_str());
+					FileManager::Rename(temp_path.c_str(), material_path.c_str());
 				}
 			}
 		}
@@ -288,7 +288,7 @@ GameObject* ModelImporter::ConvertToGameObject(ResourceModel * model)
 
 	for (size_t i = 0; i < model->nodes.size(); i++)
 	{
-		GameObject* gameObject = new GameObject(model->nodes[i].name.c_str(), root);
+		GameObject* gameObject = App->scene->CreateGameObject(model->nodes[i].name.c_str(), root, true);
 		gameObject->UUID = model->nodes[i].UID;
 		gameObject->GetComponent<Component_Transform>()->SetTransform(model->nodes[i].position, model->nodes[i].rotation, model->nodes[i].scale);
 
@@ -311,7 +311,7 @@ GameObject* ModelImporter::ConvertToGameObject(ResourceModel * model)
 		{
 			if (createdGameObjects[j]->UUID == model->nodes[i].parentUID)
 			{
-				createdGameObjects[j]->AddGameObjectAsChild(gameObject);
+				createdGameObjects[j]->AddChild(gameObject);
 				gameObject->ChangeParent(createdGameObjects[j]);
 			}
 		}
@@ -327,7 +327,7 @@ GameObject* ModelImporter::ConvertToGameObject(ResourceModel * model)
 void ModelImporter::ExtractInternalResources(const char* path, std::vector<uint> & meshes, std::vector<uint> & materials)
 {
 	char* buffer = nullptr;
-	uint size = App->fileManager->Load(path, &buffer);
+	uint size = FileManager::Load(path, &buffer);
 	JsonObj model_data(buffer);
 	JsonArray nodes_array = model_data.GetArray("Nodes");
 
@@ -361,7 +361,7 @@ void ModelImporter::ExtractInternalResources(const char* path, std::vector<uint>
 void ModelImporter::ExtractInternalResources(const char* meta_file, ResourceModel & model)
 {
 	char* buffer = nullptr;
-	uint size = App->fileManager->Load(meta_file, &buffer);
+	uint size = FileManager::Load(meta_file, &buffer);
 	JsonObj model_data(buffer);
 	JsonArray nodes_array = model_data.GetArray("Nodes");
 
@@ -384,7 +384,7 @@ bool ModelImporter::InternalResourcesExist(const char* path)
 	bool ret = true;
 
 	char* buffer;
-	App->fileManager->Load(path, &buffer);
+	FileManager::Load(path, &buffer);
 
 	JsonObj meta_data(buffer);
 	JsonArray nodes_array = meta_data.GetArray("Nodes");
@@ -405,7 +405,7 @@ bool ModelImporter::InternalResourcesExist(const char* path)
 		{
 			std::string meshLibraryPath = nodeObject.GetString("mesh_library_path", "No path");
 
-			if (!App->fileManager->Exists(meshLibraryPath.c_str())) {
+			if (!FileManager::Exists(meshLibraryPath.c_str())) {
 				ret = false;
 				LOG("Mesh: %d not found", meshID);
 				break;
@@ -421,7 +421,7 @@ bool ModelImporter::InternalResourcesExist(const char* path)
 		{
 			std::string materialLibraryPath = nodeObject.GetString("material_library_path", "No path");
 
-			if (!App->fileManager->Exists(materialLibraryPath.c_str())) {
+			if (!FileManager::Exists(materialLibraryPath.c_str())) {
 				ret = false;
 				LOG("Material: %s not found", materialLibraryPath.c_str());
 				break;
@@ -828,11 +828,11 @@ bool TextureImporter::Load(char* fileBuffer, ResourceTexture * texture, uint siz
 std::string TextureImporter::FindTexture(const char* texture_name, const char* model_directory)
 {
 	std::string path;
-	App->fileManager->SplitFilePath(model_directory, &path);
+	FileManager::SplitFilePath(model_directory, &path);
 	std::string texture_path = path + texture_name;
 
 	//Check if the texture is in the same folder
-	if (App->fileManager->Exists(texture_path.c_str()))
+	if (FileManager::Exists(texture_path.c_str()))
 	{
 		return texture_path.c_str();
 	}
@@ -840,7 +840,7 @@ std::string TextureImporter::FindTexture(const char* texture_name, const char* m
 	{
 		//Check if the texture is in a sub folder
 		texture_path = path + "Textures/" + texture_name;
-		if (App->fileManager->Exists(texture_path.c_str()))
+		if (FileManager::Exists(texture_path.c_str()))
 		{
 			return texture_path.c_str();
 		}
@@ -848,7 +848,7 @@ std::string TextureImporter::FindTexture(const char* texture_name, const char* m
 		{
 			//Check if the texture is in the root textures folder
 			texture_path = std::string("Assets/Textures/") + texture_name;
-			if (App->fileManager->Exists(texture_path.c_str()))
+			if (FileManager::Exists(texture_path.c_str()))
 			{
 				return texture_path.c_str();
 			}
@@ -867,7 +867,7 @@ void TextureImporter::UnloadTexture(uint imageID)
 ILenum TextureImporter::ExtractFileExtension(const char* file)
 {
 	ILenum file_format = IL_TYPE_UNKNOWN;
-	std::string format = App->fileManager->ExtractFileExtension(file);
+	std::string format = FileManager::ExtractFileExtension(file);
 
 	if (format == ".png")
 		file_format = IL_PNG;
@@ -932,13 +932,13 @@ void MaterialImporter::Import(const aiMaterial * aimaterial, ResourceMaterial * 
 	if (path.length > 0)
 	{
 		std::string file_path = material->assetsFile;
-		path = App->fileManager->ExtractFileName(path.C_Str());
+		path = FileManager::ExtractFileName(path.C_Str());
 		file_path = TextureImporter::FindTexture(path.C_Str(), material->assetsFile.c_str());
 
 		if (file_path.size() > 0)
 		{
 			std::string meta_file = App->resources->GenerateMetaFile(file_path.c_str());
-			if (!App->fileManager->Exists(meta_file.c_str()))
+			if (!FileManager::Exists(meta_file.c_str()))
 				material->diffuseTextureUID = App->resources->ImportFile(file_path.c_str());
 			else
 				material->diffuseTextureUID = App->resources->Find(file_path.c_str());
@@ -999,7 +999,7 @@ bool MaterialImporter::DeleteTexture(const char* material_library_path)
 	bool ret = true;
 
 	char* buffer = nullptr;
-	App->fileManager->Load(material_library_path, &buffer);
+	FileManager::Load(material_library_path, &buffer);
 
 	JsonObj material_data(buffer);
 
@@ -1008,7 +1008,7 @@ bool MaterialImporter::DeleteTexture(const char* material_library_path)
 
 	if (texture_library_path != nullptr)
 	{
-		App->fileManager->Delete(texture_library_path);
+		FileManager::Delete(texture_library_path);
 		App->resources->ReleaseResource(diffuseTextureUID);
 		App->resources->ReleaseResourceData(diffuseTextureUID);
 	}
@@ -1024,7 +1024,7 @@ bool MaterialImporter::DeleteTexture(const char* material_library_path)
 const char* MaterialImporter::ExtractTexture(const char* material_library_path)
 {
 	char* buffer = nullptr;
-	App->fileManager->Load(material_library_path, &buffer);
+	FileManager::Load(material_library_path, &buffer);
 
 	JsonObj material_data(buffer);
 

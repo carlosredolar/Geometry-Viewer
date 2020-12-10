@@ -1,12 +1,12 @@
 #include "Application.h"
+#include "Globals.h"
+#include "FileManager.h"
+#include "Time.h"
 #include "ModuleJson.h"
 #include "Glew/include/glew.h"
 
 Application::Application(int argc, char* args[]) : argc(argc), args(args), wantToSave(false), wantToLoad(false), inGame(false)
 {
-	fileManager = new FileManager(true);
-	time = new Time();
-
 	window = new ModuleWindow(true);
 	input = new ModuleInput(true);
 	renderer3D = new ModuleRenderer3D(true);
@@ -20,12 +20,10 @@ Application::Application(int argc, char* args[]) : argc(argc), args(args), wantT
 	// They will CleanUp() in reverse order
 
 	// Main Modules
-	AddModule(fileManager);
 	AddModule(window);
 	AddModule(resources);
 	AddModule(camera);
 	AddModule(input);
-	AddModule(resources);
 	
 	// Visual
 	AddModule(scene);
@@ -40,12 +38,12 @@ Application::Application(int argc, char* args[]) : argc(argc), args(args), wantT
 
 Application::~Application()
 {
-	std::vector<Module*>::reverse_iterator item = list_modules.rbegin();
+	std::vector<Module*>::iterator item = list_modules.begin();
 
-	while (item != list_modules.rend())
+	while (item != list_modules.end())
 	{
 		delete* item;
-		++item;
+		item++;
 	}
 	list_modules.clear();
 }
@@ -56,12 +54,12 @@ bool Application::Init()
 
 	LoadSpecs();
 
-	fileManager->Init();
-	time->Init();
+	ret = FileManager::Init();
+	Time::Init();
 
 	char* buffer = nullptr;
 
-	uint size = fileManager->Load("Library/Config/config.json", &buffer);
+	uint size = FileManager::Load("Library/Config/config.json", &buffer);
 	JsonObj config(buffer);
 
 	engineName = config.GetString("engineName", TITLE);
@@ -88,29 +86,29 @@ bool Application::Init()
 	config.Release();
 	RELEASE_ARRAY(buffer);
 
-	time->realClock.deltaTimer.Start();
+	Time::realClock.deltaTimer.Start();
 	return ret;
 }
 
 // ---------------------------------------------
 void Application::PrepareUpdate()
 {
-	dt = (float)time->realClock.deltaTimer.Read() / 1000.0f;
+	dt = (float)Time::realClock.deltaTimer.Read() / 1000.0f;
 	last_FPS = 1.0f / dt;
-	time->realClock.Step();
-	time->gameClock.Step();
+	Time::realClock.Step();
+	Time::gameClock.Step();
 }
 
 // ---------------------------------------------
 void Application::FinishUpdate()
 {
-	Uint32 last_frame_ms = time->realClock.deltaTimer.Read();
+	Uint32 last_frame_ms = Time::realClock.deltaTimer.Read();
 	if (last_frame_ms < capped_ms)
 	{
 		SDL_Delay(capped_ms - last_frame_ms);
 	}
 
-	time->frameCount++;
+	Time::frameCount++;
 }
 
 // Call PreUpdate, Update and PostUpdate on all modules
@@ -161,7 +159,7 @@ update_status Application::Update()
 bool Application::CleanUp()
 {
 	bool ret = true;
-	for (int i = list_modules.size() - 1; i > 0; i--)
+	for (int i = list_modules.size() - 1; i >= 0; i--)
 	{
 		list_modules[i]->CleanUp();
 	}
@@ -175,12 +173,17 @@ void Application::AddModule(Module* mod)
 
 float Application::GetMS()
 {
-	return time->realClock.deltaTimer.Read();
+	return Time::realClock.deltaTimer.Read();
 }
 
 float Application::GetFPS()
 {
 	return last_FPS;
+}
+
+void Application::SetFPSCap(int fps_cap)
+{
+	capped_ms = 1000 / fps_cap;
 }
 
 Specs Application::GetSpecs()
@@ -191,6 +194,32 @@ Specs Application::GetSpecs()
 void Application::AddModuleToTaskStack(Module* callback)
 {
 	endFrameTasks.push(callback);
+}
+
+void Application::StartGame()
+{
+	inGame = true;
+	Time::gameClock.Start();
+	Save("Library/Scenes/tmp.scene");
+}
+
+void Application::StopGame()
+{
+	inGame = false;
+	Time::gameClock.Stop();
+	Load("Library/Scenes/tmp.scene");
+}
+
+void Application::Save(const char* filePath)
+{
+	wantToSave = true;
+	fileToSave = filePath;
+}
+
+void Application::Load(const char* filePath)
+{
+	wantToLoad = true;
+	fileToLoad = filePath;
 }
 
 void Application::LoadSpecs()

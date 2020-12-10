@@ -4,9 +4,8 @@
 #include <fstream>
 #include <filesystem>
 
-FileManager::FileManager(bool start_enabled) : Module(start_enabled)
+bool FileManager::Init()
 {
-	name = "fileManager";
 
 	// Initialize the PhysicsFS library
 	if (PHYSFS_init(nullptr) != 0)
@@ -19,84 +18,70 @@ FileManager::FileManager(bool start_enabled) : Module(start_enabled)
 	if (PHYSFS_setWriteDir(".") == 0)
 	{
 		ERROR_LOG("PhysFS error while initializing writting dir: %s\n", PHYSFS_getLastError());
+		return false;
 	}
-
-	CreateFolderDirs();
-
-}
-
-
-FileManager::~FileManager()
-{
-	PHYSFS_deinit();
-}
-
-bool FileManager::Awake()
-{
-	// Determine if the PhysicsFS library is initialized, we can check it for avoid errors.
-	if (PHYSFS_isInit())
-	{
-		LOG("Asset Manager is succefully loaded");
-	}
-	else
-		LOG("Failed loading Asset Manager");
-
 
 	// PHYSFS_mount("ZIP NAME", nullptr, 1); 
 
+	CreateFolderDirs();
+
 	return true;
 }
-
 
 bool FileManager::CleanUp()
 {
 	LOG("Cleaning FileManager");
 
-	pathVector.clear();
-	bufferVector.clear();
-	bytesVector.clear();
+	//pathVector.clear();
+	//bufferVector.clear();
+	//bytesVector.clear();
 
+	PHYSFS_deinit();
 	return true;
 }
 
 void FileManager::CreateFolderDirs()
 {
-	// If the standard folders do not exist, create them
-	std::vector<const char*> dirs = { ASSETSFOLDER, MESHESPATH, TEXTURESPATH };
+	CreateDir("Assets/Config/");
+	CreateDir("Assets/Scenes/");
+	CreateDir("Assets/Models/");
+	CreateDir("Assets/Textures/");
 
-	for (uint i = 0; i < dirs.size(); ++i)
-	{
-		CreateDir(dirs[i]);
-	}
+	CreateDir("Library/Config/");
+	CreateDir("Library/Scenes/");
+	CreateDir("Library/Models/");
+	CreateDir("Library/Meshes/");
+	CreateDir("Library/Materials/");
+	CreateDir("Library/Textures/");
 }
 
-SDL_RWops* FileManager::Load(const char* path)
-{
-	char* buffer;
-	SDL_RWops* ret;
-	uint bytes;
-	int check;
+//SDL_RWops* FileManager::Load(const char* path)
+//{
+//	char* buffer;
+//	SDL_RWops* ret;
+//	uint bytes;
+//	int check;
+//
+//	check = CheckPath(path);
+//	if (check == -1)
+//	{
+//		bytes = Load(path, &buffer);
+//		ret = SDL_RWFromConstMem(buffer, bytes);
+//
+//		bufferVector.push_back(buffer);
+//		bytesVector.push_back(bytes);
+//	}
+//
+//	else
+//	{
+//		ret = SDL_RWFromConstMem(bufferVector[check], bytesVector[check]);
+//	}
+//
+//	return ret;
+//}
 
-	check = CheckPath(path);
-	if (check == -1)
-	{
-		bytes = Load(path, &buffer);
-		ret = SDL_RWFromConstMem(buffer, bytes);
 
-		bufferVector.push_back(buffer);
-		bytesVector.push_back(bytes);
-	}
-
-	else
-	{
-		ret = SDL_RWFromConstMem(bufferVector[check], bytesVector[check]);
-	}
-
-	return ret;
-}
-
-
-uint FileManager::Load(const char* path, char** buffer) const
+uint FileManager::Load(const char* path, char** buffer)
 {
 	uint ret = 0;
 
@@ -133,28 +118,28 @@ uint FileManager::Load(const char* path, char** buffer) const
 }
 
 
-int FileManager::CheckPath(const char* path)
-{
-	std::string string(path);
-
-	if (pathVector.empty() == true)
-	{
-		pathVector.push_back(string);
-		return -1;
-	}
-
-	int numBuffers = pathVector.size();
-	for (int i = 0; i < numBuffers; i++)
-	{
-		if (pathVector[i] == path)
-		{
-			return i;
-		}
-	}
-
-	pathVector.push_back(string);
-	return -1;
-}
+//int FileManager::CheckPath(const char* path)
+//{
+//	std::string string(path);
+//
+//	if (pathVector.empty() == true)
+//	{
+//		pathVector.push_back(string);
+//		return -1;
+//	}
+//
+//	int numBuffers = pathVector.size();
+//	for (int i = 0; i < numBuffers; i++)
+//	{
+//		if (pathVector[i] == path)
+//		{
+//			return i;
+//		}
+//	}
+//
+//	pathVector.push_back(string);
+//	return -1;
+//}
 
 
 // Add a new zip file or folder
@@ -173,23 +158,23 @@ bool FileManager::AddPath(const char* path_or_zip)
 }
 
 // Check if a file exists
-bool FileManager::Exists(const char* file) const
+bool FileManager::Exists(const char* file)
 {
 	return PHYSFS_exists(file) != 0;
 }
 
 // Check if a file exists
-bool FileManager::ExistsFile(const char* file, const char* ext) const
-{
-	std::string tocompare = MESHESPATH;
-	if (strcmp(ext, "png") == 0 || strcmp(ext, "jpg") || strcmp(ext, "tga") == 0)
-	{
-		tocompare = TEXTURESPATH;
-	}
-	tocompare += "/";
-	tocompare += file;
-	return PHYSFS_exists(tocompare.c_str()) != 0;
-}
+//bool FileManager::ExistsFile(const char* file, const char* ext)
+//{
+//	std::string tocompare = MODELSPATH;
+//	if (strcmp(ext, "png") == 0 || strcmp(ext, "jpg") || strcmp(ext, "tga") == 0)
+//	{
+//		tocompare = TEXTURESPATH;
+//	}
+//	tocompare += "/";
+//	tocompare += file;
+//	return PHYSFS_exists(tocompare.c_str()) != 0;
+//}
 
 bool FileManager::CreateDir(const char* dir)
 {
@@ -202,18 +187,18 @@ bool FileManager::CreateDir(const char* dir)
 }
 
 // Check if a file is a directory
-bool FileManager::IsDirectory(const char* file) const
+bool FileManager::IsDirectory(const char* file)
 {
 	return PHYSFS_isDirectory(file) != 0;
 }
 
-const char* FileManager::GetWriteDir() const
+const char* FileManager::GetWriteDir()
 {
 	//TODO: erase first annoying dot (".")
 	return PHYSFS_getWriteDir();
 }
 
-void FileManager::DiscoverFiles(const char* directory, std::vector<std::string>& file_list, std::vector<std::string>& dir_list) const
+void FileManager::DiscoverFiles(const char* directory, std::vector<std::string>& file_list, std::vector<std::string>& dir_list)
 {
 	char** rc = PHYSFS_enumerateFiles(directory);
 	char** i;
@@ -230,7 +215,7 @@ void FileManager::DiscoverFiles(const char* directory, std::vector<std::string>&
 	PHYSFS_freeList(rc);
 }
 
-void FileManager::GetAllFilesWithExtension(const char* directory, const char* extension, std::vector<std::string>& file_list) const
+void FileManager::GetAllFilesWithExtension(const char* directory, const char* extension, std::vector<std::string>& file_list)
 {
 	std::vector<std::string> files;
 	std::vector<std::string> dirs;
@@ -246,7 +231,7 @@ void FileManager::GetAllFilesWithExtension(const char* directory, const char* ex
 	}
 }
 
-PathNode FileManager::GetAllFiles(const char* directory, std::vector<std::string>* filter_ext, std::vector<std::string>* ignore_ext) const
+PathNode FileManager::GetAllFiles(const char* directory, std::vector<std::string>* filter_ext, std::vector<std::string>* ignore_ext)
 {
 	PathNode root;
 	if (Exists(directory))
@@ -292,7 +277,7 @@ PathNode FileManager::GetAllFiles(const char* directory, std::vector<std::string
 	return root;
 }
 
-void FileManager::GetRealDir(const char* path, std::string& output) const
+void FileManager::GetRealDir(const char* path, std::string& output)
 {
 	output = PHYSFS_getBaseDir();
 
@@ -304,7 +289,7 @@ void FileManager::GetRealDir(const char* path, std::string& output) const
 	output.append(PHYSFS_getRealDir(path)).append("/").append(path);
 }
 
-std::string FileManager::GetPathRelativeToAssets(const char* originalPath) const
+std::string FileManager::GetPathRelativeToAssets(const char* originalPath)
 {
 	std::string ret;
 	GetRealDir(originalPath, ret);
@@ -312,21 +297,21 @@ std::string FileManager::GetPathRelativeToAssets(const char* originalPath) const
 	return ret;
 }
 
-bool FileManager::HasExtension(const char* path) const
+bool FileManager::HasExtension(const char* path)
 {
 	std::string ext = "";
 	SplitFilePath(path, nullptr, nullptr, &ext);
 	return ext != "";
 }
 
-bool FileManager::HasExtension(const char* path, std::string extension) const
+bool FileManager::HasExtension(const char* path, std::string extension)
 {
 	std::string ext = "";
 	SplitFilePath(path, nullptr, nullptr, &ext);
 	return ext == extension;
 }
 
-bool FileManager::HasExtension(const char* path, std::vector<std::string> extensions) const
+bool FileManager::HasExtension(const char* path, std::vector<std::string> extensions)
 {
 	std::string ext = "";
 	SplitFilePath(path, nullptr, nullptr, &ext);
@@ -340,7 +325,7 @@ bool FileManager::HasExtension(const char* path, std::vector<std::string> extens
 	return false;
 }
 
-std::string FileManager::NormalizePath(const char* full_path) const
+std::string FileManager::NormalizePath(const char* full_path)
 {
 	std::string newPath(full_path);
 	for (int i = 0; i < newPath.size(); ++i)
@@ -351,7 +336,7 @@ std::string FileManager::NormalizePath(const char* full_path) const
 	return newPath;
 }
 
-std::string FileManager::LowerCaseString(const char* path) const
+std::string FileManager::LowerCaseString(const char* path)
 {
 	std::string newPath(path);
 	for (int i = 0; i < newPath.size(); ++i)
@@ -361,7 +346,7 @@ std::string FileManager::LowerCaseString(const char* path) const
 	return newPath;
 }
 
-void FileManager::SplitFilePath(const char* full_path, std::string* path, std::string* file, std::string* extension) const
+void FileManager::SplitFilePath(const char* full_path, std::string* path, std::string* file, std::string* extension)
 {
 	if (full_path != nullptr)
 	{
@@ -395,7 +380,7 @@ void FileManager::SplitFilePath(const char* full_path, std::string* path, std::s
 	}
 }
 
-unsigned int FileManager::Load(const char* path, const char* file, char** buffer) const
+unsigned int FileManager::Load(const char* path, const char* file, char** buffer)
 {
 	std::string full_path(path);
 	full_path += file;
@@ -440,16 +425,16 @@ unsigned int FileManager::Load(const char* path, const char* file, char** buffer
 	return ret;
 }*/
 
-bool FileManager::ImportFile(const char* file, std::string& relativePath)
-{
-	std::string fileStr, extensionStr;
-	SplitFilePath(file, nullptr, &fileStr, &extensionStr);
-	std::string extensionFolder = GetExtensionFolder(extensionStr.c_str()) + ("/");
-
-	relativePath = relativePath.append(extensionFolder + fileStr.append(".") + extensionStr);
-
-	return DuplicateFile(file, relativePath.c_str());
-}
+//bool FileManager::ImportFile(const char* file, std::string& relativePath)
+//{
+//	std::string fileStr, extensionStr;
+//	SplitFilePath(file, nullptr, &fileStr, &extensionStr);
+//	std::string extensionFolder = GetExtensionFolder(extensionStr.c_str()) + ("/");
+//
+//	relativePath = relativePath.append(extensionFolder + fileStr.append(".") + extensionStr);
+//
+//	return DuplicateFile(file, relativePath.c_str());
+//}
 
 bool FileManager::DuplicateFile(const char* srcFile, const char* dstFile)
 {
@@ -479,24 +464,24 @@ bool FileManager::DuplicateFile(const char* srcFile, const char* dstFile)
 	return ret;
 }
 
-std::string FileManager::GetExtensionFolder(const char* fileExtension)
-{
-	std::string extension = LowerCaseString(fileExtension);;
-
-	if (extension == "fbx" || extension == "FBX")
-	{
-		return MESHESPATH;
-	}
-	else if (extension == "png" || extension == "jpg" || extension == "tga")
-	{
-		return TEXTURESPATH;
-	}
-
-	return std::string("unknown");
-}
+//std::string FileManager::GetExtensionFolder(const char* fileExtension)
+//{
+//	std::string extension = LowerCaseString(fileExtension);;
+//
+//	if (extension == "fbx" || extension == "FBX")
+//	{
+//		return MODELSPATH;
+//	}
+//	else if (extension == "png" || extension == "jpg" || extension == "tga")
+//	{
+//		return TEXTURESPATH;
+//	}
+//
+//	return std::string("unknown");
+//}
 
 // Save a whole buffer to disk
-uint FileManager::Save(const char* file, const void* buffer, unsigned int size, bool append) const
+uint FileManager::Save(const char* file, const void* buffer, unsigned int size, bool append)
 {
 	unsigned int ret = 0;
 
@@ -578,7 +563,7 @@ uint64 FileManager::GetLastModTime(const char* filename)
 	return PHYSFS_getLastModTime(filename);
 }
 
-std::string FileManager::GetUniqueName(const char* path, const char* name) const
+std::string FileManager::GetUniqueName(const char* path, const char* name)
 {
 	//TODO: modify to distinguix files and dirs?
 	std::vector<std::string> files, dirs;
@@ -641,10 +626,10 @@ std::string FileManager::ExtractFileName(const char* path)
 	return file;
 }
 
-std::string FileManager::GetInternalFolder(const char* ext) {
-	if (strcmp(ext, "png") == 0 || strcmp(ext, "jpg") == 0 || strcmp(ext, "tga") == 0) return TEXTURESPATH;
-	return MESHESPATH;
-}
+//std::string FileManager::GetInternalFolderGetInternalFolder(const char* ext) {
+//	if (strcmp(ext, "png") == 0 || strcmp(ext, "jpg") == 0 || strcmp(ext, "tga") == 0) return TEXTURESPATH;
+//	return MODELSPATH;
+//}
 
 bool FileManager::Rename(const char* old_name, const char* new_name)
 {
