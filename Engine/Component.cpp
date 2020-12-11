@@ -1,47 +1,45 @@
 #include "Component.h"
 
-Component::Component(ComponentType type, GameObject* ownerGameObject, bool enabled) : type(type), ownerGameObject(ownerGameObject), enabled(enabled) {}
+Component::Component(ComponentType type) : type(type), enabled(true), ownerGameObject(nullptr) {}
+
+Component::Component(ComponentType _type, GameObject* gameObject)
+{
+	type = _type;
+    ownerGameObject = gameObject;
+}
 
 Component::~Component()
 {
-	ownerGameObject = nullptr;
+    ownerGameObject = nullptr;
 }
 
-void Component::Update()
-{
-	return;
-}
+void Component::Update(){}
 
-void Component::Enable()
-{
-	enabled = true;
-}
+void Component::Enable() { enabled = true; }
 
-void Component::Disable()
-{
-	enabled = false;
-}
+void Component::Disable() { enabled = false; }
 
 bool Component::IsEnabled()
 {
-	return enabled;
+    return enabled;
 }
 
 ComponentType Component::GetType()
 {
-	return type;
+    return type;
+}
+
+void Component::SetGameObject(GameObject* g_gameObject)
+{
+    ownerGameObject = g_gameObject;
+}
+
+GameObject* Component::GetGameObject()
+{
+    return ownerGameObject;
 }
 
 void Component::SetResourceUID(uint UID)
 {
-	resourceUID = UID;
-}
-
-void Component::SetOwnerGameObject(GameObject* gameObject)
-{
-	ownerGameObject = gameObject;
-}
-GameObject* Component::GetOwnerGameObject()
-{
-	return ownerGameObject;
+    _resourceUID = UID;
 }

@@ -1,99 +1,88 @@
-#include "Application.h"
 #include "GuiHierarchy.h"
-#include "ModuleGui.h"
-#include "GuiInspector.h"
+#include "ImGui/imgui.h"
+#include "GameObject.h"
 #include "ModuleScene.h"
+#include "Application.h"
 
-using namespace ImGui;
-
-GuiHierarchy::GuiHierarchy() : GuiWindow()
+GuiHierarchy::GuiHierarchy() : GuiWindow() 
 {
-	is_on = true;
-	base_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
+	type = WindowType::HIERARCHY_WINDOW;
 }
 
-GuiHierarchy::~GuiHierarchy()
-{}
-
-bool GuiHierarchy::Start()
-{
-	bool ret = true;
-	rootNode = App->scene->GetGameObject(0);
-	return ret;
-}
-
-bool GuiHierarchy::CleanUp()
-{
-	bool ret = true;
-
-	return ret;
-}
+GuiHierarchy::~GuiHierarchy() {}
 
 void GuiHierarchy::Draw()
 {
-	Begin("Hierarchy", &is_on);
-
-	if (TreeNode(rootNode->GetName()))
+	if (ImGui::Begin("Hierarchy", &visible))
 	{
-		
-		TreeNodeChild(rootNode);
-
-		ImGui::TreePop();
+		GameObject* root = App->scene->GetRoot();
+		int id = 0;
+		PreorderHierarchy(root, id);
 	}
-
 	ImGui::End();
 }
 
-void GuiHierarchy::TreeNodeChild(GameObject* gO)
+void GuiHierarchy::PreorderHierarchy(GameObject* gameObject, int& id)
 {
-	if (gO->GetChildrenAmount() > 0)
+	ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
+
+	if (gameObject == App->scene->GetRoot())
+		flags |= ImGuiTreeNodeFlags_DefaultOpen;
+
+	if (App->scene->selectedGameObject == gameObject)
+		flags |= ImGuiTreeNodeFlags_Selected;
+
+	if (gameObject->GetChildrenAmount() == 0)
+		flags |= ImGuiTreeNodeFlags_Leaf;
+
+
+	if (ImGui::TreeNodeEx(gameObject->GetName(), flags))
 	{
-		static int selection_mask = (1 << 2);
-		int node_clicked = -1;
-		for (int j = 0; j < gO->GetChildrenAmount(); j++)
+		if (ImGui::IsItemClicked())
+			App->scene->selectedGameObject = gameObject;
+
+		ImGui::PushID(id);
+		if (ImGui::BeginDragDropSource())
 		{
-			GameObject* gOChild = gO->GetChilds()->at(j);
-			ImGuiTreeNodeFlags node_flags = base_flags; // Disable the default "open on single-click behavior" + set Selected flag according to our selection.
-			const bool is_selected = (selection_mask & (1 << gOChild->UUID)) != 0;
-
-			if (is_selected && gOChild->selected)
-				node_flags |= ImGuiTreeNodeFlags_Selected;
-
-			if (gOChild->GetChildrenAmount() > 0)
-			{
-				bool node_open = ImGui::TreeNodeEx((void*)(intptr_t)j, node_flags, gOChild->GetName(), j);
-				if (ImGui::IsItemClicked())
-					node_clicked = gOChild->UUID;
-				if (node_open)
-				{
-					TreeNodeChild(gOChild);
-					ImGui::TreePop();
-				}
-			}
-			else
-			{
-				node_flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen; // ImGuiTreeNodeFlags_Bullet
-				bool node_open = ImGui::TreeNodeEx((void*)(intptr_t)j, node_flags, gOChild->GetName(), j);
-				if (ImGui::IsItemClicked())
-					node_clicked = gOChild->UUID;
-			}
-
+			ImGui::SetDragDropPayload("HIERARCHY", &id, sizeof(int));
+			ImGui::Text("Change parent");
+			ImGui::EndDragDropSource();
 		}
-		if (node_clicked != -1)
+		if (ImGui::BeginDragDropTarget())
 		{
-			GameObject* selectedGO = App->scene->GetGameObject(node_clicked);
-			//std::string logMessage = selectedGO->GetName();
-			//logMessage += " selected";
-			//LOG(logMessage.c_str());
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY"))
+			{
+				IM_ASSERT(payload->DataSize == sizeof(int));
+				int payload_n = *(const int*)payload->Data;
 
-			App->scene->SelectGameObject(selectedGO);
-
-			// Update selection state
-			// (process outside of tree loop to avoid visual inconsistencies during the clicking frame)
-			if (ImGui::GetIO().KeyCtrl)
-				selection_mask ^= (1 << node_clicked);          // CTRL+click to toggle
-			else //if (!(selection_mask & (1 << node_clicked))) // Depending on selection behavior you want, may want to preserve selection when clicking on item that is part of the selection
-				selection_mask = (1 << node_clicked);           // Click to single-select
+				std::vector<GameObject*> gameObjects = App->scene->GetAllGameObjects();
+				GameObject* target = gameObjects[payload_n];
+				target->ChangeParent(gameObject);
+			}
+			ImGui::EndDragDropTarget();
 		}
+		ImGui::PopID();
+		id++;
+
+		if (ImGui::BeginPopupContextItem())
+		{
+			if (ImGui::Button("Add Empty Child"))
+			{
+				gameObject->AddChild(new GameObject());
+				ImGui::CloseCurrentPopup();
+			}
+			else if (ImGui::Button("Delete"))
+			{
+				gameObject->toDelete = true;
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::EndPopup();
+		}
+
+		for (size_t i = 0; i < gameObject->GetChildrenAmount(); i++)
+		{
+			PreorderHierarchy(gameObject->GetChildAt(i), id);
+		}
+		ImGui::TreePop();
 	}
 }

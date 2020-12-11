@@ -2,12 +2,13 @@
 #include "Globals.h"
 #include "Module.h"
 #include "Resource.h"
-#include "ModuleImport.h"
+#include "Importers.h"
 
 #include <map>
 #include <string>
 
 class GameObject;
+struct AssetsIcons;
 
 struct ResourceData
 {
@@ -17,7 +18,7 @@ struct ResourceData
 	ResourceType type = ResourceType::RESOURCE_UNKNOWN;
 };
 
-class ModuleResources : public Module
+class ModuleResources : public Module 
 {
 public:
 	ModuleResources(bool start_enabled = true);
@@ -26,8 +27,8 @@ public:
 	bool Init() override;
 	bool CleanUp() override;
 	void OnGUI();
-	void LoadEngineAssets();
-	update_status OnFrameEnd() override;
+	void LoadEngineAssets(AssetsIcons& icons);
+	void OnFrameEnd() override;
 
 	bool MetaUpToDate(const char* assets_file, const char* meta_file);
 	int GetUIDFromMeta(const char* meta_file);
@@ -73,8 +74,8 @@ public:
 	void AddFileExtension(std::string& file, ResourceType type);
 
 public:
-	ModelImportingSettings modelImportingSettings;
-	TextureImportingSettings textureImportingSettings;
+	ModelImportingSettings modelImportSettings;
+	TextureImportingSettings textureImportSettings;
 
 private:
 	void CheckAssetsRecursive(const char* directory);

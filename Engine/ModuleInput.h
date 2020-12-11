@@ -1,7 +1,6 @@
 #pragma once
 #include "Module.h"
 #include "Globals.h"
-#include "ModuleImport.h"
 
 #define MAX_MOUSE_BUTTONS 5
 
@@ -24,14 +23,14 @@ public:
 	update_status PreUpdate(float dt);
 	bool CleanUp();
 
-	KEY_STATE GetKey(int UUID) const
+	KEY_STATE GetKey(int id) const
 	{
-		return keyboard[UUID];
+		return keyboard[id];
 	}
 
-	KEY_STATE GetMouseButton(int UUID) const
+	KEY_STATE GetMouseButton(int id) const
 	{
-		return mouse_buttons[UUID];
+		return mouse_buttons[id];
 	}
 
 	int GetMouseX() const
@@ -59,9 +58,6 @@ public:
 		return mouse_y_motion;
 	}
 
-	bool scrollUp = false;
-	bool scrollDown = false;
-
 private:
 	KEY_STATE* keyboard;
 	KEY_STATE mouse_buttons[MAX_MOUSE_BUTTONS];
@@ -71,6 +67,4 @@ private:
 	int mouse_x_motion;
 	int mouse_y_motion;
 	//int mouse_z_motion;
-
-	
 };

@@ -10,22 +10,17 @@ enum FixedFOV {
 	FIXED_HORIZONTAL_FOV
 };
 
-enum AspectRatio {
-	AR_16_9,
-	AR_16_10,
-	AR_4_3,
-};
-
 class Component_Camera : public Component {
 public:
+	Component_Camera();
 	Component_Camera(GameObject* gameObject);
 	~Component_Camera();
 
 	void Update() override;
 	void OnGUI() override;
 
-	void Save(JsonArray& save_array);
-	void Load(JsonObj& load_object);
+	void Save(JsonArray& save_array) override;
+	void Load(JsonObj& load_object) override;
 
 	void SetFixedFOV(FixedFOV fixedFOV);
 	void AdjustFieldOfView();
@@ -43,12 +38,14 @@ public:
 	float* GetViewMatrix();
 	float* GetProjectionMatrix();
 	bool ContainsAABB(AABB& aabb);
+	//virtual void Enable() override;
+	//virtual void Disable() override;
 
 public:
 	FixedFOV fixedFOV;
 
 private:
 	Frustum frustum;
-	AspectRatio aspectRatio;
-	float3 reference;
+	float _aspectRatio;
+	float3 _reference;
 };

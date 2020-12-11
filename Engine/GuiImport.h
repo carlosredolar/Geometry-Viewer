@@ -1,8 +1,8 @@
 #ifndef _WINDOW_IMPORT_H_
 #define _WINDOW_IMPORT_H_
 #include "GuiWindow.h"
+#include "ImportingSettings.h"
 #include "Resource.h"
-#include "ModuleImport.h"
 
 class GuiImport : public GuiWindow {
 public:
@@ -17,8 +17,8 @@ public:
 
 private: 
 	const char* fileToImport;
-	ModelImportingSettings modelImportingSettings;
-	TextureImportingSettings textureImportingSettings;
+	ModelImportingSettings modelImportSettings;
+	TextureImportingSettings textureImportSettings;
 	ResourceType currentResourceType;
 };
 

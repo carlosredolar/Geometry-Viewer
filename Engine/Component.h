@@ -1,7 +1,4 @@
 #pragma once
-#ifndef __COMPONENT_H__
-#define __COMPONENT_H__
-
 #include "Globals.h"
 #include <string>
 
@@ -12,55 +9,41 @@ class Resource;
 enum ResourceType;
 
 enum ComponentType {
-	NONE,
 	TRANSFORM,
 	MESH,
-	MATERIAL,
-	CAMERA,
+	MATERIAL, 
+	CAMERA, 
 	LIGHT
 };
 
 class Component {
-
-public:
-
-	//Constructor
-	Component(ComponentType type, GameObject* ownerGameObject = nullptr, bool enabled = true);
-
-	//Destructor
-	~Component();
-
-	//Update
+public: 
+	Component(ComponentType type);
+	Component(ComponentType type, GameObject* gameObject);
+	virtual ~Component();
 	virtual void Update();
-
-	//Enable Component
 	virtual void Enable();
-
-	//Disable Component
 	virtual void Disable();
-
-	//Check if component is enabled
-	virtual bool IsEnabled();
 
 	virtual void Save(JsonArray& save_array) {};
 	virtual void Load(JsonObj& load_object) {};
 
-	//Get component type
+	bool IsEnabled();
 	ComponentType GetType();
-
 	virtual void OnGUI() = 0;
 
-	void SetOwnerGameObject(GameObject* gameObject);
-	GameObject* GetOwnerGameObject();
+	void SetGameObject(GameObject* gameObject);
+	GameObject* GetGameObject();
 	virtual void SetResourceUID(uint UID);
 	virtual Resource* GetResource(ResourceType type) { return nullptr; };
 
+public:
+	std::string name;
+
 protected:
-	bool enabled;
-	GameObject* ownerGameObject;
 	ComponentType type;
+	GameObject* ownerGameObject;
+	bool enabled;
 
-	uint resourceUID;
+	uint _resourceUID;
 };
-
-#endif // !__COMPONENT_H_

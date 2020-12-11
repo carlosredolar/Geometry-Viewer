@@ -9,9 +9,12 @@ class Module
 private :
 	bool enabled;
 
+public: 
+	const char* name = "No Name Module";
+
 public:
 
-	Module(bool start_enabled = true)
+	Module(bool start_enabled = true) 
 	{
 		enabled = true;
 	}
@@ -49,15 +52,10 @@ public:
 		return UPDATE_CONTINUE;
 	}
 
-	virtual update_status OnFrameEnd() 
-	{
-		return UPDATE_CONTINUE;
-	}
+	virtual void OnFrameEnd() {}
 
 	virtual bool CleanUp() 
 	{ 
 		return true; 
 	}
-
-	const char* name = "Module without name";
 };

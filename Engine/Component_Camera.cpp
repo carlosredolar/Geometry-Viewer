@@ -1,32 +1,28 @@
 #include "Component_Camera.h"
+#include "GameObject.h"
 #include "Component_Transform.h"
 #include "Application.h"
-#include "GameObject.h"
-#include "ImGui/imgui.h"
 #include "ModuleRenderer3D.h"
+#include "ImGui/imgui.h"
 #include "ModuleJson.h"
 
-//Component_Camera::Component_Camera() : Component(), aspectRatio(AspectRatio::AR_16_9), fixedFOV(FIXED_HORIZONTAL_FOV) 
-//{
-//	type = ComponentType::CAMERA;
-//
-//	frustum.type = FrustumType::PerspectiveFrustum;
-//
-//	frustum.pos = float3(0.0f, 0.0f, -5.0f);
-//	frustum.up = float3(0.0f, 1.0f, 0.0f);
-//	frustum.front = float3(0.0f, 0.0f, 1.0f);
-//
-//	frustum.horizontalFov = 60.0f * DEGTORAD;
-//	AdjustFieldOfView();
-//
-//	frustum.nearPlaneDistance = 0.3f;
-//	frustum.farPlaneDistance = 1000.0f;
-//}
-
-Component_Camera::Component_Camera(GameObject* gameObject) : Component(ComponentType::CAMERA, gameObject), aspectRatio(AspectRatio::AR_16_9)
+Component_Camera::Component_Camera() : Component(ComponentType::CAMERA, nullptr), _aspectRatio(16.0f/9.0f), fixedFOV(FIXED_HORIZONTAL_FOV) 
 {
-	type = ComponentType::CAMERA;
+	frustum.type = FrustumType::PerspectiveFrustum;
+	
+	frustum.pos = float3(0.0f, 0.0f, -5.0f);
+	frustum.up = float3(0.0f, 1.0f, 0.0f);
+	frustum.front = float3(0.0f, 0.0f, 1.0f);
 
+	frustum.horizontalFov = 60.0f * DEGTORAD;
+	AdjustFieldOfView();
+
+	frustum.nearPlaneDistance = 0.3f;
+	frustum.farPlaneDistance = 1000.0f;
+}
+
+Component_Camera::Component_Camera(GameObject* gameObject) : Component(ComponentType::CAMERA, gameObject), _aspectRatio(16.0f/9.0f), fixedFOV(FIXED_HORIZONTAL_FOV)
+{
 	frustum.type = FrustumType::PerspectiveFrustum;
 
 	frustum.pos = float3(0.0f, 0.0f, -5.0f);
@@ -40,14 +36,14 @@ Component_Camera::Component_Camera(GameObject* gameObject) : Component(Component
 	frustum.farPlaneDistance = 1000.0f;
 }
 
-Component_Camera::~Component_Camera() {}
+Component_Camera::~Component_Camera(){}
 
 void Component_Camera::Update()
 {
-	frustum.pos = ownerGameObject->GetComponent<Component_Transform>()->GetPosition();
-
-	frustum.up = ownerGameObject->GetComponent<Component_Transform>()->GetGlobalTransform().WorldY();
-	frustum.front = ownerGameObject->GetComponent<Component_Transform>()->GetGlobalTransform().WorldZ();
+	frustum.pos = ownerGameObject->GetTransform()->GetPosition();
+	
+	frustum.up = ownerGameObject->GetTransform()->GetGlobalTransform().WorldY();
+	frustum.front = ownerGameObject->GetTransform()->GetGlobalTransform().WorldZ();
 
 	float3 corner_points[8];
 	frustum.GetCornerPoints(corner_points);
@@ -58,37 +54,90 @@ void Component_Camera::OnGUI()
 {
 	if (ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen))
 	{
-		float horizontalFOV = frustum.horizontalFov * RADTODEG;
-		if (ImGui::DragFloat("Horizontal FOV", &horizontalFOV, 0.02f, 0.0f, 130.0f)) {
-			frustum.horizontalFov = horizontalFOV * DEGTORAD;
-			AdjustFieldOfView();
+		ImGui::Spacing();
+
+		int fov = fixedFOV;
+
+		const char* items[] = { "Vertical", "Horizontal" };
+		if (ImGui::Combo("Fixed FOV", &fov, items, IM_ARRAYSIZE(items)))
+		{
+			std::string currentFov = std::string(items[fov]);
+			if (currentFov == "Vertical") SetFixedFOV(FixedFOV::FIXED_VERTICAL_FOV);
+			else if (currentFov == "Horizontal") SetFixedFOV(FixedFOV::FIXED_HORIZONTAL_FOV);
 		}
 
-		float verticalFOV = frustum.verticalFov * RADTODEG;
-		if (ImGui::DragFloat("Vertical FOV", &verticalFOV, 0.02f, 0.0f, 60.0f)) {
-			frustum.verticalFov = verticalFOV * DEGTORAD;
-			AdjustFieldOfView();
+		ImGui::Spacing();
+
+		bool currentFixedFOV = fixedFOV == FixedFOV::FIXED_VERTICAL_FOV;
+
+		//Fixed Vertical FOV Settings
+		if (currentFixedFOV)
+		{
+			float verticalFOV = frustum.verticalFov * RADTODEG;
+			if (ImGui::SliderFloat("Vertical FOV", &verticalFOV, 20.0f, 60.0f))
+			{
+				frustum.verticalFov = verticalFOV * DEGTORAD;
+				frustum.horizontalFov = 2.0f * std::atan(std::tan(frustum.verticalFov * 0.5f) * (_aspectRatio));
+			}
+
+			ImGui::Spacing();
+			ImGui::Text("Horizontal FOV: %.2f", frustum.horizontalFov * RADTODEG);
 		}
+		//Fixed Horizontal FOV Settings
+		else
+		{
+			float horizontalFOV = frustum.horizontalFov * RADTODEG;
+			if (ImGui::SliderFloat("Horizontal FOV", &horizontalFOV, 55.0f, 110.0f))
+			{
+				frustum.horizontalFov = horizontalFOV * DEGTORAD;
+				frustum.verticalFov = 2.0f * std::atan(std::tan(frustum.horizontalFov * 0.5f) * (1 / _aspectRatio));
+			}
+			ImGui::Spacing();
+			ImGui::Text("Vertical FOV: %.2f", frustum.verticalFov * RADTODEG);
+		}
+
+		ImGui::Spacing();
+		ImGui::Separator();
+		ImGui::Spacing();
+
+		ImGui::DragFloat("Near Plane", &frustum.nearPlaneDistance, 0.05f, 100.0f);
+		ImGui::DragFloat("Far Plane", &frustum.farPlaneDistance, 5.0f, 2000.0f);
 
 		ImGui::Spacing();
 	}
 }
 
-void Component_Camera::Save(JsonArray & save_array)
+void Component_Camera::Save(JsonArray& save_array)
 {
 	JsonObj save_object;
 
+	save_object.AddString("name", name.c_str());
 	save_object.AddInt("Type", type);
 	bool mainCamera = App->renderer3D->GetMainCamera() == this;
-	save_object.AddBool("Main Component_Camera", mainCamera);
+	save_object.AddBool("Main Camera", mainCamera);
+	save_object.AddFloat3("position", frustum.pos);
+	save_object.AddFloat3("up", frustum.up);
+	save_object.AddFloat3("front", frustum.front);
+	save_object.AddFloat("horizontalFOV", frustum.horizontalFov * DEGTORAD);
+	save_object.AddFloat("verticalFOV", frustum.verticalFov * DEGTORAD);
+	save_object.AddFloat("nearPlane", frustum.nearPlaneDistance);
+	save_object.AddFloat("farPlane", frustum.farPlaneDistance);
+	save_object.AddFloat("aspectRatio", _aspectRatio);
 
 	save_array.AddObject(save_object);
 }
 
-void Component_Camera::Load(JsonObj & load_object)
+void Component_Camera::Load(JsonObj& load_object)
 {
-	if (load_object.GetBool("Main Component_Camera", false))
+	if (load_object.GetBool("Main Camera", false))
 		App->renderer3D->SetMainCamera(this);
+	frustum.pos = load_object.GetFloat3("position");
+	frustum.up = load_object.GetFloat3("up");
+	frustum.front = load_object.GetFloat3("front");
+	frustum.horizontalFov = load_object.GetFloat("horizontalFOV") * RADTODEG;
+	frustum.verticalFov = load_object.GetFloat("verticalFOV") * RADTODEG;
+	frustum.nearPlaneDistance = load_object.GetFloat("nearPlane");
+	frustum.farPlaneDistance = load_object.GetFloat("farPlane");
 }
 
 void Component_Camera::SetFixedFOV(FixedFOV g_fixedFOV)
@@ -98,7 +147,9 @@ void Component_Camera::SetFixedFOV(FixedFOV g_fixedFOV)
 
 void Component_Camera::AdjustFieldOfView()
 {
-	switch (aspectRatio)
+	frustum.verticalFov = 2 * atan(tan(frustum.horizontalFov * 0.5f) * (1/_aspectRatio));
+	/*
+	switch (_aspectRatio)
 	{
 	case AR_16_9:
 		//frustum.horizontalFov = 2.0f * std::atan(std::tan(frustum.verticalFov * 0.5f) * (16.0f / 9.0f));
@@ -115,13 +166,14 @@ void Component_Camera::AdjustFieldOfView()
 	default:
 		break;
 	}
+	*/
 }
 
 void Component_Camera::AdjustFieldOfView(float width, float height)
 {
-	if (fixedFOV == FIXED_HORIZONTAL_FOV)
+	if(fixedFOV == FIXED_HORIZONTAL_FOV)
 		frustum.verticalFov = 2.0f * std::atan(std::tan(frustum.horizontalFov * 0.5f) * (height / width));
-	else
+	else 
 		frustum.horizontalFov = 2.0f * std::atan(std::tan(frustum.verticalFov * 0.5f) * (width / height));
 }
 
@@ -144,7 +196,7 @@ void Component_Camera::SetPosition(float3 position)
 
 void Component_Camera::SetReference(float3 reference)
 {
-	reference = reference;
+	_reference = reference;
 }
 
 void Component_Camera::SetNearPlaneDistance(float distance)
@@ -192,41 +244,41 @@ float* Component_Camera::GetProjectionMatrix()
 	return (float*)projectionMatrix.v;
 }
 
-bool Component_Camera::ContainsAABB(AABB & aabb)
+bool Component_Camera::ContainsAABB(AABB& aabb)
 {
 	float3 cornerPoints[8];
 	int totalInside = 0;
 
 	//get frustum planes
-	Plane* m_plane = new Plane[6]();
+	Plane* m_plane = new Plane[6](); 
 	frustum.GetPlanes(m_plane);
 
 	//get AABB points
-	aabb.GetCornerPoints(cornerPoints);
+	aabb.GetCornerPoints(cornerPoints); 
 
 	for (int p = 0; p < 6; ++p) {
 		int iInCount = 8;
 		int iPtIn = 1;
 
-		for (int i = 0; i < 8; ++i)
+		for (int i = 0; i < 8; ++i) 
 		{
-			if (m_plane[p].normal.Dot(cornerPoints[i]) - m_plane[p].d >= 0.0f)
+			if (m_plane[p].normal.Dot(cornerPoints[i]) - m_plane[p].d >= 0.0f) 
 			{
 				iPtIn = 0;
 				--iInCount;
 			}
 		}
-
-		if (iInCount == 0)
+		
+		if(iInCount == 0)
 			return false;
 
 		totalInside += iPtIn;
 	}
 
-	//Totally inside Component_Camera view
+	//Totally inside camera view
 	if (totalInside == 6)
 		return true;
 
-	//Partially inside Component_Camera view
+	//Partially inside camera view
 	return true;
 }

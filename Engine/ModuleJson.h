@@ -1,7 +1,7 @@
 #pragma once
 #include "Globals.h"
 #include "Color.h"
-#include "Libs/MathGeoLib/include/MathGeoLib.h"
+#include "MathGeoLib/include/MathGeoLib.h"
 
 struct json_array_t;
 typedef json_array_t JSON_Array;
@@ -14,7 +14,7 @@ typedef json_object_t JSON_Object;
 
 class JsonArray;
 
-class JsonObj
+class JsonObj 
 {
 public:
 	JsonObj();
@@ -34,8 +34,8 @@ public:
 	float GetFloat(const char* name, float default = -1.0f);
 	bool GetBool(const char* name, bool default = false);
 	const char* GetString(const char* name, const char* default);
-	float3 GetFloat3(const char* name, float3 default = float3(-1, -1, -1));
-	Quat GetQuaternion(const char* name, Quat default = Quat(-1, -1, -1, -1));
+	float3 GetFloat3(const char* name, float3 default = float3(0,0,0));
+	Quat GetQuaternion(const char* name, Quat default = Quat(0,0,0,1));
 	Color GetColor(const char* name, Color default = Color(0, 0, 0, 1));
 
 	void AddInt(const char* name, int number);
@@ -49,11 +49,11 @@ public:
 	JsonArray AddArray(JsonArray array);
 
 private:
-	JSON_Object* object;
-	JSON_Value* root;
+	JSON_Object* objectObj;
+	JSON_Value* rootObj;
 };
 
-class JsonArray
+class JsonArray 
 {
 public:
 	JsonArray();
@@ -71,8 +71,8 @@ public:
 	void AddFloat(float number);
 	void AddString(const char* string);
 
-private:
-	JSON_Array* array;
-	JSON_Value* value;
-	bool nested;
+private: 
+	JSON_Array* _array;
+	JSON_Value* _value;
+	bool _nested;
 };

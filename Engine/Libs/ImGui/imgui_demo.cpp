@@ -45,12 +45,12 @@ Index of this file:
 // [SECTION] Forward Declarations, Helpers
 // [SECTION] Demo Window / ShowDemoWindow()
 // [SECTION] About Window / ShowAboutWindow()
-// [SECTION] Style Editor / ShowStyleEditor()
+// [SECTION] Style ModuleGui / ShowStyleEditor()
 // [SECTION] Example App: Main Menu Bar / ShowExampleAppMainMenuBar()
 // [SECTION] Example App: Debug Console / ShowExampleAppConsole()
 // [SECTION] Example App: Debug Log / ShowExampleAppLog()
 // [SECTION] Example App: Simple Layout / ShowExampleAppLayout()
-// [SECTION] Example App: Property Editor / ShowExampleAppPropertyEditor()
+// [SECTION] Example App: Property ModuleGui / ShowExampleAppPropertyEditor()
 // [SECTION] Example App: Long Text / ShowExampleAppLongText()
 // [SECTION] Example App: Auto Resize / ShowExampleAppAutoResize()
 // [SECTION] Example App: Constrained Resize / ShowExampleAppConstrainedResize()
@@ -275,7 +275,7 @@ void ImGui::ShowDemoWindow(bool* p_open)
     if (show_app_about)         { ImGui::ShowAboutWindow(&show_app_about); }
     if (show_app_style_editor)
     {
-        ImGui::Begin("Dear ImGui Style Editor", &show_app_style_editor);
+        ImGui::Begin("Dear ImGui Style ModuleGui", &show_app_style_editor);
         ImGui::ShowStyleEditor();
         ImGui::End();
     }
@@ -356,7 +356,7 @@ void ImGui::ShowDemoWindow(bool* p_open)
         if (ImGui::BeginMenu("Tools"))
         {
             ImGui::MenuItem("Metrics", NULL, &show_app_metrics);
-            ImGui::MenuItem("Style Editor", NULL, &show_app_style_editor);
+            ImGui::MenuItem("Style ModuleGui", NULL, &show_app_style_editor);
             ImGui::MenuItem("About Dear ImGui", NULL, &show_app_about);
             ImGui::EndMenu();
         }
@@ -371,7 +371,7 @@ void ImGui::ShowDemoWindow(bool* p_open)
         ImGui::Text("ABOUT THIS DEMO:");
         ImGui::BulletText("Sections below are demonstrating many aspects of the library.");
         ImGui::BulletText("The \"Examples\" menu above leads to more demo contents.");
-        ImGui::BulletText("The \"Tools\" menu above gives access to: About Box, Style Editor,\n"
+        ImGui::BulletText("The \"Tools\" menu above gives access to: About Box, Style ModuleGui,\n"
                           "and Metrics (general purpose Dear ImGui debugging tool).");
         ImGui::Separator();
 
@@ -478,7 +478,7 @@ void ImGui::ShowDemoWindow(bool* p_open)
 
         if (ImGui::TreeNode("Style"))
         {
-            HelpMarker("The same contents can be accessed in 'Tools->Style Editor' or by calling the ShowStyleEditor() function.");
+            HelpMarker("The same contents can be accessed in 'Tools->Style ModuleGui' or by calling the ShowStyleEditor() function.");
             ImGui::ShowStyleEditor();
             ImGui::TreePop();
             ImGui::Separator();
@@ -3568,7 +3568,7 @@ void ImGui::ShowAboutWindow(bool* p_open)
 }
 
 //-----------------------------------------------------------------------------
-// [SECTION] Style Editor / ShowStyleEditor()
+// [SECTION] Style ModuleGui / ShowStyleEditor()
 //-----------------------------------------------------------------------------
 // - ShowStyleSelector()
 // - ShowFontSelector()
@@ -4609,7 +4609,7 @@ static void ShowExampleAppLayout(bool* p_open)
 }
 
 //-----------------------------------------------------------------------------
-// [SECTION] Example App: Property Editor / ShowExampleAppPropertyEditor()
+// [SECTION] Example App: Property ModuleGui / ShowExampleAppPropertyEditor()
 //-----------------------------------------------------------------------------
 
 static void ShowDummyObject(const char* prefix, int uid)

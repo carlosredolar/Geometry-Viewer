@@ -1,16 +1,31 @@
 #include "Component_Material.h"
 #include "Component_Mesh.h"
 #include "ImGui/imgui.h"
-//#include "FileManager.h"
+#include "FileManager.h"
 #include "ModuleJson.h"
 #include "GameObject.h"
 #include "Application.h"
-#include "Resource.h"
-#include "Glew/include/glew.h"
-//#include "WindowAssets.h"
-#include "ModuleImport.h"
+#include "ResourceTexture.h"
+#include "glew/include/glew.h"
+#include "ResourceMaterial.h"
+#include "GuiAssets.h"
 
-Component_Material::Component_Material(GameObject* ownerGameObject, bool enabled) : Component(ComponentType::MATERIAL, ownerGameObject, enabled)
+Component_Material::Component_Material() : Component(ComponentType::MATERIAL), checkersImageActive(false), _resource(nullptr), colored(false), _diffuseTexture(nullptr)
+{
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	glGenTextures(1, &checkersID);
+	glBindTexture(GL_TEXTURE_2D, checkersID);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glGenerateMipmap(GL_TEXTURE_2D);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+Component_Material::Component_Material(GameObject* gameObject) : Component(ComponentType::MATERIAL, gameObject), checkersImageActive(false), _resource(nullptr), colored(false), _diffuseTexture(nullptr)
 {
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 	glGenTextures(1, &checkersID);
@@ -27,19 +42,9 @@ Component_Material::Component_Material(GameObject* ownerGameObject, bool enabled
 
 Component_Material::~Component_Material()
 {
-	CleanUp();
-}
-
-void Component_Material::Update()
-{
-	
-}
-
-void Component_Material::CleanUp() 
-{
 	if (_resource != nullptr)
 	{
-		App->resources->ReleaseResource(resourceUID);
+		App->resources->ReleaseResource(_resourceUID);
 		_resource = nullptr;
 
 		if (_diffuseTexture != nullptr)
@@ -48,6 +53,35 @@ void Component_Material::CleanUp()
 			_diffuseTexture = nullptr;
 		}
 	}
+
+	glDeleteTextures(1, &checkersID);
+}
+
+void Component_Material::Update() {}
+
+void Component_Material::SetResourceUID(uint UID)
+{
+	_resourceUID = UID;
+	_resource = dynamic_cast<ResourceMaterial*>(App->resources->RequestResource(UID));
+
+	if (_resource->diffuseTextureUID != 0)
+	{
+		if (_diffuseTexture != nullptr)
+			App->resources->ReleaseResource(_diffuseTexture->GetUID());
+
+		_diffuseTexture = dynamic_cast<ResourceTexture*>(App->resources->RequestResource(_resource->diffuseTextureUID));
+	}
+
+	if (_diffuseTexture == nullptr)
+		AssignCheckersImage();
+	else
+		SetTexture(_diffuseTexture);
+}
+
+void Component_Material::BindTexture()
+{
+	if (!checkersImageActive) _diffuseTexture->BindTexture();
+	else glBindTexture(GL_TEXTURE_2D, checkersID);
 }
 
 void Component_Material::Save(JsonArray& save_array)
@@ -63,14 +97,14 @@ void Component_Material::Save(JsonArray& save_array)
 	save_array.AddObject(save_object);
 }
 
-void Component_Material::Load(JsonObj & load_object)
+void Component_Material::Load(JsonObj& load_object)
 {
 	int materialUID = load_object.GetInt("Material UID");
 	_resource = (ResourceMaterial*)App->resources->RequestResource(materialUID);
 
 	int textureUID = load_object.GetInt("Texture UID", -1);
 
-	if (_resource != nullptr && textureUID != -1)
+	if (_resource != nullptr && textureUID != -1) 
 	{
 		_resource->diffuseTextureUID = textureUID;
 		_diffuseTexture = (ResourceTexture*)App->resources->RequestResource(textureUID);
@@ -82,44 +116,92 @@ void Component_Material::Load(JsonObj & load_object)
 		SetTexture(_diffuseTexture);
 }
 
-uint Component_Material::GetIdTexture()
+void Component_Material::OnGUI()
 {
-	return _diffuseTexture->GetID();
-}
-
-ResourceTexture* Component_Material::GetDiffuseTexture()
-{
-	return _diffuseTexture;
-}
-
-void Component_Material::SetResourceUID(uint UID)
-{
-	resourceUID = UID;
-	_resource = dynamic_cast<ResourceMaterial*>(App->resources->RequestResource(UID));
-
-	if (_resource->diffuseTextureUID != 0)
+	if (ImGui::CollapsingHeader("Material", ImGuiTreeNodeFlags_DefaultOpen))
 	{
-		if (_diffuseTexture != nullptr)
-			App->resources->ReleaseResource(_diffuseTexture->GetUID());
+		if (ImGui::Checkbox("Enabled", &enabled)) {}
 
-		_diffuseTexture = dynamic_cast<ResourceTexture*>(App->resources->RequestResource(_resource->diffuseTextureUID));
+		ImGui::SameLine();
+		if (ImGui::Checkbox("Checkers Image Active", &checkersImageActive))
+		{
+			if (checkersImageActive)
+			{
+				AssignCheckersImage();
+			}
+			else
+			{
+				if (_diffuseTexture != nullptr)
+					SetTexture(_diffuseTexture);
+				else
+					checkersImageActive = true;
+			}
+		}
+
+		ImGui::Separator();
+
+		if(_diffuseTexture != nullptr && checkersImageActive == false)
+		{
+			ImGui::Image((ImTextureID)_diffuseTexture->GetGpuID(), ImVec2(100, 100), ImVec2(0, 1), ImVec2(1, 0));
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSETS"))
+				{
+					IM_ASSERT(payload->DataSize == sizeof(int));
+					int payload_n = *(const int*)payload->Data;
+					GuiAssets* assets_window = (GuiAssets*)App->gui->windows[ASSETS_WINDOW];
+					const char* file = assets_window->GetFileAt(payload_n);
+					Resource* possible_texture = App->resources->RequestResource(App->resources->Find(file));
+
+					if (possible_texture->GetType() == ResourceType::RESOURCE_TEXTURE)
+						_diffuseTexture = (ResourceTexture*)possible_texture;
+				}
+				ImGui::EndDragDropTarget();
+			}
+				
+			ImGui::SameLine();
+
+			if (ImGui::Button("Delete Texture"))
+			{
+				_diffuseTexture = nullptr;
+				AssignCheckersImage();
+			}
+
+			ImGui::Spacing();
+
+			ImGui::Text("Texture Path: %s", _diffuseTexture->assetsFile.c_str());
+
+			ImGui::Text("Width: %d Height: %d", _diffuseTexture->GetWidth(), _diffuseTexture->GetHeight());
+		}
+		else
+		{
+			ImGui::Image((ImTextureID)checkersID, ImVec2(100, 100), ImVec2(0, 1), ImVec2(1, 0));
+
+			if (ImGui::BeginDragDropTarget())
+			{
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSETS"))
+				{
+					IM_ASSERT(payload->DataSize == sizeof(int));
+					int payload_n = *(const int*)payload->Data;
+					GuiAssets* assets_window = (GuiAssets*)App->gui->windows[ASSETS_WINDOW];
+					const char* file = assets_window->GetFileAt(payload_n);
+					Resource* possible_texture = App->resources->RequestResource(App->resources->Find(file));
+
+					if (possible_texture->GetType() == ResourceType::RESOURCE_TEXTURE)
+						SetTexture(dynamic_cast<ResourceTexture*>(possible_texture));
+				}
+				ImGui::EndDragDropTarget();
+			}
+		}
+
+		ImGui::Text("UID: %d", _resourceUID);
 	}
-
-	if (_diffuseTexture == nullptr) AssignCheckersImage();
-	else SetTexture(_diffuseTexture);
 }
 
-void Component_Material::SetTexture(ResourceTexture* tex)
+void Component_Material::SetTexture(ResourceTexture* texture)
 {
-	_diffuseTexture = tex;
-
-	checkers_image = false;
-}
-
-void Component_Material::BindTexture()
-{
-	if (!checkers_image) _diffuseTexture->BindTexture();
-	else glBindTexture(GL_TEXTURE_2D, checkersID);
+	_diffuseTexture = texture;
+	checkersImageActive = false;
 }
 
 void Component_Material::AssignCheckersImage()
@@ -143,102 +225,10 @@ void Component_Material::AssignCheckersImage()
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, CHECKERS_WIDTH, CHECKERS_HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, checkerImage);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
-	checkers_image = true;
+	checkersImageActive = true;
 }
 
-void Component_Material::OnGUI()
+ResourceTexture* Component_Material::GetDiffuseTexture()
 {
-	if (ImGui::CollapsingHeader("Material", ImGuiTreeNodeFlags_DefaultOpen))
-	{
-		if (ImGui::Checkbox("Enabled", &enabled)) {}
-
-		ImGui::SameLine();
-		if (ImGui::Checkbox("Checkers Image", &checkers_image))
-		{
-			if (checkers_image)
-			{
-				AssignCheckersImage();
-			}
-			else
-			{
-				if (_diffuseTexture != nullptr)
-					SetTexture(_diffuseTexture);
-				else
-					checkers_image = true;
-			}
-		}
-
-		ImGui::Separator();
-
-		if (_diffuseTexture != nullptr && checkers_image == false)
-		{
-			ImGui::Text("Texture: %s", _diffuseTexture->assetsFile.c_str());
-			ImGui::Text("Width: %d Height: %d", _diffuseTexture->GetWidth(), _diffuseTexture->GetHeight());
-
-			ImGui::Spacing();
-
-			ImGui::Image((ImTextureID)_diffuseTexture->GetGpuID(), ImVec2(100, 100), ImVec2(0, 1), ImVec2(1, 0));
-			if (ImGui::BeginDragDropTarget())
-			{
-				if (const ImGuiPayload * payload = ImGui::AcceptDragDropPayload("ASSETS"))
-				{
-					IM_ASSERT(payload->DataSize == sizeof(int));
-					int payload_n = *(const int*)payload->Data;
-					//WindowAssets * assets_window = (WindowAssets*)App->editor->windows[ASSETS_WINDOW];
-					//const char* file = assets_window->GetFileAt(payload_n);
-					//Resource * possible_texture = App->resources->RequestResource(App->resources->Find(file));
-
-					//if (possible_texture->GetType() == ResourceType::RESOURCE_TEXTURE)
-					//	_diffuseTexture = (ResourceTexture*)possible_texture;
-				}
-				ImGui::EndDragDropTarget();
-			}
-
-			ImGui::SameLine();
-			if (ImGui::Button("Remove Texture"))
-			{
-				_diffuseTexture = nullptr;
-				AssignCheckersImage();
-			}
-		}
-		else
-		{
-			ImGui::Image((ImTextureID)checkersID, ImVec2(100, 100), ImVec2(0, 1), ImVec2(1, 0));
-
-			if (ImGui::BeginDragDropTarget())
-			{
-				if (const ImGuiPayload * payload = ImGui::AcceptDragDropPayload("ASSETS"))
-				{
-					IM_ASSERT(payload->DataSize == sizeof(int));
-					int payload_n = *(const int*)payload->Data;
-					//WindowAssets * assets_window = (WindowAssets*)App->editor->windows[ASSETS_WINDOW];
-					//const char* file = assets_window->GetFileAt(payload_n);
-					//Resource * possible_texture = App->resources->RequestResource(App->resources->Find(file));
-
-					//if (possible_texture->GetType() == ResourceType::RESOURCE_TEXTURE)
-					//	SetTexture(dynamic_cast<ResourceTexture*>(possible_texture));
-				}
-				ImGui::EndDragDropTarget();
-			}
-		}
-	}
-}
-
-const char* Component_Material::GetName()
-{
-	return _diffuseTexture->name.c_str();
-}
-
-const char* Component_Material::GetPath()
-{
-	return _diffuseTexture->GetPath().c_str();
-}
-
-const char* Component_Material::GetSize()
-{
-	std::string sizeTexture = std::to_string(_diffuseTexture->GetWidth());
-	sizeTexture += "x";
-	sizeTexture += std::to_string(_diffuseTexture->GetHeight()).c_str();
-
-	return sizeTexture.c_str();
+	return _diffuseTexture;
 }

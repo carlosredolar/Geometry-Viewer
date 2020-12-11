@@ -18,18 +18,17 @@
 #include <gl/GL.h>
 #include <gl/GLU.h>
 
-#include "Devil/include/IL/il.h"
+#include "Libs/Devil/include/IL/il.h"
 
 #pragma comment (lib, "glu32.lib")          /* link OpenGL Utility lib */
 #pragma comment (lib, "opengl32.lib")     /* link Microsoft OpenGL lib */
 #pragma comment (lib, "Libs/Glew/libx86/glew32.lib")		  /* link glew lib */
 
-ModuleRenderer3D::ModuleRenderer3D(bool start_enabled) : Module(start_enabled), cullEditorCamera(false), context(nullptr)
+ModuleRenderer3D::ModuleRenderer3D(bool start_enabled) : Module(start_enabled), showCameraCulling(false), context(nullptr)
 {
 	name = "renderer";
 
 	_ray = LineSegment();
-
 	display_mode = SOLID;
 }
 
@@ -47,7 +46,7 @@ bool ModuleRenderer3D::Init()
 	context = SDL_GL_CreateContext(App->window->window);
 	if (context == NULL)
 	{
-		ERROR_LOG("OpenGL context could not be created! SDL_Error: %s\n", SDL_GetError());
+		LOG_ERROR("OpenGL context could not be created! SDL_Error: %s\n", SDL_GetError());
 		ret = false;
 	}
 
@@ -55,19 +54,15 @@ bool ModuleRenderer3D::Init()
 
 	if (error != GL_NO_ERROR)
 	{
-		ERROR_LOG("Error initializing glew library! %s", SDL_GetError());
+		LOG_ERROR("Error initializing glew library! %s", SDL_GetError());
 		ret = false;
-	}
-	else
-	{
-		LOG("Using Glew %d.%d.%d", GLEW_VERSION_MAJOR, GLEW_VERSION_MINOR, GLEW_VERSION_MICRO);
 	}
 
 	if (ret == true)
 	{
 		//Use Vsync
 		if (vsync && SDL_GL_SetSwapInterval(1) < 0)
-			ERROR_LOG("Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
+			LOG_ERROR("Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError());
 
 		//Initialize Projection Matrix
 		glMatrixMode(GL_PROJECTION);
@@ -78,20 +73,20 @@ bool ModuleRenderer3D::Init()
 		GLenum error = glGetError();
 		if (error != GL_NO_ERROR)
 		{
-			LOG("Error initializing OpenGL! %s\n", gluErrorString(error));
+			LOG_ERROR("Error initializing OpenGL! %s\n", gluErrorString(error));
 			ret = false;
 		}
 
 		//Initialize Modelview Matrix
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
-		glLoadMatrixf(App->camera->GetViewMatrix());
+		glLoadMatrixf(App->camera->GetViewMatrix());		
 
 		//Check for error
 		error = glGetError();
 		if (error != GL_NO_ERROR)
 		{
-			LOG("Error initializing OpenGL! %s\n", gluErrorString(error));
+			LOG_ERROR("Error initializing OpenGL! %s\n", gluErrorString(error));
 			ret = false;
 		}
 
@@ -105,7 +100,7 @@ bool ModuleRenderer3D::Init()
 		error = glGetError();
 		if (error != GL_NO_ERROR)
 		{
-			LOG("Error initializing OpenGL! %s\n", gluErrorString(error));
+			LOG_ERROR("Error initializing OpenGL! %s\n", gluErrorString(error));
 			ret = false;
 		}
 
@@ -117,7 +112,6 @@ bool ModuleRenderer3D::Init()
 		lights[0].diffuse.Set(0.75f, 0.75f, 0.75f, 1.0f);
 		lights[0].SetPos(0.0f, 0.0f, 2.5f);
 		lights[0].Init();
-		lights[0].Active(true);
 
 		GLfloat MaterialAmbient[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 		glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, MaterialAmbient);
@@ -137,15 +131,7 @@ bool ModuleRenderer3D::Init()
 		lights[0].Active(true);
 	}
 
-	LOG("Vendor: %s", glGetString(GL_VENDOR));
-	LOG("Renderer: %s", glGetString(GL_RENDERER));
-	LOG("OpenGL version supported %s", glGetString(GL_VERSION));
-	LOG("GLSL: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
-
-	//GenerateBuffers();
-	OnResize(SCREEN_WIDTH, SCREEN_HEIGHT);
-
-	mainCamera = new Component_Camera(nullptr);
+	GenerateBuffers();
 
 	return ret;
 }
@@ -155,8 +141,8 @@ bool ModuleRenderer3D::LoadConfig(JsonObj& config)
 	debug = config.GetBool("debug");
 	vsync = config.GetBool("vsync");
 
-	draw_vertex_normals = config.GetBool("draw_vertex_normals");
-	draw_face_normals = config.GetBool("draw_face_normals");
+	drawVertexNormals = config.GetBool("draw_vertex_normals");
+	drawFaceFormals = config.GetBool("draw_face_normals");
 
 	return true;
 }
@@ -188,7 +174,8 @@ update_status ModuleRenderer3D::Update(float dt)
 {
 	update_status ret = UPDATE_CONTINUE;
 
-	//DrawRay();
+	//DrawDirectModeCube();
+	DrawRay();
 
 	return ret;
 }
@@ -196,24 +183,20 @@ update_status ModuleRenderer3D::Update(float dt)
 // PostUpdate present buffer to screen
 update_status ModuleRenderer3D::PostUpdate(float dt)
 {
-	update_status ret = UPDATE_CONTINUE;
-
 	glBindVertexArray(0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	//ret = App->gui->Draw();
+	App->gui->Draw();
 
 	SDL_GL_SwapWindow(App->window->window);
 
-	GameObject* selectedGameObject = App->scene->GetSelectedGameObject();
-
-	if (selectedGameObject != nullptr && selectedGameObject->to_delete)
+	if (App->scene->selectedGameObject != nullptr && App->scene->selectedGameObject->toDelete)
 	{
-		App->scene->DeleteGameObject(selectedGameObject);
-		selectedGameObject = nullptr;
+		App->scene->DeleteGameObject(App->scene->selectedGameObject);
+		App->scene->selectedGameObject = nullptr;
 	}
 
-	return ret;
+	return UPDATE_CONTINUE;
 }
 
 // Called before quitting
@@ -261,7 +244,7 @@ void ModuleRenderer3D::UpdateProjectionMatrix(float* projectionMatrix)
 	glLoadMatrixf(App->camera->GetProjectionMatrix());
 }
 
-void ModuleRenderer3D::DrawAABB(float3 * cornerPoints)
+void ModuleRenderer3D::DrawAABB(float3* cornerPoints)
 {
 	glBegin(GL_LINES);
 
@@ -300,13 +283,14 @@ void ModuleRenderer3D::DrawAABB(float3 * cornerPoints)
 
 	glVertex3f(cornerPoints[7].x, cornerPoints[7].y, cornerPoints[7].z);
 	glVertex3f(cornerPoints[3].x, cornerPoints[3].y, cornerPoints[3].z);
+
 	glEnd();
 }
 
 DisplayMode ModuleRenderer3D::GetDisplayMode() { return display_mode; }
 
-void ModuleRenderer3D::SetDisplayMode(DisplayMode display)
-{
+void ModuleRenderer3D::SetDisplayMode(DisplayMode display) 
+{ 
 	GLenum face = GL_FRONT;
 
 	display_mode = display;
@@ -314,7 +298,7 @@ void ModuleRenderer3D::SetDisplayMode(DisplayMode display)
 	if (!glIsEnabled(GL_CULL_FACE_MODE))
 		face = GL_FRONT_AND_BACK;
 
-	if (display == SOLID)
+	if (display == SOLID) 
 	{
 		glPolygonMode(face, GL_FILL);
 	}
@@ -324,7 +308,7 @@ void ModuleRenderer3D::SetDisplayMode(DisplayMode display)
 	}
 }
 
-void ModuleRenderer3D::SetMainCamera(Component_Camera * camera)
+void ModuleRenderer3D::SetMainCamera(Component_Camera* camera)
 {
 	mainCamera = camera;
 }
@@ -336,7 +320,7 @@ Component_Camera* ModuleRenderer3D::GetMainCamera()
 
 bool ModuleRenderer3D::IsInsideCameraView(AABB aabb)
 {
-	if (cullEditorCamera)
+	if (showCameraCulling)
 		return mainCamera->ContainsAABB(aabb) || App->camera->GetCamera()->ContainsAABB(aabb);
 	else
 		return mainCamera->ContainsAABB(aabb);
@@ -356,7 +340,7 @@ void ModuleRenderer3D::SetVSYNC(bool enabled)
 	{
 		if (SDL_GL_SetSwapInterval(1) == -1)
 		{
-			LOG("VSYNC not supported");
+			LOG_ERROR("VSYNC not supported");
 		}
 		else
 		{
@@ -367,7 +351,7 @@ void ModuleRenderer3D::SetVSYNC(bool enabled)
 	{
 		if (SDL_GL_SetSwapInterval(0) == -1)
 		{
-			LOG("VSYNC not supported");
+			LOG_ERROR("VSYNC not supported");
 		}
 		else
 		{
@@ -429,7 +413,7 @@ void ModuleRenderer3D::GenerateBuffers()
 	glDrawBuffers(1, DrawBuffers);*/
 
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-		LOG("Famebuffer is not complete");
+		LOG_ERROR("Famebuffer is not complete");
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -562,7 +546,7 @@ void ModuleRenderer3D::DrawDirectModeCube()
 	glDeleteTextures(1, &textureID);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	ilBindImage(0);
-	//ilDeleteImages(1, &Lenna->UUID);
+	//ilDeleteImages(1, &Lenna->id);
 }
 
 void ModuleRenderer3D::BeginDebugDraw() {}

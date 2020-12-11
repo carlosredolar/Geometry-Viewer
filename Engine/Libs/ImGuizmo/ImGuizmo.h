@@ -43,7 +43,7 @@
 // -------------------------------------------------------------------------------------------
 // Example 
 #if 0
-void EditTransform(const Camera& camera, matrix_t& matrix)
+void EditTransform(const Component_Camera& camera, matrix_t& matrix)
 {
    static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::ROTATE);
    static ImGuizmo::MODE mCurrentGizmoMode(ImGuizmo::WORLD);

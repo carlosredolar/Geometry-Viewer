@@ -31,14 +31,13 @@ public:
 	float4x4 GetProjectionMatrixM();
 	float3 GetPosition();
 	GameObject* PickGameObject();
-	
+
 	FixedFOV GetFixedFOV();
 	void SetFixedFOV(FixedFOV fixedFOV);
 	float GetVerticalFieldOfView();
 	float GetHorizontalFieldOfView();
 	void SetVerticalFieldOfView(float verticalFOV, int screen_width, int screen_height);
 	void SetHorizontalFieldOfView(float horizontalFOV, int screen_width, int screen_height);
-	void SetPosition(float3 newPosition);
 
 	void Reset();
 	void SetBackgroundColor(float r, float g, float b, float w);
@@ -46,16 +45,14 @@ public:
 private:
 	void Move(const float3& Movement);
 	void Orbit(float dt);
-	void Pan(float dt);
 
 public:
 	Color background;
 
-	float movementSpeed;
-	float dragSpeed;
-	float orbitSpeed;
-	float panSpeed;
-	float zoomSpeed;
+	float move_speed;
+	float drag_speed;
+	float orbit_speed;
+	float zoom_speed;
 	float sensitivity;
 
 private:

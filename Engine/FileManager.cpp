@@ -1,155 +1,86 @@
-#include "Application.h"
 #include "FileManager.h"
+#include "Application.h"
 
+#include "Libs/SDL/include/SDL.h"
+#include <algorithm>
 #include <fstream>
-#include <filesystem>
+#include <iostream>
+#include <Shlwapi.h>
 
-bool FileManager::Init()
+#include "Libs/PhysFS/include/physfs.h"
+
+#pragma comment (lib, "Libs/PhysFS/libx86/physfs.lib")
+#pragma comment (lib,"shlwapi.lib")
+
+#pragma region FileManager
+
+void FileManager::Init()
 {
+	char* base_path = SDL_GetBasePath();
 
-	// Initialize the PhysicsFS library
 	if (PHYSFS_init(nullptr) != 0)
 		LOG("PhysFS initted correctly");
+	
+	SDL_free(base_path);
 
-	// We only need this when compiling in debug. In Release we don't need it.
-	PHYSFS_mount(".", nullptr, 1);
+	AddPath("."); //Adding ProjectFolder (working directory)
+	AddPath("Assets");
 
-	// Enable PhysFS writting
 	if (PHYSFS_setWriteDir(".") == 0)
-	{
-		ERROR_LOG("PhysFS error while initializing writting dir: %s\n", PHYSFS_getLastError());
-		return false;
-	}
+		LOG_ERROR("File Manager error while creating write dir: %s\n", PHYSFS_getLastError());
 
-	// PHYSFS_mount("ZIP NAME", nullptr, 1); 
+	CreateLibraryDirectories();
 
-	CreateFolderDirs();
+	std::string path = PHYSFS_getWriteDir();
 
-	return true;
+	normalize_scales = true;
 }
 
-bool FileManager::CleanUp()
+void FileManager::CleanUp()
 {
-	LOG("Cleaning FileManager");
-
-	//pathVector.clear();
-	//bufferVector.clear();
-	//bytesVector.clear();
-
 	PHYSFS_deinit();
-	return true;
 }
 
-void FileManager::CreateFolderDirs()
+void FileManager::GetPhysFSVersion(std::string& version_str)
 {
+	PHYSFS_Version version;
+	PHYSFS_getLinkedVersion(&version);
+	version_str = std::to_string(version.major) + "." + std::to_string(version.minor) + "." + std::to_string(version.patch);
+}
+
+void FileManager::CreateLibraryDirectories()
+{
+	//CreateDir(LIBRARY_PATH);
+	//CreateDir(FOLDERS_PATH);
+	//CreateDir(MESHES_PATH);
+	//CreateDir(TEXTURES_PATH);
+	//CreateDir(MATERIALS_PATH);
 	CreateDir("Assets/Config/");
-	CreateDir("Assets/Scenes/");
-	CreateDir("Assets/Models/");
 	CreateDir("Assets/Textures/");
+	CreateDir("Assets/Models/");
+	CreateDir("Assets/Scenes/");
 
 	CreateDir("Library/Config/");
-	CreateDir("Library/Scenes/");
 	CreateDir("Library/Models/");
 	CreateDir("Library/Meshes/");
 	CreateDir("Library/Materials/");
 	CreateDir("Library/Textures/");
+	CreateDir("Library/Scenes/");
+	//CreateDir("Materials/");
+	//CreateDir(ANIMATIONS_PATH);
+	//CreateDir(PARTICLES_PATH);
+	//CreateDir(SHADERS_PATH);
+	//CreateDir(SCENES_PATH);
 }
 
-//SDL_RWops* FileManager::Load(const char* path)
-//{
-//	char* buffer;
-//	SDL_RWops* ret;
-//	uint bytes;
-//	int check;
-//
-//	check = CheckPath(path);
-//	if (check == -1)
-//	{
-//		bytes = Load(path, &buffer);
-//		ret = SDL_RWFromConstMem(buffer, bytes);
-//
-//		bufferVector.push_back(buffer);
-//		bytesVector.push_back(bytes);
-//	}
-//
-//	else
-//	{
-//		ret = SDL_RWFromConstMem(bufferVector[check], bytesVector[check]);
-//	}
-//
-//	return ret;
-//}
-
-
-uint FileManager::Load(const char* path, char** buffer)
-{
-	uint ret = 0;
-
-	PHYSFS_file* fs_file = PHYSFS_openRead(path);
-
-	if (fs_file != nullptr)
-	{
-		PHYSFS_sint32 size = (PHYSFS_sint32)PHYSFS_fileLength(fs_file);
-
-		if (size > 0)
-		{
-			*buffer = new char[size + 1];
-			uint readed = (uint)PHYSFS_read(fs_file, *buffer, 1, size);
-			if (readed != size)
-			{
-				LOG("File System error while reading from file %s: %s\n", path, PHYSFS_getLastError());
-				delete buffer;
-			}
-			else
-			{
-				ret = readed;
-				//Adding end of file at the end of the buffer. Loading a shader file does not add this for some reason
-				(*buffer)[size] = '\0';
-			}
-		}
-
-		if (PHYSFS_close(fs_file) == 0)
-			LOG("File System error while closing file %s: %s\n", path, PHYSFS_getLastError());
-	}
-	else
-		LOG("File System error while opening file %s: %s\n", path, PHYSFS_getLastError());
-
-	return ret;
-}
-
-
-//int FileManager::CheckPath(const char* path)
-//{
-//	std::string string(path);
-//
-//	if (pathVector.empty() == true)
-//	{
-//		pathVector.push_back(string);
-//		return -1;
-//	}
-//
-//	int numBuffers = pathVector.size();
-//	for (int i = 0; i < numBuffers; i++)
-//	{
-//		if (pathVector[i] == path)
-//		{
-//			return i;
-//		}
-//	}
-//
-//	pathVector.push_back(string);
-//	return -1;
-//}
-
-
-// Add a new zip file or folder
+// Add a new zip file_path or folder
 bool FileManager::AddPath(const char* path_or_zip)
 {
 	bool ret = false;
 
 	if (PHYSFS_mount(path_or_zip, nullptr, 1) == 0)
 	{
-		LOG("File System error while adding a path or zip: %s\n", PHYSFS_getLastError());
+		LOG_ERROR("File Manager error while adding a path or zip: %s\n", PHYSFS_getLastError());
 	}
 	else
 		ret = true;
@@ -157,26 +88,11 @@ bool FileManager::AddPath(const char* path_or_zip)
 	return ret;
 }
 
-// Check if a file exists
-bool FileManager::Exists(const char* file)
+// Check if a file_path exists
+bool FileManager::Exists(const char* file) 
 {
-	LOG("%s", file);
-	bool ret = PHYSFS_exists(file) != 0;
-	return ret;
+	return PHYSFS_exists(file) != 0;
 }
-
-// Check if a file exists
-//bool FileManager::ExistsFile(const char* file, const char* ext)
-//{
-//	std::string tocompare = MODELSPATH;
-//	if (strcmp(ext, "png") == 0 || strcmp(ext, "jpg") || strcmp(ext, "tga") == 0)
-//	{
-//		tocompare = TEXTURESPATH;
-//	}
-//	tocompare += "/";
-//	tocompare += file;
-//	return PHYSFS_exists(tocompare.c_str()) != 0;
-//}
 
 bool FileManager::CreateDir(const char* dir)
 {
@@ -188,19 +104,18 @@ bool FileManager::CreateDir(const char* dir)
 	return false;
 }
 
-// Check if a file is a directory
-bool FileManager::IsDirectory(const char* file)
+// Check if a file_path is a directory
+bool FileManager::IsDirectory(const char* file) 
 {
 	return PHYSFS_isDirectory(file) != 0;
 }
 
-const char* FileManager::GetWriteDir()
+const char* FileManager::GetWriteDir() 
 {
-	//TODO: erase first annoying dot (".")
 	return PHYSFS_getWriteDir();
 }
 
-void FileManager::DiscoverFiles(const char* directory, std::vector<std::string>& file_list, std::vector<std::string>& dir_list)
+void FileManager::DiscoverFiles(const char* directory, std::vector<std::string>& file_list, std::vector<std::string>& dir_list) 
 {
 	char** rc = PHYSFS_enumerateFiles(directory);
 	char** i;
@@ -217,7 +132,31 @@ void FileManager::DiscoverFiles(const char* directory, std::vector<std::string>&
 	PHYSFS_freeList(rc);
 }
 
-void FileManager::GetAllFilesWithExtension(const char* directory, const char* extension, std::vector<std::string>& file_list)
+void FileManager::DiscoverFilesRecursive(const char* directory, std::vector<std::string>& file_list, std::vector<std::string>& dir_list)
+{
+	std::vector<std::string> files;
+	std::vector<std::string> directories;
+
+	DiscoverFiles(directory, files, directories);
+	
+	for (size_t i = 0; i < files.size(); i++)
+	{
+		std::string file = directory;
+		file.append("/" + files[i]);
+		file_list.push_back(file);
+	}
+
+	for (size_t i = 0; i < directories.size(); i++) 
+	{
+		std::string dir = directory;
+		dir.append("/" + directories[i]);
+		dir_list.push_back(dir);
+		DiscoverFilesRecursive(dir.c_str(), file_list, dir_list);
+	}
+
+}
+
+void FileManager::GetAllFilesWithExtension(const char* directory, const char* extension, std::vector<std::string>& file_list) 
 {
 	std::vector<std::string> files;
 	std::vector<std::string> dirs;
@@ -233,53 +172,7 @@ void FileManager::GetAllFilesWithExtension(const char* directory, const char* ex
 	}
 }
 
-PathNode FileManager::GetAllFiles(const char* directory, std::vector<std::string>* filter_ext, std::vector<std::string>* ignore_ext)
-{
-	PathNode root;
-	if (Exists(directory))
-	{
-		root.path = directory;
-		SplitFilePath(directory, nullptr, &root.localPath);
-		if (root.localPath == "")
-			root.localPath = directory;
-
-		std::vector<std::string> file_list, dir_list;
-		DiscoverFiles(directory, file_list, dir_list);
-
-		//Adding all child directories
-		for (uint i = 0; i < dir_list.size(); i++)
-		{
-			std::string str = directory;
-			str.append("/").append(dir_list[i]);
-			root.children.push_back(GetAllFiles(str.c_str(), filter_ext, ignore_ext));
-		}
-		//Adding all child files
-		for (uint i = 0; i < file_list.size(); i++)
-		{
-			//Filtering extensions
-			bool filter = true, discard = false;
-			if (filter_ext != nullptr)
-			{
-				filter = HasExtension(file_list[i].c_str(), *filter_ext);
-			}
-			if (ignore_ext != nullptr)
-			{
-				discard = HasExtension(file_list[i].c_str(), *ignore_ext);
-			}
-			if (filter == true && discard == false)
-			{
-				std::string str = directory;
-				str.append("/").append(file_list[i]);
-				root.children.push_back(GetAllFiles(str.c_str(), filter_ext, ignore_ext));
-			}
-		}
-		root.isFile = HasExtension(root.path.c_str());
-		root.isLeaf = root.children.empty() == true;
-	}
-	return root;
-}
-
-void FileManager::GetRealDir(const char* path, std::string& output)
+void FileManager::GetRealDir(const char* path, std::string& output) 
 {
 	output = PHYSFS_getBaseDir();
 
@@ -291,29 +184,39 @@ void FileManager::GetRealDir(const char* path, std::string& output)
 	output.append(PHYSFS_getRealDir(path)).append("/").append(path);
 }
 
-std::string FileManager::GetPathRelativeToAssets(const char* originalPath)
+std::string FileManager::GetPathRelativeToAssets(const char* originalPath) 
 {
-	std::string ret;
-	GetRealDir(originalPath, ret);
+	std::string file_path = originalPath;
+	
+	std::size_t pos = file_path.find("Assets");
 
-	return ret;
+	if (pos > file_path.size())
+	{
+		file_path.clear();
+	}
+	else
+	{
+		file_path = file_path.substr(pos);
+	}
+
+	return file_path;
 }
 
-bool FileManager::HasExtension(const char* path)
+bool FileManager::HasExtension(const char* path) 
 {
 	std::string ext = "";
 	SplitFilePath(path, nullptr, nullptr, &ext);
 	return ext != "";
 }
 
-bool FileManager::HasExtension(const char* path, std::string extension)
+bool FileManager::HasExtension(const char* path, std::string extension) 
 {
 	std::string ext = "";
 	SplitFilePath(path, nullptr, nullptr, &ext);
 	return ext == extension;
 }
 
-bool FileManager::HasExtension(const char* path, std::vector<std::string> extensions)
+bool FileManager::HasExtension(const char* path, std::vector<std::string> extensions) 
 {
 	std::string ext = "";
 	SplitFilePath(path, nullptr, nullptr, &ext);
@@ -327,6 +230,22 @@ bool FileManager::HasExtension(const char* path, std::vector<std::string> extens
 	return false;
 }
 
+std::string FileManager::ProcessPath(const char* path)
+{
+	std::string final_path = path;
+	
+	final_path = NormalizePath(final_path.c_str());
+	std::string tmp_path = GetPathRelativeToAssets(final_path.c_str());
+
+	//The file_path is inside a directory
+	if (tmp_path.size() > 0)
+	{
+		return tmp_path.c_str();
+	}
+
+	return final_path.c_str();
+}
+
 std::string FileManager::NormalizePath(const char* full_path)
 {
 	std::string newPath(full_path);
@@ -338,17 +257,7 @@ std::string FileManager::NormalizePath(const char* full_path)
 	return newPath;
 }
 
-std::string FileManager::LowerCaseString(const char* path)
-{
-	std::string newPath(path);
-	for (int i = 0; i < newPath.size(); ++i)
-	{
-		newPath[i] = std::tolower(newPath[i]);
-	}
-	return newPath;
-}
-
-void FileManager::SplitFilePath(const char* full_path, std::string* path, std::string* file, std::string* extension)
+void FileManager::SplitFilePath(const char* full_path, std::string* path, std::string* file, std::string* extension) 
 {
 	if (full_path != nullptr)
 	{
@@ -382,16 +291,15 @@ void FileManager::SplitFilePath(const char* full_path, std::string* path, std::s
 	}
 }
 
-unsigned int FileManager::Load(const char* path, const char* file, char** buffer)
+unsigned int FileManager::Load(const char* path, const char* file, char** buffer) 
 {
 	std::string full_path(path);
 	full_path += file;
 	return Load(full_path.c_str(), buffer);
 }
 
-
-// Read a whole file and put it in a new buffer
-/*uint FileManager::Load(const char* file, char** buffer) const  (MEMORY LEAK)
+// Read a whole file_path and put it in a new buffer
+uint FileManager::Load(const char* file, char** buffer) 
 {
 	uint ret = 0;
 
@@ -407,83 +315,83 @@ unsigned int FileManager::Load(const char* path, const char* file, char** buffer
 			uint readed = (uint)PHYSFS_read(fs_file, *buffer, 1, size);
 			if (readed != size)
 			{
-				LOG("File System error while reading from file %s: %s\n", file, PHYSFS_getLastError());
+				LOG_ERROR("File Manager error while reading from file %s: %s\n", file, PHYSFS_getLastError());
 				RELEASE_ARRAY(buffer);
 			}
 			else
 			{
 				ret = readed;
-				//Adding end of file at the end of the buffer. Loading a shader file does not add this for some reason
+				//Adding end of file_path at the end of the buffer. Loading a shader file_path does not add this for some reason
 				(*buffer)[size] = '\0';
 			}
 		}
 
 		if (PHYSFS_close(fs_file) == 0)
-			LOG("File System error while closing file %s: %s\n", file, PHYSFS_getLastError());
+			LOG_ERROR("File Manager error while closing file %s: %s\n", file, PHYSFS_getLastError());
 	}
 	else
-		LOG("File System error while opening file %s: %s\n", file, PHYSFS_getLastError());
-
-	return ret;
-}*/
-
-//bool FileManager::ImportFile(const char* file, std::string& relativePath)
-//{
-//	std::string fileStr, extensionStr;
-//	SplitFilePath(file, nullptr, &fileStr, &extensionStr);
-//	std::string extensionFolder = GetExtensionFolder(extensionStr.c_str()) + ("/");
-//
-//	relativePath = relativePath.append(extensionFolder + fileStr.append(".") + extensionStr);
-//
-//	return DuplicateFile(file, relativePath.c_str());
-//}
-
-bool FileManager::DuplicateFile(const char* srcFile, const char* dstFile)
-{
-	bool ret = false;
-
-	char buf[HUGE_STR];
-	uint size;
-
-	FILE* source = nullptr;
-	fopen_s(&source, srcFile, "rb");
-	PHYSFS_file* dest = PHYSFS_openWrite(dstFile);
-
-	if (source && dest)
-	{
-		while (size = fread_s(buf, HUGE_STR, 1, HUGE_STR, source))
-			PHYSFS_write(dest, buf, 1, size);
-
-		fclose(source);
-		PHYSFS_close(dest);
-		ret = true;
-
-		LOG("File System copied file [%s] to [%s]", srcFile, dstFile);
-	}
-	else
-		LOG("File System error while copy from [%s] to [%s]", srcFile, dstFile);
+		LOG_ERROR("File Manager error while opening file %s: %s\n", file, PHYSFS_getLastError());
 
 	return ret;
 }
 
-//std::string FileManager::GetExtensionFolder(const char* fileExtension)
-//{
-//	std::string extension = LowerCaseString(fileExtension);;
-//
-//	if (extension == "fbx" || extension == "FBX")
-//	{
-//		return MODELSPATH;
-//	}
-//	else if (extension == "png" || extension == "jpg" || extension == "tga")
-//	{
-//		return TEXTURESPATH;
-//	}
-//
-//	return std::string("unknown");
-//}
+bool FileManager::DuplicateFile(const char* file, const char* dstFolder, std::string& relativePath)
+{
+	std::string fileStr, extensionStr;
+	SplitFilePath(file, nullptr, &fileStr, &extensionStr);
+
+	relativePath = relativePath.append(dstFolder).append("/") + fileStr.append(".") + extensionStr;
+	std::string finalPath = std::string(*PHYSFS_getSearchPath()).append("/") + relativePath;
+
+	return DuplicateFile(file, finalPath.c_str());
+
+}
+
+bool FileManager::DuplicateFile(const char* srcFile, const char* dstFile)
+{
+	std::ifstream src;
+	src.open(srcFile, std::ios::binary);
+	bool srcOpen = src.is_open();
+	std::ofstream  dst(dstFile, std::ios::binary);
+	bool dstOpen = dst.is_open();
+
+	dst << src.rdbuf();
+
+	src.close();
+	dst.close();
+
+	if (srcOpen && dstOpen)
+	{
+		LOG("[success] File Duplicated Correctly");
+		return true;
+	}
+	else
+	{
+		LOG("[error] File could not be duplicated");
+		return false;
+	}
+}
+
+void FileManager::Rename(const char* old_name, const char* new_name)
+{
+	char* fileBuffer;
+	uint size = FileManager::Load(old_name, &fileBuffer);
+
+	Save(new_name, fileBuffer, size);
+	Delete(old_name);
+
+	RELEASE_ARRAY(fileBuffer);
+}
+
+int close_sdl_rwops(SDL_RWops* rw)
+{
+	RELEASE_ARRAY(rw->hidden.mem.base);
+	SDL_FreeRW(rw);
+	return 0;
+}
 
 // Save a whole buffer to disk
-uint FileManager::Save(const char* file, const void* buffer, unsigned int size, bool append)
+uint FileManager::Save(const char* file, const void* buffer, unsigned int size, bool append) 
 {
 	unsigned int ret = 0;
 
@@ -495,7 +403,7 @@ uint FileManager::Save(const char* file, const void* buffer, unsigned int size, 
 		uint written = (uint)PHYSFS_write(fs_file, (const void*)buffer, 1, size);
 		if (written != size)
 		{
-			LOG("[error] File System error while writing to file %s: %s", file, PHYSFS_getLastError());
+			LOG_ERROR("[error] File Manager error while writing to file %s: %s", file, PHYSFS_getLastError());
 		}
 		else
 		{
@@ -508,44 +416,18 @@ uint FileManager::Save(const char* file, const void* buffer, unsigned int size, 
 				LOG("File [%s%s] overwritten with %u bytes", GetWriteDir(), file, size);
 			}
 			else
+			{
 				LOG("New file created [%s%s] of %u bytes", GetWriteDir(), file, size);
+			}
 
 			ret = written;
 		}
 
 		if (PHYSFS_close(fs_file) == 0)
-			LOG("[error] File System error while closing file %s: %s", file, PHYSFS_getLastError());
+			LOG_ERROR("[error] File Manager error while closing file %s: %s", file, PHYSFS_getLastError());
 	}
 	else
-		LOG("[error] File System error while opening file %s: %s", file, PHYSFS_getLastError());
-
-	return ret;
-}
-
-bool FileManager::Remove(const char* file)
-{
-	bool ret = false;
-
-	if (file != nullptr)
-	{
-		//If it is a directory, we need to recursively remove all the files inside
-		if (IsDirectory(file))
-		{
-			std::vector<std::string> containedFiles, containedDirs;
-			PathNode rootDirectory = GetAllFiles(file);
-
-			for (uint i = 0; i < rootDirectory.children.size(); ++i)
-				Remove(rootDirectory.children[i].path.c_str());
-		}
-
-		if (PHYSFS_delete(file) != 0)
-		{
-			LOG("File deleted: [%s]", file);
-			ret = true;
-		}
-		else
-			LOG("File System error while trying to delete [%s]: %s", file, PHYSFS_getLastError());
-	}
+		LOG_ERROR("[error] File Manager error while opening file %s: %s", file, PHYSFS_getLastError());
 
 	return ret;
 }
@@ -555,7 +437,7 @@ bool FileManager::Delete(const char* file)
 	if (PHYSFS_delete(file) != 0)
 		return true;
 	else {
-		ERROR_LOG("File System error while deleting file %s: %s", file, PHYSFS_getLastError());
+		LOG_ERROR("File Manager error while deleting file %s: %s", file, PHYSFS_getLastError());
 		return false;
 	}
 }
@@ -567,7 +449,6 @@ uint64 FileManager::GetLastModTime(const char* filename)
 
 std::string FileManager::GetUniqueName(const char* path, const char* name)
 {
-	//TODO: modify to distinguix files and dirs?
 	std::vector<std::string> files, dirs;
 	DiscoverFiles(path, files, dirs);
 
@@ -600,51 +481,45 @@ std::string FileManager::GetUniqueName(const char* path, const char* name)
 	return finalName;
 }
 
-std::string FileManager::ExtractFileExtension(const char* path)
+std::string FileManager::GetFileExtension(const char* path)
 {
-	LOG("Getting file extension");
-	std::string filePath;
-	std::string extension;
-	SplitFilePath(path, &filePath, nullptr, &extension);
-	return extension;
+	std::string format = PathFindExtensionA(path);
+	std::transform(format.begin(), format.end(), format.begin(), [](unsigned char c) { return std::tolower(c); });
+	return format;
 }
 
-std::string FileManager::ExtractFileNameAndExtension(const char* path)
+std::string FileManager::GetFileNameAndExtension(const char* path)
 {
-	LOG("Getting file name and extension");
 	std::string file;
-	std::string filePath;
+	std::string file_path;
 	std::string extension;
-	SplitFilePath(path, &filePath, &file, &extension);
+	SplitFilePath(path, &file_path, &file, &extension);
 	return file + "." + extension;
 }
 
-std::string FileManager::ExtractFileName(const char* path)
+std::string FileManager::GetFileName(const char* path)
 {
-	LOG("Getting file name");
 	std::string file;
-	std::string filePath;
-	SplitFilePath(path, &filePath, &file);
+	std::string file_path;
+	SplitFilePath(path, &file_path, &file);
 	return file;
 }
 
-//std::string FileManager::GetInternalFolderGetInternalFolder(const char* ext) {
-//	if (strcmp(ext, "png") == 0 || strcmp(ext, "jpg") == 0 || strcmp(ext, "tga") == 0) return TEXTURESPATH;
-//	return MODELSPATH;
-//}
-
-bool FileManager::Rename(const char* old_name, const char* new_name)
+std::string FileManager::GetFolder(const char* path)
 {
-	LOG("Renaming file");
-	bool ret = true;
-
-	char* fileBuffer;
-	uint size = Load(old_name, &fileBuffer);
-
-	Save(new_name, fileBuffer, size);
-	ret = Delete(old_name);
-
-	RELEASE_ARRAY(fileBuffer);
-
-	return ret;
+	std::string folder;
+	SplitFilePath(path, &folder);
+	return folder;
 }
+
+std::string FileManager::ToLower(const char* path)
+{
+	std::string string = path;
+	std::transform(string.begin(), string.end(), string.begin(), [](unsigned char c) { return std::tolower(c); });
+	return string;
+}
+
+
+
+#pragma endregion 
+

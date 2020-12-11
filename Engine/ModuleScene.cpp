@@ -1,10 +1,14 @@
+#include "Globals.h"
 #include "Application.h"
 #include "ModuleScene.h"
-#include "ModuleCamera3D.h"
-#include "Component_Material.h"
+#include "ModuleJson.h"
+#include "Component_Mesh.h"
 #include "FileManager.h"
+#include "GameObject.h"
+#include "Component_Transform.h"
+#include "Component_Camera.h"
 
-ModuleScene::ModuleScene(bool start_enabled) : Module(start_enabled)
+ModuleScene::ModuleScene(bool start_enabled) : Module(start_enabled), showGrid(true), selectedGameObject(nullptr), root(nullptr) 
 {
 	name = "scene";
 
@@ -12,7 +16,7 @@ ModuleScene::ModuleScene(bool start_enabled) : Module(start_enabled)
 	mCurrentGizmoMode = ImGuizmo::MODE::WORLD;
 }
 
-ModuleScene::~ModuleScene()
+ModuleScene::~ModuleScene() 
 {}
 
 // Load assets
@@ -22,57 +26,64 @@ bool ModuleScene::Start()
 	bool ret = true;
 
 	//Create root gameObject
-	root = new GameObject("Scene", nullptr, true);
-	root->CreateComponent(ComponentType::TRANSFORM);
+	root = new GameObject();
+	root->SetName("Scene");
+	selectedGameObject = root;
+	
+	//Create camera
+	GameObject* camera = new GameObject();
+	camera->AddComponent(ComponentType::CAMERA);
+	camera->SetName("Camera");
+	camera->GetTransform()->SetPosition(float3(0.0f, 0.0f, -5.0f));
+	AddGameObject(camera);
+	App->renderer3D->SetMainCamera(camera->GetComponent<Component_Camera>());
 
-	//currentID = 0;
-	//gameObjects.push_back(root);
-
-	GameObject* startCube = App->resources->RequestGameObject("Assets/Models/Primitives/Cube.fbx");
-	gameObjects.push_back(startCube);
-
-	App->camera->SetPosition(float3(0, 3, 10));
-	App->camera->LookAt(float3(0, 0, 0));
-
+	//Create initial gameObject
+	GameObject* street_environment = App->resources->RequestGameObject("Assets/Models/BakerHouse.fbx");
+	AddGameObject(street_environment);
+	
 	return ret;
 }
 
-// Load assets
+// Clean up all gameObjects
 bool ModuleScene::CleanUp()
 {
-	LOG("Unloading Scene");
+	LOG("Unloading Intro scene");
+
+	root->DeleteAllChildren();
+	delete root;
+	root = nullptr;
+
+	selectedGameObject = nullptr;
 
 	return true;
 }
 
-// Update
+// Update: draw background
 update_status ModuleScene::Update(float dt)
 {
-	//Update all gameObjects	
-	for (int i = 0; i < gameObjects.size(); i++) {
-		gameObjects[i]->Update();
-	}
-	
-	//Inputs
-	if (App->input->GetKey(SDL_SCANCODE_X) == KEY_DOWN) 
-	{
-		App->camera->SetPosition(float3(0, 1, 4));
-		App->camera->LookAt(float3(0, 0, 0));
-	}
-
-	//if (App->input->GetKey(SDL_SCANCODE_DELETE) == KEY_DOWN) 
-	//{
-	//	if (GetSelectedGameObject() != nullptr) 
-	//	{
-	//		GameObject* parent = GetSelectedGameObject()->GetParent();
-	//		DeleteGameObject(GetSelectedGameObject());
-	//		SelectGameObject(parent);
-	//	}
-	//}
-
 	//Grid
-	Grid grid(20);
-	grid.Render();
+	if (showGrid)
+	{
+		PrimitiveGrid grid(24);
+		grid.Render();
+	}
+
+	//Inputs
+	if ((App->input->GetKey(SDL_SCANCODE_DELETE) == KEY_DOWN) && (selectedGameObject != nullptr) && (selectedGameObject != root))
+		selectedGameObject->toDelete = true;
+
+	if ((App->input->GetKey(SDL_SCANCODE_W) == KEY_DOWN))
+		mCurrentGizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
+
+	else if ((App->input->GetKey(SDL_SCANCODE_E) == KEY_DOWN))
+		mCurrentGizmoOperation = ImGuizmo::OPERATION::ROTATE;
+
+	else if ((App->input->GetKey(SDL_SCANCODE_R) == KEY_DOWN))
+		mCurrentGizmoOperation = ImGuizmo::OPERATION::SCALE;
+
+	//Update GameObjects
+	root->Update();
 
 	//Rendering primitives
 	//uncomment the primitive u want to see
@@ -86,105 +97,85 @@ update_status ModuleScene::Update(float dt)
 	return UPDATE_CONTINUE;
 }
 
-GameObject* ModuleScene::CreateGameObject(const char* name, GameObject* parent, bool enabled) 
+void ModuleScene::AddGameObject(GameObject* gameObject)
 {
-	if (parent == nullptr) parent = root;
-
-	GameObject* newGameObject = new GameObject(name, parent, enabled);
-
-	//Create component transform
-	newGameObject->CreateComponent(ComponentType::TRANSFORM);
-
-	parent->AddChild(newGameObject);
-	gameObjects.push_back(newGameObject);
-
-	return newGameObject;
-}
-
-//Get gameObject functions
-GameObject* ModuleScene::GetGameObject(const char* name) //This method could fail if 2 gameObjects are named the same
-{
-	for (int i = 0; i < gameObjects.size(); i++) 
-	{		
-		if (strcmp(gameObjects[i]->GetName(), name) == 0) {
-			return gameObjects[i];
-		}
-	}
-	//Log gameObject searh error
-	std::string logText = "Not found gameObject with name: ";
-	logText += name;
-	LOG(logText.c_str());
-	return nullptr;
-}
-
-GameObject* ModuleScene::GetGameObject(int UUID) //This method is fast and precise
-{
-	//GameObject* ret;
-	//ret = gameObjects.at(UUID);
-
-	//if (ret != nullptr) {
-	//	return ret;
-	//}
-	//else {
-	//	//Log gameObject searh error
-	//	std::string logText = "Not found gameObject with id: ";
-	//	logText += UUID;
-	//	LOG(logText.c_str());
-	//	return nullptr;
-	//}
-	return root;
-}
-
-void ModuleScene::SelectGameObject(GameObject* selected) 
-{
-	for (int i = 0; i < gameObjects.size(); i++) {
-		if (gameObjects[i] == selected)
-		{
-			gameObjects[i]->selected = true;
-			App->gui->SelectGameObject(gameObjects[i]);
-		}
-		else gameObjects[i]->selected = false;
+	if (gameObject != nullptr) 
+	{
+		//gameObject->SetParent(root);
+		root->AddChild(gameObject);
+		selectedGameObject = gameObject;
 	}
 }
 
-GameObject* ModuleScene::GetSelectedGameObject()
+void ModuleScene::DeleteGameObject(GameObject* gameObject)
 {
-	for (int i = 0; i < gameObjects.size(); i++) {
-		if (gameObjects[i]->selected)
-		{
-			return gameObjects[i];
-		}
+	if (root->RemoveChild(gameObject))
+	{
+		gameObject->DeleteAllChildren();
+	}
+	else if (gameObject->GetParent()->RemoveChild(gameObject))
+	{
+		gameObject->DeleteAllChildren();
 	}
 
-	return nullptr;
+	delete gameObject;
+	gameObject = nullptr;
 }
 
 std::vector<GameObject*> ModuleScene::GetAllGameObjects()
 {
-	return gameObjects;
+	std::vector<GameObject*> gameObjectsToGet;
+
+	GetChildrenGameObjects(root, gameObjectsToGet);
+
+	return gameObjectsToGet;
 }
 
-bool ModuleScene::DeleteGameObject(GameObject* todelete)
+void ModuleScene::GetChildrenGameObjects(GameObject* gameObject, std::vector<GameObject*>& gameObjectsToGet)
 {
-	//if (todelete->GetChilds()->size() > 0) 
-	//{
-	//	std::vector<GameObject*>::iterator currentGO = todelete->GetChilds()->begin();
+	gameObjectsToGet.push_back(gameObject);
 
-	//	for (; currentGO != gameObjects.end(); currentGO++) {
-	//		DeleteGameObject((*currentGO));
-	//	}
-	//}
-	//todelete->DeleteComponents();
+	for (size_t i = 0; i < gameObject->GetChildrenAmount(); i++)
+	{
+		GetChildrenGameObjects(gameObject->GetChildAt(i), gameObjectsToGet);
+	}
+}
 
-	delete(todelete);
-	return true;
+void ModuleScene::EditTransform()
+{
+	if (selectedGameObject != nullptr) 
+	{
+		float4x4 viewMatrix = App->camera->GetViewMatrixM().Transposed();
+		float4x4 projectionMatrix = App->camera->GetProjectionMatrixM().Transposed();
+		float4x4 objectTransform = selectedGameObject->GetTransform()->GetGlobalTransform().Transposed();
+
+		ImGuizmo::SetDrawlist();
+		ImGuizmo::SetRect(App->gui->sceneWindowOrigin.x, App->gui->sceneWindowOrigin.y, App->gui->image_size.x, App->gui->image_size.y);
+
+		float tempTransform[16];
+		memcpy(tempTransform, objectTransform.ptr(), 16 * sizeof(float));
+
+		ImGuizmo::Manipulate(viewMatrix.ptr(), projectionMatrix.ptr(), mCurrentGizmoOperation, mCurrentGizmoMode, tempTransform);
+
+		if (!(App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT) && (ImGuizmo::IsUsing()))
+		{
+			float4x4 newTransform;
+			newTransform.Set(tempTransform);
+			objectTransform = newTransform.Transposed();
+			selectedGameObject->GetTransform()->SetGlobalTransform(objectTransform);
+		}
+	}
+	else 
+	{
+		LOG_WARNING("No gameObject to edit transform, please select gameObject");
+	}
 }
 
 bool ModuleScene::ClearScene()
 {
 	bool ret = true;
 
-	root->DeleteAllChilds();
+	root->DeleteAllChildren();
 	root = nullptr;
 
 	return ret;
@@ -194,18 +185,17 @@ bool ModuleScene::Save(const char* file_path)
 {
 	bool ret = true;
 
-	JsonObj save_file;
-
-	JsonArray gameObjects = save_file.AddArray("Game Objects");
+	JsonObj saveFile;
+	JsonArray gameObjects = saveFile.AddArray("Game Objects");
 
 	root->Save(gameObjects);
 
 	char* buffer = NULL;
-	uint size = save_file.Save(&buffer);
+	uint size = saveFile.Save(&buffer);
 
-	FileManager::Save(file_path, buffer, size);
+	if (FileManager::Save(file_path, buffer, size) == 0) ret = false;
 
-	save_file.Release();
+	saveFile.Release();
 	RELEASE_ARRAY(buffer);
 
 	return ret;
@@ -215,10 +205,10 @@ bool ModuleScene::Load(const char* scene_file)
 {
 	bool ret = true;
 
-	std::string extension = FileManager::ExtractFileExtension(scene_file);
-	if (extension != ".scene")
+	std::string extension = FileManager::GetFileExtension(scene_file);
+	if (extension != ".scener")
 	{
-		WARNING_LOG("%s is not a valid scene extension and can't be loaded", scene_file);
+		LOG_WARNING("%s is not a valid scene extension and can't be loaded", scene_file);
 		return false;
 	}
 
@@ -226,23 +216,23 @@ bool ModuleScene::Load(const char* scene_file)
 
 	char* buffer = NULL;
 	FileManager::Load(scene_file, &buffer);
-
+	
 	JsonObj base_object(buffer);
-	JsonArray loadedGameObjects(base_object.GetArray("Game Objects"));
+	JsonArray gameObjects(base_object.GetArray("Game Objects"));
 
 	std::vector<GameObject*> createdObjects;
 
-	for (size_t i = 0; i < loadedGameObjects.Size(); i++)
+	for (size_t i = 0; i < gameObjects.Size(); i++)
 	{
 		//load game object
-		GameObject* gameObject = new GameObject(loadedGameObjects.GetObjectAt(i).GetString("Name", "GameObject"), App->scene->GetRoot());
-		uint parentUUID = gameObject->Load(&loadedGameObjects.GetObjectAt(i));
+		GameObject* gameObject = new GameObject();
+		uint parentUUID = gameObject->Load(&gameObjects.GetObjectAt(i));
 		createdObjects.push_back(gameObject);
 
 		//check if it's the root game object
-		if (strcmp(gameObject->GetName(), "Root") == 0) {
+		if (strcmp(gameObject->GetName(), "Scene") == 0) {
 			root = gameObject;
-			SelectGameObject(root);
+			selectedGameObject = root;
 		}
 
 		//Get game object's parent
@@ -251,12 +241,12 @@ bool ModuleScene::Load(const char* scene_file)
 			if (createdObjects[i]->UUID == parentUUID)
 			{
 				createdObjects[i]->AddChild(gameObject);
-				gameObject->ChangeParent(createdObjects[i]);
+				gameObject->SetParent(createdObjects[i]);
 			}
 		}
 	}
 
-	//root->UpdateChildrenTransforms();
+	root->UpdateChildrenTransforms();
 
 	if (root != nullptr)
 		LOG("Scene: %s loaded successfully", scene_file);
@@ -264,9 +254,13 @@ bool ModuleScene::Load(const char* scene_file)
 	return ret;
 }
 
-bool ModuleScene::LoadConfig(JsonObj & config)
+bool ModuleScene::LoadConfig(JsonObj& config)
 {
-	show_grid = config.GetBool("show_grid");
+	showGrid = config.GetBool("show_grid");
 
 	return true;
 }
+
+
+
+

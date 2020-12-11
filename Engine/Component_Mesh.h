@@ -1,9 +1,9 @@
 #pragma once
-#ifndef __COMPONENT_MESH_H__
-
-#include "Component.h"
-#include "GameObject.h"
 #include "Globals.h"
+#include "Component.h"
+#include <vector>;
+#include "Component_Material.h"
+
 #include "MathGeoLib/include/MathGeoLib.h"
 
 class ResourceMesh;
@@ -14,40 +14,41 @@ typedef unsigned char GLubyte;
 
 class Component_Mesh : public Component {
 public:
-
-	//Constructor
-	Component_Mesh(GameObject* ownerGameObject, bool enabled = true);
-
-	//Destructor
-	~Component_Mesh();
+	Component_Mesh();
+	virtual ~Component_Mesh();
 
 	void Save(JsonArray& save_array) override;
 	void Load(JsonObj& load_object) override;
 	void SetResourceUID(uint UID) override;
 	Resource* GetResource(ResourceType type) override;
 
-	//Update
-	void Update() override;
-	void Render();
-	void OnGUI() override;
+	virtual void Update() override;
+	virtual void Render();
+	virtual void OnGUI() override;
 
-	void RenderVertexNormals();
-	void RenderFaceNormals();
-
-	void GenerateAABB();
-	AABB GetAABB();
-
-	const char* GetName();
-	int GetVertices();
-	int GetIndices();
+	void DrawVertexNormals();
+	void DrawFaceNormals();
 
 public:
-	bool enableVertexNormals = false;
-	bool enableFaceNormals = false;
+	const char* name;
+	char* path;
+
 private:
+	bool drawVertexNormals;
+	bool drawFaceFormals;
+
+	ResourceMesh* meshResource;
 	
-	AABB AABB;
-	ResourceMesh* mesh;
 };
 
-#endif // !__COMPONENT_MESH_H__
+class PrimitiveGrid {
+public:
+	PrimitiveGrid(int size);
+	~PrimitiveGrid();
+
+	void Render();
+
+private:
+	int size;
+};
+

@@ -13,9 +13,6 @@
     <Filter Include="Sources\Tools">
       <UniqueIdentifier>{7e4dfaf7-022c-4f7d-92aa-f3b3fa9d6248}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Helpers">
-      <UniqueIdentifier>{121f8e6b-df36-4ab0-be0d-601ddfc9e503}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Sources\ImGui">
       <UniqueIdentifier>{a24c2267-2087-4c9e-8cfd-28958cfa6da0}</UniqueIdentifier>
     </Filter>
@@ -34,6 +31,9 @@
     <Filter Include="Sources\Json">
       <UniqueIdentifier>{1d37eef8-2783-4757-98ce-a5edf552db94}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\Resources">
+      <UniqueIdentifier>{53994ff2-06db-4884-98d7-11472700fe11}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Module.h">
@@ -51,15 +51,6 @@
     <ClInclude Include="ModuleWindow.h">
       <Filter>Sources\Modules</Filter>
     </ClInclude>
-    <ClInclude Include="p2DynArray.h">
-      <Filter>Sources\Containers</Filter>
-    </ClInclude>
-    <ClInclude Include="p2List.h">
-      <Filter>Sources\Containers</Filter>
-    </ClInclude>
-    <ClInclude Include="p2Point.h">
-      <Filter>Sources\Containers</Filter>
-    </ClInclude>
     <ClInclude Include="glmath.h">
       <Filter>Sources\Containers</Filter>
     </ClInclude>
@@ -71,9 +62,6 @@
     </ClInclude>
     <ClInclude Include="Color.h">
       <Filter>Sources\Containers</Filter>
-    </ClInclude>
-    <ClInclude Include="Light.h">
-      <Filter>Sources\Helpers</Filter>
     </ClInclude>
     <ClInclude Include="Timer.h">
       <Filter>Sources\Tools</Filter>
@@ -87,26 +75,11 @@
     <ClInclude Include="GuiWindow.h">
       <Filter>Sources\Modules\Gui</Filter>
     </ClInclude>
-    <ClInclude Include="GuiConsole.h">
-      <Filter>Sources\Modules\Gui</Filter>
-    </ClInclude>
     <ClInclude Include="GuiConfiguration.h">
       <Filter>Sources\Modules\Gui</Filter>
     </ClInclude>
-    <ClInclude Include="Primitive.h">
-      <Filter>Sources\Helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="ModuleImport.h">
-      <Filter>Sources\Modules</Filter>
-    </ClInclude>
     <ClInclude Include="FileManager.h">
       <Filter>Sources\Modules</Filter>
-    </ClInclude>
-    <ClInclude Include="Defs.h">
-      <Filter>Sources\Containers</Filter>
-    </ClInclude>
-    <ClInclude Include="PathNode.h">
-      <Filter>Sources\Helpers</Filter>
     </ClInclude>
     <ClInclude Include="GameObject.h">
       <Filter>Sources\GO&amp;Comp</Filter>
@@ -131,9 +104,6 @@
     </ClInclude>
     <ClInclude Include="ModuleResources.h">
       <Filter>Sources\Modules</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource.h">
-      <Filter>Sources\Tools</Filter>
     </ClInclude>
     <ClInclude Include="Component_Material.h">
       <Filter>Sources\GO&amp;Comp</Filter>
@@ -360,6 +330,36 @@
     <ClInclude Include="Libs\parson\parson.h">
       <Filter>Sources\Json</Filter>
     </ClInclude>
+    <ClInclude Include="GuiAssets.h">
+      <Filter>Sources\Modules\Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="Component_Light.h">
+      <Filter>Sources\GO&amp;Comp</Filter>
+    </ClInclude>
+    <ClInclude Include="GuiScene.h">
+      <Filter>Sources\Modules\Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Sources\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceMaterial.h">
+      <Filter>Sources\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceMesh.h">
+      <Filter>Sources\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceModel.h">
+      <Filter>Sources\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceTexture.h">
+      <Filter>Sources\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Importers.h">
+      <Filter>Sources\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="ImportingSettings.h">
+      <Filter>Sources\Modules</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleCamera3D.cpp">
@@ -392,29 +392,14 @@
     <ClCompile Include="Color.cpp">
       <Filter>Sources\Containers</Filter>
     </ClCompile>
-    <ClCompile Include="Light.cpp">
-      <Filter>Sources\Helpers</Filter>
-    </ClCompile>
     <ClCompile Include="ModuleScene.cpp">
       <Filter>Sources\Modules</Filter>
     </ClCompile>
     <ClCompile Include="ModuleGui.cpp">
       <Filter>Sources\Modules</Filter>
     </ClCompile>
-    <ClCompile Include="GuiWindow.cpp">
-      <Filter>Sources\Modules\Gui</Filter>
-    </ClCompile>
-    <ClCompile Include="GuiConsole.cpp">
-      <Filter>Sources\Modules\Gui</Filter>
-    </ClCompile>
     <ClCompile Include="GuiConfiguration.cpp">
       <Filter>Sources\Modules\Gui</Filter>
-    </ClCompile>
-    <ClCompile Include="Primitive.cpp">
-      <Filter>Sources\Helpers</Filter>
-    </ClCompile>
-    <ClCompile Include="ModuleImport.cpp">
-      <Filter>Sources\Modules</Filter>
     </ClCompile>
     <ClCompile Include="FileManager.cpp">
       <Filter>Sources\Modules</Filter>
@@ -439,9 +424,6 @@
     </ClCompile>
     <ClCompile Include="ModuleJson.cpp">
       <Filter>Sources\Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource.cpp">
-      <Filter>Sources\Tools</Filter>
     </ClCompile>
     <ClCompile Include="ModuleResources.cpp">
       <Filter>Sources\Modules</Filter>
@@ -586,6 +568,33 @@
     </ClCompile>
     <ClCompile Include="Libs\parson\parson.c">
       <Filter>Sources\Json</Filter>
+    </ClCompile>
+    <ClCompile Include="GuiAssets.cpp">
+      <Filter>Sources\Modules\Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="Component_Light.cpp">
+      <Filter>Sources\GO&amp;Comp</Filter>
+    </ClCompile>
+    <ClCompile Include="GuiScene.cpp">
+      <Filter>Sources\Modules\Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource.cpp">
+      <Filter>Sources\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceMaterial.cpp">
+      <Filter>Sources\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceMesh.cpp">
+      <Filter>Sources\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceModel.cpp">
+      <Filter>Sources\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceTexture.cpp">
+      <Filter>Sources\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Importers.cpp">
+      <Filter>Sources\Modules</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -2,7 +2,7 @@
 #include "Module.h"
 #include "Globals.h"
 #include "MathGeoLib/include/MathGeoLib.h"
-#include "Light.h"
+#include "Component_Light.h"
 
 #define MAX_LIGHTS 8
 
@@ -30,7 +30,7 @@ public:
 	update_status Update(float dt) override;
 	update_status PostUpdate(float dt) override;
 	bool CleanUp();
-
+	
 	void OnResize(int width, int height);
 	void UpdateProjectionMatrix(float* projectionMatrix);
 
@@ -61,17 +61,17 @@ public:
 	GLuint depthRenderBuffer;
 	GLuint depthTexture;
 
-	Light lights[MAX_LIGHTS];
+	Component_Light lights[MAX_LIGHTS];
 	SDL_GLContext context;
 	//mat3x3 NormalMatrix;
 	//mat4x4 ModelMatrix, ViewMatrix, ProjectionMatrix;
 	DisplayMode display_mode;
 
 	LineSegment _ray;
-	bool cullEditorCamera;
+	bool showCameraCulling;
 
-	bool draw_vertex_normals;
-	bool draw_face_normals;
+	bool drawVertexNormals;
+	bool drawFaceFormals;
 
 	bool vsync;
 

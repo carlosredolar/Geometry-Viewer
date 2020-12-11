@@ -2,6 +2,7 @@
 #define _APPLICATION_H_
 
 #include "Globals.h"
+#include <vector>
 #include "Timer.h"
 #include "Module.h"
 #include "ModuleWindow.h"
@@ -10,10 +11,8 @@
 #include "ModuleCamera3D.h"
 #include "ModuleScene.h"
 #include "ModuleGui.h"
-#include "ModuleImport.h"
 #include "ModuleResources.h"
 
-#include <vector>
 #include <string>
 #include <stack>
 
@@ -54,9 +53,9 @@ public:
 	ModuleRenderer3D* renderer3D;
 	ModuleResources* resources;
 
-	bool inGame;
-	const char* engineName;
-	const char* engineVersion;
+	const char* engine_name;
+	const char* engine_version;
+	bool in_game;
 
 public:
 
@@ -70,9 +69,9 @@ public:
 	void StartGame();
 	void StopGame();
 
-	float GetMS();
 	float GetFPS();
-
+	float GetLastDt();
+	int GetFPSCap();
 	void SetFPSCap(int fps_cap);
 	void Save(const char* filePath);
 	void Load(const char* filePath);
@@ -81,19 +80,19 @@ public:
 	Specs GetSpecs();
 
 private:
+
 	void AddModule(Module* mod);
 	void PrepareUpdate();
 	void FinishUpdate();
-
-	void LoadSpecs();
 
 private:
 	int	   argc;
 	char** args;
 
-	float	dt = 0;
-	float last_FPS = 0.0f;
-	float capped_ms;
+	float	dt;
+	float	fps;
+	float	capped_ms;
+	std::vector<Module*> moudlesList;
 
 	const char* config_path;
 
@@ -103,13 +102,9 @@ private:
 	const char* fileToLoad;
 	const char* fileToSave;
 
-	std::vector<Module*> list_modules;
-
 	std::stack<Module*> endFrameTasks;
-
-protected:
-	Specs specs;
 };
+
 extern Application* App;
 
-#endif
+#endif 
