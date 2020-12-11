@@ -160,7 +160,9 @@ bool FileManager::AddPath(const char* path_or_zip)
 // Check if a file exists
 bool FileManager::Exists(const char* file)
 {
-	return PHYSFS_exists(file) != 0;
+	LOG("%s", file);
+	bool ret = PHYSFS_exists(file) != 0;
+	return ret;
 }
 
 // Check if a file exists

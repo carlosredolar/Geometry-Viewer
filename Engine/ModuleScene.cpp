@@ -28,7 +28,7 @@ bool ModuleScene::Start()
 	//currentID = 0;
 	//gameObjects.push_back(root);
 
-	GameObject* startCube = App->resources->RequestGameObject("Assets/Meshes/Primitives/Cube.fbx");
+	GameObject* startCube = App->resources->RequestGameObject("Assets/Models/Primitives/Cube.fbx");
 	gameObjects.push_back(startCube);
 
 	App->camera->SetPosition(float3(0, 3, 10));
@@ -119,19 +119,20 @@ GameObject* ModuleScene::GetGameObject(const char* name) //This method could fai
 
 GameObject* ModuleScene::GetGameObject(int UUID) //This method is fast and precise
 {
-	GameObject* ret;
-	ret = gameObjects.at(UUID);
+	//GameObject* ret;
+	//ret = gameObjects.at(UUID);
 
-	if (ret != nullptr) {
-		return ret;
-	}
-	else {
-		//Log gameObject searh error
-		std::string logText = "Not found gameObject with id: ";
-		logText += UUID;
-		LOG(logText.c_str());
-		return nullptr;
-	}
+	//if (ret != nullptr) {
+	//	return ret;
+	//}
+	//else {
+	//	//Log gameObject searh error
+	//	std::string logText = "Not found gameObject with id: ";
+	//	logText += UUID;
+	//	LOG(logText.c_str());
+	//	return nullptr;
+	//}
+	return root;
 }
 
 void ModuleScene::SelectGameObject(GameObject* selected) 

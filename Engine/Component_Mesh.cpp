@@ -29,8 +29,8 @@ Component_Mesh::~Component_Mesh()
 
 void Component_Mesh::Update()
 {
-	if(IsEnabled()) 
-		Render();
+	//if(IsEnabled()) 
+	//	Render();
 }
 
 void Component_Mesh::Render() 

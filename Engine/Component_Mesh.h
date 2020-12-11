@@ -42,9 +42,6 @@ public:
 	int GetIndices();
 
 public:
-	const char* name;
-	char* path;
-
 	bool enableVertexNormals = false;
 	bool enableFaceNormals = false;
 private:
