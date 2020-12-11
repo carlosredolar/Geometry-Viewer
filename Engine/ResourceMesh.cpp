@@ -2,32 +2,32 @@
 #include "glew/include/glew.h"
 
 ResourceMesh::ResourceMesh(uint UID) : Resource(UID, ResourceType::RESOURCE_MESH),
- vertices_amount(0), vertices(nullptr), 
- indices_amount(0), indices(nullptr),
- normals_amount(0), normals(nullptr), 
- texcoords(nullptr), texcoords_amount(0),
-colors(nullptr), _buffers_created(false) {}
+ amountVertices(0), vertices(nullptr), 
+ amountIndices(0), indices(nullptr),
+ amountNormals(0), normals(nullptr), 
+ texCoords(nullptr), amountTexCoords(0),
+colors(nullptr), buffersCreated(false) {}
 
 ResourceMesh::~ResourceMesh()
 {
-	if(_buffers_created)
+	if(buffersCreated)
 		DeleteBuffers();
 
 	delete vertices;
 	vertices = nullptr;
-	vertices_amount = 0;
+	amountVertices = 0;
 
 	delete indices;
 	indices = nullptr;
-	indices_amount = 0;
+	amountIndices = 0;
 
 	delete normals;
 	normals = nullptr;
-	normals_amount = 0;
+	amountNormals = 0;
 
-	delete texcoords;
-	texcoords = nullptr;
-	texcoords_amount = 0;
+	delete texCoords;
+	texCoords = nullptr;
+	amountTexCoords = 0;
 }
 
 void ResourceMesh::Load(JsonObj& base_object) {}
@@ -35,45 +35,45 @@ void ResourceMesh::Load(JsonObj& base_object) {}
 void ResourceMesh::GenerateBuffers()
 {
 	//vertices
-	glGenBuffers(1, (GLuint*)&(vertices_buffer));
-	glBindBuffer(GL_ARRAY_BUFFER, vertices_buffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertices_amount * 3, vertices, GL_STATIC_DRAW);
+	glGenBuffers(1, (GLuint*)&(verticesBuffer));
+	glBindBuffer(GL_ARRAY_BUFFER, verticesBuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * amountVertices * 3, vertices, GL_STATIC_DRAW);
 
 	//normals
-	glGenBuffers(1, (GLuint*)&(normals_buffer));
-	glBindBuffer(GL_NORMAL_ARRAY, normals_buffer);
-	glBufferData(GL_NORMAL_ARRAY, sizeof(float) * vertices_amount * 3, normals, GL_STATIC_DRAW);
+	glGenBuffers(1, (GLuint*)&(normalsBuffer));
+	glBindBuffer(GL_NORMAL_ARRAY, normalsBuffer);
+	glBufferData(GL_NORMAL_ARRAY, sizeof(float) * amountVertices * 3, normals, GL_STATIC_DRAW);
 
 	//textures
-	glGenBuffers(1, (GLuint*)&(texcoords_buffer));
-	glBindBuffer(GL_ARRAY_BUFFER, texcoords_buffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertices_amount * 2, texcoords, GL_STATIC_DRAW);
+	glGenBuffers(1, (GLuint*)&(texcoordsBuffer));
+	glBindBuffer(GL_ARRAY_BUFFER, texcoordsBuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * amountVertices * 2, texCoords, GL_STATIC_DRAW);
 
 	//indices
-	glGenBuffers(1, (GLuint*)&(indices_buffer));
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices_buffer);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * indices_amount, indices, GL_STATIC_DRAW);
+	glGenBuffers(1, (GLuint*)&(indicesBuffer));
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * amountIndices, indices, GL_STATIC_DRAW);
 
-	_buffers_created = true;
+	buffersCreated = true;
 }
 
 void ResourceMesh::DeleteBuffers()
 {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glDeleteBuffers(1, &vertices_buffer);
-	vertices_buffer = 0;
+	glDeleteBuffers(1, &verticesBuffer);
+	verticesBuffer = 0;
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	glDeleteBuffers(1, &indices_buffer);
-	indices_buffer = 0;
+	glDeleteBuffers(1, &indicesBuffer);
+	indicesBuffer = 0;
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glDeleteBuffers(1, &normals_buffer);
-	normals_buffer = 0;
+	glDeleteBuffers(1, &normalsBuffer);
+	normalsBuffer = 0;
 
 	glBindTexture(GL_TEXTURE_2D, 0);
-	glDeleteBuffers(1, &texcoords_buffer);
-	texcoords_buffer = 0;
+	glDeleteBuffers(1, &texcoordsBuffer);
+	texcoordsBuffer = 0;
 
-	_buffers_created = false;
+	buffersCreated = false;
 }

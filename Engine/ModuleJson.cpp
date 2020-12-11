@@ -267,9 +267,9 @@ JsonObj JsonArray::GetObjectInArray(const char* name)
 	for (size_t i = 0; i < json_array_get_count(_array); i++)
 	{
 		JSON_Object* object = json_array_get_object(_array, i);
-		const char* object_name = json_object_get_string(object, "name");
+		const char* objectName = json_object_get_string(object, "name");
 
-		if (strcmp(name, object_name) == 0)
+		if (strcmp(name, objectName) == 0)
 			return JsonObj(object);
 	}
 

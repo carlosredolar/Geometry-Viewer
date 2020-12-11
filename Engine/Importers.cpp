@@ -573,17 +573,17 @@ void MeshImporter::Import(const aiMesh* aimesh, ResourceMesh* mesh)
 	timer.Start();
 
 	//vertex copying
-	mesh->vertices_amount = aimesh->mNumVertices;
-	mesh->vertices = new float[mesh->vertices_amount * 3]();
-	memcpy(mesh->vertices, aimesh->mVertices, sizeof(float) * mesh->vertices_amount * 3);
-	LOG("%s imported with %d vertices", aimesh->mName.C_Str(), mesh->vertices_amount);
+	mesh->amountVertices = aimesh->mNumVertices;
+	mesh->vertices = new float[mesh->amountVertices * 3]();
+	memcpy(mesh->vertices, aimesh->mVertices, sizeof(float) * mesh->amountVertices * 3);
+	LOG("%s imported with %d vertices", aimesh->mName.C_Str(), mesh->amountVertices);
 
 	//indices copying
 	if (aimesh->HasFaces())
 	{
-		mesh->indices_amount = aimesh->mNumFaces * 3;
-		mesh->indices = new uint[mesh->indices_amount]();
-		LOG("%s imported with %d indices", aimesh->mName.C_Str(), mesh->indices_amount);
+		mesh->amountIndices = aimesh->mNumFaces * 3;
+		mesh->indices = new uint[mesh->amountIndices]();
+		LOG("%s imported with %d indices", aimesh->mName.C_Str(), mesh->amountIndices);
 
 		for (size_t f = 0; f < aimesh->mNumFaces; f++)
 		{
@@ -598,13 +598,13 @@ void MeshImporter::Import(const aiMesh* aimesh, ResourceMesh* mesh)
 		}
 	}
 
-	mesh->texcoords_amount = aimesh->mNumVertices;
-	mesh->texcoords = new float[mesh->vertices_amount * 2]();
-	mesh->colors = new float[mesh->indices_amount * 4]();
+	mesh->amountTexCoords = aimesh->mNumVertices;
+	mesh->texCoords = new float[mesh->amountVertices * 2]();
+	mesh->colors = new float[mesh->amountIndices * 4]();
 
 	if (aimesh->HasNormals())
 	{
-		mesh->normals_amount = aimesh->mNumVertices;
+		mesh->amountNormals = aimesh->mNumVertices;
 		mesh->normals = new float[aimesh->mNumVertices * 3]();
 	}
 
@@ -620,16 +620,16 @@ void MeshImporter::Import(const aiMesh* aimesh, ResourceMesh* mesh)
 			mesh->normals[n + 2] = aimesh->mNormals[v].z;
 		}
 
-		//texcoords copying
+		//texCoords copying
 		if (aimesh->mTextureCoords[0])
 		{
-			mesh->texcoords[tx] = aimesh->mTextureCoords[0][v].x;
-			mesh->texcoords[tx + 1] = aimesh->mTextureCoords[0][v].y;
+			mesh->texCoords[tx] = aimesh->mTextureCoords[0][v].x;
+			mesh->texCoords[tx + 1] = aimesh->mTextureCoords[0][v].y;
 		}
 		else
 		{
-			mesh->texcoords[tx] = 0.0f;
-			mesh->texcoords[tx + 1] = 0.0f;
+			mesh->texCoords[tx] = 0.0f;
+			mesh->texCoords[tx + 1] = 0.0f;
 		}
 
 		//color copying
@@ -654,10 +654,10 @@ void MeshImporter::Import(const aiMesh* aimesh, ResourceMesh* mesh)
 
 uint64 MeshImporter::Save(ResourceMesh* mesh, char** fileBuffer)
 {
-	uint ranges[4] = { mesh->indices_amount, mesh->vertices_amount, mesh->normals_amount, mesh->texcoords_amount };
+	uint ranges[4] = { mesh->amountIndices, mesh->amountVertices, mesh->amountNormals, mesh->amountTexCoords };
 
-	uint size = sizeof(ranges) + sizeof(uint) * mesh->indices_amount + sizeof(float) * mesh->vertices_amount * 3
-		+ sizeof(float) * mesh->normals_amount * 3 + sizeof(float) * mesh->texcoords_amount * 2;
+	uint size = sizeof(ranges) + sizeof(uint) * mesh->amountIndices + sizeof(float) * mesh->amountVertices * 3
+		+ sizeof(float) * mesh->amountNormals * 3 + sizeof(float) * mesh->amountTexCoords * 2;
 
 	char* buffer = new char[size];
 	char* cursor = buffer;
@@ -667,23 +667,23 @@ uint64 MeshImporter::Save(ResourceMesh* mesh, char** fileBuffer)
 	cursor += bytes;
 
 	//store indices
-	bytes = sizeof(uint) * mesh->indices_amount;
+	bytes = sizeof(uint) * mesh->amountIndices;
 	memcpy(cursor, mesh->indices, bytes);
 	cursor += bytes;
 
 	//store vertices
-	bytes = sizeof(float) * mesh->vertices_amount * 3;
+	bytes = sizeof(float) * mesh->amountVertices * 3;
 	memcpy(cursor, mesh->vertices, bytes);
 	cursor += bytes;
 
 	//store normals
-	bytes = sizeof(float) * mesh->normals_amount * 3;
+	bytes = sizeof(float) * mesh->amountNormals * 3;
 	memcpy(cursor, mesh->normals, bytes);
 	cursor += bytes;
 
-	//store texcoords
-	bytes = sizeof(float) * mesh->texcoords_amount * 2;
-	memcpy(cursor, mesh->texcoords, bytes);
+	//store texCoords
+	bytes = sizeof(float) * mesh->amountTexCoords * 2;
+	memcpy(cursor, mesh->texCoords, bytes);
 
 	*fileBuffer = buffer;
 
@@ -704,33 +704,33 @@ bool MeshImporter::Load(char* fileBuffer, ResourceMesh* mesh, uint size)
 	memcpy(ranges, cursor, bytes);
 	cursor += bytes;
 
-	mesh->indices_amount = ranges[0];
-	mesh->vertices_amount = ranges[1];
-	mesh->normals_amount = ranges[2];
-	mesh->texcoords_amount = ranges[3];
+	mesh->amountIndices = ranges[0];
+	mesh->amountVertices = ranges[1];
+	mesh->amountNormals = ranges[2];
+	mesh->amountTexCoords = ranges[3];
 
 	// Load indices
-	bytes = sizeof(uint) * mesh->indices_amount;
-	mesh->indices = new uint[mesh->indices_amount];
+	bytes = sizeof(uint) * mesh->amountIndices;
+	mesh->indices = new uint[mesh->amountIndices];
 	memcpy(mesh->indices, cursor, bytes);
 	cursor += bytes;
 
 	//load vertices
-	bytes = sizeof(float) * mesh->vertices_amount * 3;
-	mesh->vertices = new float[mesh->vertices_amount * 3];
+	bytes = sizeof(float) * mesh->amountVertices * 3;
+	mesh->vertices = new float[mesh->amountVertices * 3];
 	memcpy(mesh->vertices, cursor, bytes);
 	cursor += bytes;
 
 	//load normals
-	bytes = sizeof(float) * mesh->normals_amount * 3;
-	mesh->normals = new float[mesh->normals_amount * 3];
+	bytes = sizeof(float) * mesh->amountNormals * 3;
+	mesh->normals = new float[mesh->amountNormals * 3];
 	memcpy(mesh->normals, cursor, bytes);
 	cursor += bytes;
 
-	//load texcoords
-	bytes = sizeof(float) * mesh->texcoords_amount * 2;
-	mesh->texcoords = new float[mesh->texcoords_amount * 2];
-	memcpy(mesh->texcoords, cursor, bytes);
+	//load texCoords
+	bytes = sizeof(float) * mesh->amountTexCoords * 2;
+	mesh->texCoords = new float[mesh->amountTexCoords * 2];
+	memcpy(mesh->texCoords, cursor, bytes);
 	cursor += bytes;
 
 	LOG("%s loaded in %d ms", mesh->libraryFile.c_str(), timer.Read());

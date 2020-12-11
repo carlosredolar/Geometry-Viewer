@@ -15,24 +15,24 @@ public:
 	void DeleteBuffers();
 
 public:
-	uint vertices_buffer = 0;
-	uint vertices_amount = 0;
+	uint verticesBuffer = 0;
+	uint amountVertices = 0;
 	float* vertices = nullptr;
 
-	uint indices_buffer = 0;
-	uint indices_amount = 0;
+	uint indicesBuffer = 0;
+	uint amountIndices = 0;
 	uint* indices = nullptr;
 
-	uint normals_buffer = 0;
-	uint normals_amount = 0;
+	uint normalsBuffer = 0;
+	uint amountNormals = 0;
 	float* normals;
 
-	uint texcoords_buffer = 0;
-	uint texcoords_amount = 0;
-	float* texcoords = nullptr;
+	uint texcoordsBuffer = 0;
+	uint amountTexCoords = 0;
+	float* texCoords = nullptr;
 
 	float* colors = nullptr;;
 
 private:
-	bool _buffers_created;
+	bool buffersCreated;
 };

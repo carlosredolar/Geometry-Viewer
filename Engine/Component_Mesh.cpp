@@ -68,19 +68,19 @@ void Component_Mesh::Render()
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
 	//vertices
-	glBindBuffer(GL_ARRAY_BUFFER, meshResource->vertices_buffer);
+	glBindBuffer(GL_ARRAY_BUFFER, meshResource->verticesBuffer);
 	glVertexPointer(3, GL_FLOAT, 0, NULL);
 
 	//normals
-	glBindBuffer(GL_NORMAL_ARRAY, meshResource->normals_buffer);
+	glBindBuffer(GL_NORMAL_ARRAY, meshResource->normalsBuffer);
 	glNormalPointer(GL_FLOAT, 0, NULL);
 
 	//textures
-	glBindBuffer(GL_ARRAY_BUFFER, meshResource->texcoords_buffer);
+	glBindBuffer(GL_ARRAY_BUFFER, meshResource->texcoordsBuffer);
 	glTexCoordPointer(2, GL_FLOAT, 0, NULL);
 
 	//indices
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshResource->indices_buffer);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshResource->indicesBuffer);
 
 	glPushMatrix();
 	glMultMatrixf((float*)&ownerGameObject->GetTransform()->GetGlobalTransform().Transposed());
@@ -90,7 +90,7 @@ void Component_Mesh::Render()
 	if (material != nullptr)
 		material->BindTexture();
 
-	glDrawElements(GL_TRIANGLES, meshResource->indices_amount, GL_UNSIGNED_INT, NULL);
+	glDrawElements(GL_TRIANGLES, meshResource->amountIndices, GL_UNSIGNED_INT, NULL);
 
 	if(drawVertexNormals ||App->renderer3D->drawVertexNormals)
 		DrawVertexNormals();
@@ -144,7 +144,7 @@ void Component_Mesh::OnGUI()
 		ImGui::Separator();
 		ImGui::Spacing();
 
-		ImGui::Text("Vertices: %d Indices: %d", meshResource->vertices_amount, meshResource->indices_amount);
+		ImGui::Text("Vertices: %d Indices: %d", meshResource->amountVertices, meshResource->amountIndices);
 		ImGui::Spacing();
 
 		ImGui::Spacing();
@@ -161,14 +161,14 @@ void Component_Mesh::OnGUI()
 
 void Component_Mesh::DrawVertexNormals()
 {
-	if (meshResource->normals_buffer == -1)
+	if (meshResource->normalsBuffer == -1)
 		return;
 
 	float normal_lenght = 0.5f;
 
 	//vertices normals
 	glBegin(GL_LINES);
-	for (size_t i = 0, c = 0; i < meshResource->vertices_amount * 3; i += 3, c+= 4)
+	for (size_t i = 0, c = 0; i < meshResource->amountVertices * 3; i += 3, c+= 4)
 	{
 		glColor3f(0.0f, 0.85f, 0.85f);
 		//glColor4f(colors[c], colors[c + 1], colors[c + 2], colors[c + 3]);
@@ -185,14 +185,14 @@ void Component_Mesh::DrawVertexNormals()
 
 void Component_Mesh::DrawFaceNormals()
 {
-	if (meshResource->normals_buffer == -1)
+	if (meshResource->normalsBuffer == -1)
 		return;
 
 	float normal_lenght = 0.5f;
 
 	//vertices normals
 	glBegin(GL_LINES);
-	for (size_t i = 0; i < meshResource->vertices_amount * 3; i += 3)
+	for (size_t i = 0; i < meshResource->amountVertices * 3; i += 3)
 	{
 		glColor3f(1.0f, 0.85f, 0.0f);
 		float vx = (meshResource->vertices[i] + meshResource->vertices[i + 3] + meshResource->vertices[i+ 6]) / 3;
