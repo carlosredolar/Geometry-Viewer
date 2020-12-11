@@ -47,7 +47,10 @@ void Component_Camera::Update()
 
 	float3 corner_points[8];
 	frustum.GetCornerPoints(corner_points);
+	
 	App->renderer3D->DrawAABB(corner_points);
+
+	
 }
 
 void Component_Camera::OnGUI()

@@ -299,7 +299,7 @@ template<typename T>
 template<typename Func>
 inline void QuadTree<T>::AABBQuery(const AABB2D &aabb, Func &callback)
 {
-	PROFILE(QuadTree_AABBQuery);
+	PROFILE(QuadTreeaabbQuery);
 	std::vector<TraversalStackItem> stack;
 	TraversalStackItem n;
 	n.aabb = BoundingAABB();

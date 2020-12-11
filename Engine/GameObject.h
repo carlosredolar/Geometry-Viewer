@@ -63,6 +63,9 @@ public:
 
 	bool toDelete;
 
+	OBB obb;
+	AABB aabb;
+
 private:
 	bool enabled;
 	bool isVisible;

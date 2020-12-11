@@ -15311,7 +15311,7 @@ void ImGui::ShowMetricsWindow(bool* p_open)
     static bool show_tables_rects = false;
     static int  show_tables_rect_type = TRT_WorkRect;
     static bool show_drawcmd_mesh = true;
-    static bool show_drawcmd_aabb = true;
+    static bool show_drawcmdaabb = true;
     static bool show_docking_nodes = false;
 
     // Basic info
@@ -15348,9 +15348,9 @@ void ImGui::ShowMetricsWindow(bool* p_open)
             return ImRect();
         }
 
-        static void NodeDrawCmdShowMeshAndBoundingBox(ImDrawList* fg_draw_list, const ImDrawList* draw_list, const ImDrawCmd* draw_cmd, int elem_offset, bool show_mesh, bool show_aabb)
+        static void NodeDrawCmdShowMeshAndBoundingBox(ImDrawList* fg_draw_list, const ImDrawList* draw_list, const ImDrawCmd* draw_cmd, int elem_offset, bool show_mesh, bool showaabb)
         {
-            IM_ASSERT(show_mesh || show_aabb);
+            IM_ASSERT(show_mesh || showaabb);
             ImDrawIdx* idx_buffer = (draw_list->IdxBuffer.Size > 0) ? draw_list->IdxBuffer.Data : NULL;
 
             // Draw wire-frame version of all triangles
@@ -15371,7 +15371,7 @@ void ImGui::ShowMetricsWindow(bool* p_open)
                     fg_draw_list->AddPolyline(triangle, 3, IM_COL32(255, 255, 0, 255), true, 1.0f); // In yellow: mesh triangles
             }
             // Draw bounding boxes
-            if (show_aabb)
+            if (showaabb)
             {
                 fg_draw_list->AddRect(ImFloor(clip_rect.Min), ImFloor(clip_rect.Max), IM_COL32(255, 0, 255, 255)); // In pink: clipping rectangle submitted to GPU
                 fg_draw_list->AddRect(ImFloor(vtxs_rect.Min), ImFloor(vtxs_rect.Max), IM_COL32(0, 255, 255, 255)); // In cyan: bounding box of triangles
@@ -15417,8 +15417,8 @@ void ImGui::ShowMetricsWindow(bool* p_open)
                     pcmd->ElemCount/3, (void*)(intptr_t)pcmd->TextureId,
                     pcmd->ClipRect.x, pcmd->ClipRect.y, pcmd->ClipRect.z, pcmd->ClipRect.w);
                 bool pcmd_node_open = ImGui::TreeNode((void*)(pcmd - draw_list->CmdBuffer.begin()), "%s", buf);
-                if (ImGui::IsItemHovered() && (show_drawcmd_mesh || show_drawcmd_aabb) && fg_draw_list)
-                    NodeDrawCmdShowMeshAndBoundingBox(fg_draw_list, draw_list, pcmd, elem_offset, show_drawcmd_mesh, show_drawcmd_aabb);
+                if (ImGui::IsItemHovered() && (show_drawcmd_mesh || show_drawcmdaabb) && fg_draw_list)
+                    NodeDrawCmdShowMeshAndBoundingBox(fg_draw_list, draw_list, pcmd, elem_offset, show_drawcmd_mesh, show_drawcmdaabb);
                 if (!pcmd_node_open)
                     continue;
 
@@ -15684,7 +15684,7 @@ void ImGui::ShowMetricsWindow(bool* p_open)
             ImGui::Unindent();
         }
         ImGui::Checkbox("Show mesh when hovering ImDrawCmd", &show_drawcmd_mesh);
-        ImGui::Checkbox("Show bounding boxes when hovering ImDrawCmd", &show_drawcmd_aabb);
+        ImGui::Checkbox("Show bounding boxes when hovering ImDrawCmd", &show_drawcmdaabb);
         ImGui::TreePop();
     }
 

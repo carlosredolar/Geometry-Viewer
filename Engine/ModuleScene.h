@@ -36,6 +36,7 @@ public:
 
 public:
 	bool showGrid;
+	bool showBB;
 	GameObject* selectedGameObject;
 
 private:

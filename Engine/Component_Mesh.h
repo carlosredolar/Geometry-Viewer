@@ -29,9 +29,14 @@ public:
 	void DrawVertexNormals();
 	void DrawFaceNormals();
 
+	void GenerateAABB();
+	AABB GetAABB();
+
 public:
 	const char* name;
 	char* path;
+
+	AABB aabb;
 
 private:
 	bool drawVertexNormals;

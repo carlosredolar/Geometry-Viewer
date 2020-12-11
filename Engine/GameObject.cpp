@@ -55,7 +55,24 @@ void GameObject::Update()
 				{
 					Component_Mesh* mesh = (Component_Mesh*)components[i];
 
+					obb = mesh->GetAABB();
+					obb.Transform(transform->GetGlobalTransform());
+
+					aabb.SetNegativeInfinity();
+					aabb.Enclose(obb);
+
+					float3 cornerPoints[8];
+					aabb.GetCornerPoints(cornerPoints);
+
+					if (App->scene->showBB)
+					{
+						App->renderer3D->DrawAABB(cornerPoints);
+					}
+					
+
 					mesh->Update();
+
+
 				}
 				else
 				{

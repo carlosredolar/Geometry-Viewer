@@ -36,6 +36,10 @@ void GuiScene::Draw()
 			if (ImGui::Checkbox("Show Grid", &showGrid))
 				App->scene->showGrid = showGrid;
 
+			static bool showBB = App->scene->showBB;
+			if (ImGui::Checkbox("Show Bounding Boxes", &showBB))
+				App->scene->showBB = showBB;
+
 			ImGui::Checkbox("Show camera culling", &App->renderer3D->showCameraCulling);
 
 			ImGui::EndMenuBar();

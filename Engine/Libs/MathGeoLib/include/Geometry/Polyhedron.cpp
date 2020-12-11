@@ -751,7 +751,7 @@ bool Polyhedron::Intersects(const Polyhedron &polyhedron) const
 }
 
 template<typename T>
-bool PolyhedronIntersectsAABB_OBB(const Polyhedron &p, const T &obj)
+bool PolyhedronIntersectsAABBobb(const Polyhedron &p, const T &obj)
 {
 	if (p.Contains(obj.CenterPoint()))
 		return true;
@@ -785,17 +785,17 @@ bool PolyhedronIntersectsAABB_OBB(const Polyhedron &p, const T &obj)
 
 bool Polyhedron::Intersects(const AABB &aabb) const
 {
-	return PolyhedronIntersectsAABB_OBB(*this, aabb);
+	return PolyhedronIntersectsAABBobb(*this, aabb);
 }
 
 bool Polyhedron::Intersects(const OBB &obb) const
 {
-	return PolyhedronIntersectsAABB_OBB(*this, obb);
+	return PolyhedronIntersectsAABBobb(*this, obb);
 }
 
 bool Polyhedron::Intersects(const Triangle &triangle) const
 {
-	return PolyhedronIntersectsAABB_OBB(*this, triangle);
+	return PolyhedronIntersectsAABBobb(*this, triangle);
 }
 
 bool Polyhedron::Intersects(const Polygon &polygon) const
@@ -805,7 +805,7 @@ bool Polyhedron::Intersects(const Polygon &polygon) const
 
 bool Polyhedron::Intersects(const Frustum &frustum) const
 {
-	return PolyhedronIntersectsAABB_OBB(*this, frustum);
+	return PolyhedronIntersectsAABBobb(*this, frustum);
 }
 
 bool Polyhedron::Intersects(const Sphere &sphere) const

@@ -44,6 +44,7 @@ void Component_Mesh::SetResourceUID(uint UID)
 {
 	_resourceUID = UID;
 	meshResource = (ResourceMesh*)App->resources->RequestResource(_resourceUID);
+	GenerateAABB();
 }
 
 Resource* Component_Mesh::GetResource(ResourceType type)
@@ -246,4 +247,15 @@ void PrimitiveGrid::Render()
 	}
 
 	glEnd();
+}
+
+void Component_Mesh::GenerateAABB()
+{
+	aabb.SetNegativeInfinity();
+	aabb.Enclose((float3*)meshResource->vertices, meshResource->amountVertices);
+}
+
+AABB Component_Mesh::GetAABB()
+{
+	return aabb;
 }
