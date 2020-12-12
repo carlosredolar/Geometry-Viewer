@@ -61,11 +61,12 @@ void GameObject::Update()
 					aabb.SetNegativeInfinity();
 					aabb.Enclose(obb);
 
-					float3 cornerPoints[8];
-					aabb.GetCornerPoints(cornerPoints);
-
+					
 					if (App->scene->showBB)
 					{
+						float3 cornerPoints[8];
+						aabb.GetCornerPoints(cornerPoints);
+
 						ImVec4 color = ImGui::GetStyleColorVec4(ImGuiCol_Button);
 
 						App->renderer3D->DrawAABB(cornerPoints, color);
@@ -378,4 +379,9 @@ void GameObject::UpdateChildrenTransforms()
 			children[i]->UpdateChildrenTransforms();
 		}
 	}
+}
+
+AABB GameObject::GetAABB()
+{
+	return aabb;
 }

@@ -165,10 +165,6 @@ void ModuleScene::EditTransform()
 			selectedGameObject->GetTransform()->SetGlobalTransform(objectTransform);
 		}
 	}
-	else 
-	{
-		LOG_WARNING("No gameObject to edit transform, please select gameObject");
-	}
 }
 
 bool ModuleScene::ClearScene()

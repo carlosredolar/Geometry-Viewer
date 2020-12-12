@@ -8,6 +8,7 @@
 #include "ResourceMesh.h"
 #include "GameObject.h"
 #include "Component_Transform.h"
+#include "glew/include/glew.h"
 
 
 ModuleCamera3D::ModuleCamera3D(bool start_enabled) : Module(start_enabled)
@@ -141,7 +142,16 @@ update_status ModuleCamera3D::Update(float dt)
 
 
 	if ((App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT) && (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT))
+	{
 		Orbit(dt);
+	} 
+		
+	if (!(App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT) && (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN) && !(ImGuizmo::IsOver()))
+	{
+		App->scene->selectedGameObject = SelectGO();
+	}
+		
+	//RenderRay();
 
 	position += newPos;
 	camera->SetPosition(position);
@@ -266,5 +276,43 @@ void ModuleCamera3D::Reset()
 void ModuleCamera3D::SetBackgroundColor(float r, float g, float b, float w)
 {
 	background = { r,g,b,w };
+}
+
+GameObject* ModuleCamera3D::SelectGO() 
+{
+
+	float normalized_x = ((App->gui->mouseScenePosition.x / App->gui->image_size.x) - 0.5f)*2;
+	float normalized_y = -((App->gui->mouseScenePosition.y / App->gui->image_size.y) - 0.5f)*2;
+
+	ray = camera->GetFrustum().UnProjectLineSegment(normalized_x, normalized_y);
+
+	//LOG("X: %.1f Y: %.1f", normalized_x, normalized_y); //click point pos
+
+	std::vector<GameObject*> sceneGO = App->scene->GetAllGameObjects();
+
+	for (size_t i = 0; i < sceneGO.size(); i++)
+	{
+		bool hit = ray.Intersects(sceneGO[i]->GetAABB());
+
+		if (hit)
+		{
+			float distance;
+			float hit_point;
+
+			hit = ray.Intersects(sceneGO[i]->GetAABB(), distance, hit_point);
+			
+			return sceneGO[i];
+		}
+	}
+
+	return nullptr;
+}
+
+void ModuleCamera3D::RenderRay() 
+{
+	glBegin(GL_LINES);
+	glVertex3f(ray.a.x, ray.a.y, ray.a.z);
+	glVertex3f(ray.b.x, ray.b.y, ray.b.z);
+	glEnd();
 }
 

@@ -30,7 +30,7 @@ public:
 	float* GetProjectionMatrix();
 	float4x4 GetProjectionMatrixM();
 	float3 GetPosition();
-	GameObject* PickGameObject();
+	GameObject* SelectGO();
 
 	FixedFOV GetFixedFOV();
 	void SetFixedFOV(FixedFOV fixedFOV);
@@ -38,6 +38,8 @@ public:
 	float GetHorizontalFieldOfView();
 	void SetVerticalFieldOfView(float verticalFOV, int screen_width, int screen_height);
 	void SetHorizontalFieldOfView(float horizontalFOV, int screen_width, int screen_height);
+
+	void RenderRay();
 
 	void Reset();
 	void SetBackgroundColor(float r, float g, float b, float w);
@@ -54,6 +56,8 @@ public:
 	float orbit_speed;
 	float zoom_speed;
 	float sensitivity;
+
+	LineSegment ray;
 
 private:
 	//mat4x4 ViewMatrix, ViewMatrixInverse;
