@@ -101,7 +101,7 @@ void GuiAssets::DrawDirectoryRecursive(const char* directory, const char* filter
 				{
 					std::string file_to_delete = directory;
 					file_to_delete.append("/" + str);
-					App->resources->AddAssetToDelete(file_to_delete.c_str());
+					App->resources->AssetToDelete(file_to_delete.c_str());
 					ImGui::CloseCurrentPopup();
 				}
 				ImGui::EndPopup();
@@ -197,7 +197,7 @@ bool GuiAssets::DrawIcon(const char* path, int id, bool isFolder)
 		if (ImGui::BeginPopupContextItem()) {
 			if (ImGui::Button("Delete"))
 			{
-				App->resources->AddAssetToDelete(path);
+				App->resources->AssetToDelete(path);
 				ImGui::CloseCurrentPopup();
 			}
 			ImGui::EndPopup();

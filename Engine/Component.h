@@ -45,5 +45,5 @@ protected:
 	GameObject* ownerGameObject;
 	bool enabled;
 
-	uint _resourceUID;
+	uint resourceUID;
 };

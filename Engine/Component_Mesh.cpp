@@ -42,8 +42,8 @@ void Component_Mesh::Load(JsonObj& load_object)
 
 void Component_Mesh::SetResourceUID(uint UID)
 {
-	_resourceUID = UID;
-	meshResource = (ResourceMesh*)App->resources->RequestResource(_resourceUID);
+	resourceUID = UID;
+	meshResource = (ResourceMesh*)App->resources->RequestResource(resourceUID);
 	GenerateAABB();
 }
 
@@ -59,7 +59,7 @@ void Component_Mesh::Update()
 
 void Component_Mesh::Render()
 {
-	if (!App->resources->Exists(_resourceUID)) {
+	if (!App->resources->ExistsResource(resourceUID)) {
 		meshResource = nullptr;
 		return;
 	}
@@ -94,10 +94,10 @@ void Component_Mesh::Render()
 	glDrawElements(GL_TRIANGLES, meshResource->amountIndices, GL_UNSIGNED_INT, NULL);
 
 	if(drawVertexNormals ||App->renderer3D->drawVertexNormals)
-		DrawVertexNormals();
+		RenderVertexNormals();
 
 	if (drawFaceFormals || App->renderer3D->drawFaceFormals)
-		DrawFaceNormals();
+		RenderFaceNormals();
 
 	glPopMatrix();
 
@@ -155,12 +155,12 @@ void Component_Mesh::OnGUI()
 		ImGui::Checkbox("Face Normals", &drawFaceFormals);
 
 		ImGui::Spacing();
-		ImGui::Text("UID: %d", _resourceUID);
+		ImGui::Text("UID: %d", resourceUID);
 		ImGui::Spacing();
 	}
 }
 
-void Component_Mesh::DrawVertexNormals()
+void Component_Mesh::RenderVertexNormals()
 {
 	if (meshResource->normalsBuffer == -1)
 		return;
@@ -170,10 +170,9 @@ void Component_Mesh::DrawVertexNormals()
 	//vertices normals
 	glDisable(GL_LIGHTING);
 	glBegin(GL_LINES);
-	for (size_t i = 0, c = 0; i < meshResource->amountVertices * 3; i += 3, c+= 4)
+	for (int i = 0, c = 0; i < meshResource->amountVertices * 3; i += 3, c+= 4)
 	{
 		glColor3f(0.0f, 0.85f, 0.85f);
-		//glColor4f(colors[c], colors[c + 1], colors[c + 2], colors[c + 3]);
 		glVertex3f(meshResource->vertices[i], meshResource->vertices[i + 1], meshResource->vertices[i + 2]);
 
 		glVertex3f(meshResource->vertices[i] + (meshResource->normals[i] * normal_lenght),
@@ -186,7 +185,7 @@ void Component_Mesh::DrawVertexNormals()
 	glEnable(GL_LIGHTING);
 }
 
-void Component_Mesh::DrawFaceNormals()
+void Component_Mesh::RenderFaceNormals()
 {
 	if (meshResource->normalsBuffer == -1)
 		return;
@@ -196,7 +195,7 @@ void Component_Mesh::DrawFaceNormals()
 	//vertices normals
 	glDisable(GL_LIGHTING);
 	glBegin(GL_LINES);
-	for (size_t i = 0; i < meshResource->amountVertices * 3; i += 3)
+	for (int i = 0; i < meshResource->amountVertices * 3; i += 3)
 	{
 		glColor3f(1.0f, 0.85f, 0.0f);
 		float vx = (meshResource->vertices[i] + meshResource->vertices[i + 3] + meshResource->vertices[i+ 6]) / 3;

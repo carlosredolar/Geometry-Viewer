@@ -32,7 +32,7 @@ private:
 	bool checkersImageActive;
 	bool colored;
 
-	ResourceMaterial* _resource;
+	ResourceMaterial* materialResource;
 	ResourceTexture* _diffuseTexture;
 	uint checkersID;
 };

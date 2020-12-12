@@ -37,7 +37,7 @@ bool ModuleResources::Init()
 	//std::vector<std::string> dirs;
 	//FileManager::DiscoverFilesRecursive("Library", files, dirs);
 
-	CheckAssetsRecursive("Assets");
+	CheckAssets("Assets");
 
 	return ret;
 }
@@ -159,7 +159,7 @@ void ModuleResources::OnFrameEnd()
 	}
 }
 
-bool ModuleResources::MetaUpToDate(const char* assets_file, const char* meta_file)
+bool ModuleResources::CheckMeta(const char* assets_file, const char* meta_file)
 {
 	bool ret = true;
 
@@ -280,7 +280,7 @@ const char* ModuleResources::GetLibraryPath(uint UID)
 	}
 }
 
-bool ModuleResources::Exists(uint UID)
+bool ModuleResources::ExistsResource(uint UID)
 {
 	std::map<uint, Resource*>::iterator resource = resources.find(UID);
 	std::map<uint, ResourceData>::iterator resource_data = resources_data.find(UID);
@@ -296,7 +296,7 @@ uint ModuleResources::ImportFile(const char* assets_file)
 	std::string meta_file = assets_file;
 	meta_file.append(".meta");
 
-	if(FileManager::Exists(meta_file.c_str()))
+	if(FileManager::ExistsResource(meta_file.c_str()))
 		return GetUIDFromMeta(meta_file.c_str());
 
 	*/
@@ -422,7 +422,7 @@ void ModuleResources::CreateResourceData(uint UID, const char* name, const char*
 	resources_data[UID].type = GetTypeFromPath(library_path);
 }
 
-void ModuleResources::DragDropFile(const char* path)
+void ModuleResources::DragAndDropFile(const char* path)
 {
 	std::string file_to_import = path;
 
@@ -438,7 +438,7 @@ void ModuleResources::DragDropFile(const char* path)
 	import_window->Enable(final_path, GetTypeFromPath(path));
 }
 
-void ModuleResources::AddAssetToDelete(const char* asset_path)
+void ModuleResources::AssetToDelete(const char* asset_path)
 {
 	std::string meta_file = asset_path;
 	meta_file.append(".meta");
@@ -446,7 +446,7 @@ void ModuleResources::AddAssetToDelete(const char* asset_path)
 	App->AddModuleToTaskStack(this);
 }
 
-void ModuleResources::AddResourceToDelete(uint UID)
+void ModuleResources::ResourceToDelete(uint UID)
 {
 	_toDeleteResource = UID;
 	App->AddModuleToTaskStack(this);
@@ -968,7 +968,7 @@ void ModuleResources::AddFileExtension(std::string& file, ResourceType type)
 	}
 }
 
-void ModuleResources::CheckAssetsRecursive(const char* directory)
+void ModuleResources::CheckAssets(const char* directory)
 {
 	std::vector<std::string> files;
 	std::vector<std::string> dirs;
@@ -980,7 +980,7 @@ void ModuleResources::CheckAssetsRecursive(const char* directory)
 
 	for (std::vector<std::string>::const_iterator it = dirs.begin(); it != dirs.end(); ++it)
 	{
-		CheckAssetsRecursive((dir + (*it)).c_str());
+		CheckAssets((dir + (*it)).c_str());
 	}
 
 	std::sort(files.begin(), files.end());
@@ -999,7 +999,7 @@ void ModuleResources::CheckAssetsRecursive(const char* directory)
 
 		if(FileManager::Exists(meta.c_str()))
 		{
-			if (!MetaUpToDate(file.c_str(), meta.c_str()))
+			if (!CheckMeta(file.c_str(), meta.c_str()))
 			{
 				ReimportFile(file.c_str());
 			}

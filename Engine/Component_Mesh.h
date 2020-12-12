@@ -26,8 +26,8 @@ public:
 	virtual void Render();
 	virtual void OnGUI() override;
 
-	void DrawVertexNormals();
-	void DrawFaceNormals();
+	void RenderVertexNormals();
+	void RenderFaceNormals();
 
 	void GenerateAABB();
 	AABB GetAABB();
