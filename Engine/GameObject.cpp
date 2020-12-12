@@ -72,10 +72,16 @@ void GameObject::Update()
 						App->renderer3D->DrawAABB(cornerPoints, color);
 					}
 					
+					if (App->camera->GetCamera()->ContainsAABB(aabb))
+					{
+						if (App->renderer3D->GetMainCamera()->ContainsAABB(aabb) || !App->renderer3D->cameraCulling)
+						{
+							mesh->Update();
+						}
+					}
+					
 
-					mesh->Update();
-
-
+					
 				}
 				else
 				{

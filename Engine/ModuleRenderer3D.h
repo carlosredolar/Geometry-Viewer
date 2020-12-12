@@ -40,7 +40,6 @@ public:
 	void SetDisplayMode(DisplayMode display);
 	void SetMainCamera(Component_Camera* camera);
 	Component_Camera* GetMainCamera();
-	bool IsInsideCameraView(AABB aabb);
 
 	void SetCapActive(GLenum cap, bool active);
 	void SetVSYNC(bool enabled);
@@ -69,7 +68,7 @@ public:
 	DisplayMode display_mode;
 
 	LineSegment _ray;
-	bool showCameraCulling;
+	bool cameraCulling;
 
 	bool drawVertexNormals;
 	bool drawFaceFormals;

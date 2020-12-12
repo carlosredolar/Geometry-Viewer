@@ -40,7 +40,7 @@ void GuiScene::Draw()
 			if (ImGui::Checkbox("Show Bounding Boxes", &showBB))
 				App->scene->showBB = showBB;
 
-			ImGui::Checkbox("Show camera culling", &App->renderer3D->showCameraCulling);
+			ImGui::Checkbox("Camera Culling", &App->renderer3D->cameraCulling);
 
 			ImGui::EndMenuBar();
 		}
