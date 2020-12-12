@@ -30,7 +30,7 @@ public:
 	float* GetProjectionMatrix();
 	float4x4 GetProjectionMatrixM();
 	float3 GetPosition();
-	GameObject* PickGameObject();
+	GameObject* SelectGO();
 
 	FixedFOV GetFixedFOV();
 	void SetFixedFOV(FixedFOV fixedFOV);
@@ -54,6 +54,8 @@ public:
 	float orbit_speed;
 	float zoom_speed;
 	float sensitivity;
+
+	LineSegment ray;
 
 private:
 	//mat4x4 ViewMatrix, ViewMatrixInverse;

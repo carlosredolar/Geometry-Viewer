@@ -8,6 +8,7 @@
 #include "ResourceMesh.h"
 #include "GameObject.h"
 #include "Component_Transform.h"
+#include "glew/include/glew.h"
 
 
 ModuleCamera3D::ModuleCamera3D(bool start_enabled) : Module(start_enabled)
@@ -141,7 +142,16 @@ update_status ModuleCamera3D::Update(float dt)
 
 
 	if ((App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT) && (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT))
+	{
 		Orbit(dt);
+	} 
+		
+	if (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN)
+	{
+		SelectGO();
+	}
+		
+	
 
 	position += newPos;
 	camera->SetPosition(position);
@@ -266,5 +276,24 @@ void ModuleCamera3D::Reset()
 void ModuleCamera3D::SetBackgroundColor(float r, float g, float b, float w)
 {
 	background = { r,g,b,w };
+}
+
+GameObject* ModuleCamera3D::SelectGO() {
+
+	float normalized_x = App->gui->mouseScenePosition.x / App->gui->image_size.x;
+	float normalized_y = App->gui->mouseScenePosition.y / App->gui->image_size.y;
+
+	LineSegment picking = App->camera->camera->GetFrustum().UnProjectLineSegment(normalized_x, normalized_y);
+
+	ray = LineSegment();
+
+	glBegin(GL_LINES);
+	glVertex3f(ray.a.x, ray.a.y, ray.a.z);
+	glVertex3f(ray.b.x, ray.b.y, ray.b.z);
+	glEnd();
+
+	LOG("X: %.1f Y: %.1f", normalized_x, normalized_y);
+
+	return nullptr;
 }
 
