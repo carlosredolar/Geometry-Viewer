@@ -165,9 +165,10 @@ void Component_Mesh::DrawVertexNormals()
 	if (meshResource->normalsBuffer == -1)
 		return;
 
-	float normal_lenght = 0.5f;
+	float normal_lenght = 0.3f;
 
 	//vertices normals
+	glDisable(GL_LIGHTING);
 	glBegin(GL_LINES);
 	for (size_t i = 0, c = 0; i < meshResource->amountVertices * 3; i += 3, c+= 4)
 	{
@@ -182,6 +183,7 @@ void Component_Mesh::DrawVertexNormals()
 
 	glColor3f(1.0f, 1.0f, 1.0f);
 	glEnd();
+	glEnable(GL_LIGHTING);
 }
 
 void Component_Mesh::DrawFaceNormals()
@@ -189,9 +191,10 @@ void Component_Mesh::DrawFaceNormals()
 	if (meshResource->normalsBuffer == -1)
 		return;
 
-	float normal_lenght = 0.5f;
+	float normal_lenght = 0.3f;
 
 	//vertices normals
+	glDisable(GL_LIGHTING);
 	glBegin(GL_LINES);
 	for (size_t i = 0; i < meshResource->amountVertices * 3; i += 3)
 	{
@@ -212,8 +215,8 @@ void Component_Mesh::DrawFaceNormals()
 	}
 
 	glColor3f(1.0f, 1.0f, 1.0f);
-
 	glEnd();
+	glEnable(GL_LIGHTING);
 }
 
 // PrimitiveGrid =========================================================================================================================
@@ -230,6 +233,7 @@ PrimitiveGrid::~PrimitiveGrid() {}
 
 void PrimitiveGrid::Render()
 {
+	glDisable(GL_LIGHTING);
 	glBegin(GL_LINES);
 
 	//Vertical Lines
@@ -247,6 +251,7 @@ void PrimitiveGrid::Render()
 	}
 
 	glEnd();
+	glEnable(GL_LIGHTING);
 }
 
 void Component_Mesh::GenerateAABB()
