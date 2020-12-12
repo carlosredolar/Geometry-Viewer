@@ -36,16 +36,16 @@ public:
 	void UpdateProjectionMatrix(float* projectionMatrix);
 
 	void DrawAABB(float3* aabb, ImVec4 color);
+	void DrawRay();
+
 	DisplayMode GetDisplayMode();
 	void SetDisplayMode(DisplayMode display);
 	void SetMainCamera(Component_Camera* camera);
 	Component_Camera* GetMainCamera();
 
-	void SetCapActive(GLenum cap, bool active);
-	void SetVSYNC(bool enabled);
-
-	void DrawRay();
-
+	void SetCap(GLenum cap, bool enabled);
+	void SetVSync(bool enabled);
+	
 private:
 	void GenerateBuffers();
 	void DrawDirectModeCube();
@@ -57,25 +57,23 @@ private:
 public:
 	GLuint colorTexture;
 	GLuint renderBuffer;
-
 	GLuint depthRenderBuffer;
 	GLuint depthTexture;
 
 	Component_Light lights[MAX_LIGHTS];
 	SDL_GLContext context;
-	//mat3x3 NormalMatrix;
-	//mat4x4 ModelMatrix, ViewMatrix, ProjectionMatrix;
+
 	DisplayMode display_mode;
 
 	LineSegment _ray;
-	bool cameraCulling;
 
+	bool cameraCulling;
 	bool drawVertexNormals;
 	bool drawFaceFormals;
-
 	bool vsync;
 
 private:
 	bool debug;
+
 	Component_Camera* mainCamera;
 };

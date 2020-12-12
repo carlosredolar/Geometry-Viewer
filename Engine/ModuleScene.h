@@ -7,7 +7,6 @@
 #include <vector>
 
 class GameObject;
-class GnTexture;
 
 class ModuleScene : public Module
 {
@@ -37,10 +36,12 @@ public:
 public:
 	bool showGrid;
 	bool showBB;
+
 	GameObject* selectedGameObject;
 
 private:
 	GameObject* root;
+
 	ImGuizmo::OPERATION mCurrentGizmoOperation;
 	ImGuizmo::MODE mCurrentGizmoMode;
 };

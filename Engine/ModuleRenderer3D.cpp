@@ -322,36 +322,36 @@ Component_Camera* ModuleRenderer3D::GetMainCamera()
 	return mainCamera;
 }
 
-void ModuleRenderer3D::SetCapActive(GLenum cap, bool active)
+void ModuleRenderer3D::SetCap(GLenum cap, bool enabled)
 {
-	if (active)
+	if (enabled)
 		glEnable(cap);
 	else
 		glDisable(cap);
 }
 
-void ModuleRenderer3D::SetVSYNC(bool enabled)
+void ModuleRenderer3D::SetVSync(bool enabled)
 {
 	if (enabled)
 	{
 		if (SDL_GL_SetSwapInterval(1) == -1)
 		{
-			LOG_ERROR("VSYNC not supported");
+			LOG_ERROR("VSync not supported");
 		}
 		else
 		{
-			LOG("VSYNC enabled");
+			LOG("VSync enabled");
 		}
 	}
 	else
 	{
 		if (SDL_GL_SetSwapInterval(0) == -1)
 		{
-			LOG_ERROR("VSYNC not supported");
+			LOG_ERROR("VSync not supported");
 		}
 		else
 		{
-			LOG("VSYNC disabled");
+			LOG("VSync disabled");
 		}
 	}
 

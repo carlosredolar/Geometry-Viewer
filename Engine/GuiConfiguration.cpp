@@ -98,30 +98,30 @@ void GuiConfiguration::Draw()
 		{
 			static bool depth_test = glIsEnabled(GL_DEPTH_TEST);
 			if (ImGui::Checkbox("Depth Test", &depth_test))
-				App->renderer3D->SetCapActive(GL_DEPTH_TEST, depth_test);
+				App->renderer3D->SetCap(GL_DEPTH_TEST, depth_test);
 
 			ImGui::SameLine();
 			static bool cull_face = glIsEnabled(GL_CULL_FACE);
 			if (ImGui::Checkbox("Cull Face", &cull_face))
-				App->renderer3D->SetCapActive(GL_CULL_FACE, cull_face);
+				App->renderer3D->SetCap(GL_CULL_FACE, cull_face);
 
 			static bool texture_2D = glIsEnabled(GL_TEXTURE_2D);
 			if (ImGui::Checkbox("Texture 2D", &texture_2D))
-				App->renderer3D->SetCapActive(GL_TEXTURE_2D, texture_2D);
+				App->renderer3D->SetCap(GL_TEXTURE_2D, texture_2D);
 
 			ImGui::SameLine();
 			static bool lighting = glIsEnabled(GL_LIGHTING);
 			if (ImGui::Checkbox("Lighting", &lighting))
-				App->renderer3D->SetCapActive(GL_LIGHTING, lighting);
+				App->renderer3D->SetCap(GL_LIGHTING, lighting);
 
 
 			static bool color_material = glIsEnabled(GL_COLOR_MATERIAL);
 			if (ImGui::Checkbox("Color Material", &color_material))
-				App->renderer3D->SetCapActive(GL_COLOR_MATERIAL, color_material);
+				App->renderer3D->SetCap(GL_COLOR_MATERIAL, color_material);
 
 			static bool vsync = App->renderer3D->vsync;
 			if (ImGui::Checkbox("VSYNC", &vsync))
-				App->renderer3D->SetVSYNC(vsync);
+				App->renderer3D->SetVSync(vsync);
 
 			if (ImGui::BeginMenu("Shading Mode"))
 			{
