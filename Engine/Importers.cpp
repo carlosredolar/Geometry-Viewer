@@ -798,8 +798,7 @@ bool MaterialImporter::Load(const char* fileBuffer, ResourceMaterial* material, 
 	JsonObj material_data(fileBuffer);
 	material->diffuseTextureUID = material_data.GetInt("diffuseTexture", 0);
 
-
-	if (material->diffuseTextureUID != 0)
+	if (material->diffuseTextureUID != 0 && material->diffuseTextureUID != -1)
 		App->resources->LoadResource(material->diffuseTextureUID, ResourceType::RESOURCE_TEXTURE);
 
 	material->diffuseColor = material_data.GetColor("diffuseColor");

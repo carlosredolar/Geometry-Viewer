@@ -9,6 +9,6 @@ public:
 	~ResourceMaterial();
 
 public:
-	uint diffuseTextureUID;
+	uint diffuseTextureUID = 0;
 	Color diffuseColor;
 };
