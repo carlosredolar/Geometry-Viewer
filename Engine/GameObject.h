@@ -58,14 +58,14 @@ public:
 	void SetParent(GameObject* parentGameObject);
 	void ChangeParent(GameObject* newParent);
 
+	AABB GetAABB();
+
 public: 
 	uint UUID = 0;
 
 	bool toDelete;
 
-	OBB obb;
-	AABB aabb;
-
+	
 private:
 	bool enabled;
 	bool isVisible;
@@ -74,6 +74,8 @@ private:
 	Component_Transform* transform;
 	std::vector<Component*> components;
 	std::vector<GameObject*> children;
+	OBB obb;
+	AABB aabb;
 };
 
 template<typename Type>
