@@ -1,7 +1,6 @@
 #pragma once
 #include "Module.h"
 #include "Globals.h"
-#include "ModuleImport.h"
 
 #define MAX_MOUSE_BUTTONS 5
 
@@ -17,7 +16,7 @@ class ModuleInput : public Module
 {
 public:
 	
-	ModuleInput(Application* app, bool start_enabled = true);
+	ModuleInput(bool start_enabled = true);
 	~ModuleInput();
 
 	bool Init();
@@ -59,9 +58,6 @@ public:
 		return mouse_y_motion;
 	}
 
-	bool scrollUp = false;
-	bool scrollDown = false;
-
 private:
 	KEY_STATE* keyboard;
 	KEY_STATE mouse_buttons[MAX_MOUSE_BUTTONS];
@@ -71,6 +67,4 @@ private:
 	int mouse_x_motion;
 	int mouse_y_motion;
 	//int mouse_z_motion;
-
-	
 };

@@ -1,26 +1,13 @@
-#ifndef __GuiHierarchy_H__
-#define __GuiHierarchy_H__
-
-#include "Module.h"
+#pragma once
 #include "GuiWindow.h"
-#include <vector>
 
 class GameObject;
 
-class GuiHierarchy : public GuiWindow
-{
+class GuiHierarchy : public GuiWindow {
 public:
 	GuiHierarchy();
 	~GuiHierarchy();
 
-	bool Start();
-	void Draw();
-	bool CleanUp();
-
-	void TreeNodeChild(GameObject* gO);
-
-private:
-	GameObject* rootNode;
-	ImGuiTreeNodeFlags base_flags;
+	void Draw() override;
+	void PreorderHierarchy(GameObject* gameObject, int& id);
 };
-#endif __GuiHierarchy_H__

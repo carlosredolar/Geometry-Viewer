@@ -2,20 +2,11 @@
 #include "Application.h"
 #include "Globals.h"
 
-#include "SDL/include/SDL.h"
-//#include "ImGui/imgui.h"
-
-#pragma comment( lib, "SDL/libx86/SDL2.lib" )
-#pragma comment( lib, "SDL/libx86/SDL2main.lib" )
-#pragma comment( lib, "glew/libx86/glew32.lib" )
-#pragma comment( lib, "glew/libx86/glew32s.lib" )
-
-//#ifdef _DEBUG
-//	#pragma comment( lib, "MathGeoLib/libx86/Debug/MathGeoLib.lib" )
-//#else
-//	#pragma comment( lib, "MathGeoLib/libx86/Release/MathGeoLib.lib" )
-//#endif
-
+//SDL
+#include "Libs/SDL/include/SDL.h"
+#pragma comment( lib, "Libs/SDL/libx86/SDL2.lib" )
+#pragma comment( lib, "Libs/SDL/libx86/SDL2main.lib" )
+ 
 enum main_states
 {
 	MAIN_CREATION,
@@ -25,9 +16,11 @@ enum main_states
 	MAIN_EXIT
 };
 
-int main(int argc, char ** argv)
+Application* App = NULL;
+
+int main(int argc, char* argv[])
 {
-	LOG("Starting engine '%s'...", TITLE);
+	LOG("Starting Genesis Engine...");
 
 	int main_return = EXIT_FAILURE;
 	main_states state = MAIN_CREATION;
@@ -39,7 +32,7 @@ int main(int argc, char ** argv)
 		case MAIN_CREATION:
 
 			LOG("-------------- Application Creation --------------");
-			App = new Application();
+			App = new Application(argc, argv);
 			state = MAIN_START;
 			break;
 
@@ -91,7 +84,8 @@ int main(int argc, char ** argv)
 		}
 	}
 
-	LOG("Exiting engine '%s'...\n", TITLE);
 	delete App;
+	App = nullptr;
+	LOG("Exiting Genesis Engine...\n");
 	return main_return;
 }

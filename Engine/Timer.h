@@ -2,7 +2,7 @@
 #define __TIMER_H__
 
 #include "Globals.h"
-#include "SDL\include\SDL.h"
+#include "Libs/SDL/include/SDL.h"
 
 class Timer
 {
@@ -13,8 +13,10 @@ public:
 
 	void Start();
 	void Stop();
+	void Resume();
 
 	Uint32 Read();
+	float  ReadSec() const;
 
 private:
 

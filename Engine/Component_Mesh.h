@@ -1,60 +1,59 @@
 #pragma once
-#ifndef __COMPONENT_MESH_H__
-
-#include "Component.h"
-#include "GameObject.h"
 #include "Globals.h"
+#include "Component.h"
+#include <vector>;
+#include "Component_Material.h"
+
 #include "MathGeoLib/include/MathGeoLib.h"
 
-struct meshInfo;
+class ResourceMesh;
+
+typedef float GLfloat;
+typedef unsigned short GLushort;
+typedef unsigned char GLubyte;
 
 class Component_Mesh : public Component {
 public:
+	Component_Mesh();
+	virtual ~Component_Mesh();
 
-	//Constructor
-	Component_Mesh(GameObject* ownerGameObject, bool enabled = true);
+	void Save(JsonArray& save_array) override;
+	void Load(JsonObj& load_object) override;
+	void SetResourceUID(uint UID) override;
+	Resource* GetResource(ResourceType type) override;
 
-	//Destructor
-	~Component_Mesh();
+	virtual void Update() override;
+	virtual void Render();
+	virtual void OnGUI() override;
 
-	void GenerateMesh(meshInfo* newMesh, std::vector<float3> vertices, std::vector<uint> indices, std::vector<float3> normals, std::vector<float2> textureCoords);
+	void DrawVertexNormals();
+	void DrawFaceNormals();
 
-	//Update
-	void Update() override;
+	void GenerateAABB();
+	AABB GetAABB();
 
-	//Enable Component
-	void Enable() override;
+public:
+	const char* name;
+	char* path;
 
-	//Disable Component
-	void Disable() override;
+	AABB aabb;
 
-	//Check if component is enabled
-	bool IsEnabled() override;
+private:
+	bool drawVertexNormals;
+	bool drawFaceFormals;
 
-	const char* GetName();
-	int GetVertices();
-	int GetIndices();
+	ResourceMesh* meshResource;
+	
+};
 
-	void CreateBuffers();
+class PrimitiveGrid {
+public:
+	PrimitiveGrid(int size);
+	~PrimitiveGrid();
 
 	void Render();
 
-	void RenderVertexNormals(std::vector<float3> vertices, std::vector<float3> normals);
-	void RenderFaceNormals(std::vector<float3> vertices, std::vector<float3> normals);
-
-	void CleanUp();
-
-	bool enableVertexNormals = false;
-	bool enableFaceNormals = false;
-
 private:
-
-
-	uint idTextureImage;
-
-	
-	meshInfo* mesh;
-
+	int size;
 };
 
-#endif // !__COMPONENT_MESH_H__

@@ -1,14 +1,18 @@
 #include "Globals.h"
 #include "Application.h"
 #include "ModuleInput.h"
+#include "FileManager.h"
+
+#include "ImGui/imgui_internal.h"
+#include "ImGui/imgui_impl_sdl.h"
 
 #define MAX_KEYS 300
 
-ModuleInput::ModuleInput(Application* app, bool start_enabled) : Module(app, start_enabled)
+ModuleInput::ModuleInput(bool start_enabled) : Module(start_enabled)
 {
+	name = "input";
 	keyboard = new KEY_STATE[MAX_KEYS];
 	memset(keyboard, KEY_IDLE, sizeof(KEY_STATE) * MAX_KEYS);
-	memset(mouse_buttons, KEY_IDLE, sizeof(KEY_STATE) * MAX_MOUSE_BUTTONS);
 }
 
 // Destructor
@@ -24,13 +28,13 @@ bool ModuleInput::Init()
 	bool ret = true;
 	SDL_Init(0);
 
+	SDL_EventState(SDL_DROPFILE, SDL_ENABLE);
+
 	if(SDL_InitSubSystem(SDL_INIT_EVENTS) < 0)
 	{
 		LOG("SDL_EVENTS could not initialize! SDL_Error: %s\n", SDL_GetError());
 		ret = false;
 	}
-
-	SDL_EventState(SDL_DROPFILE, SDL_ENABLE);
 
 	return ret;
 }
@@ -88,29 +92,16 @@ update_status ModuleInput::PreUpdate(float dt)
 
 	bool quit = false;
 	SDL_Event e;
-
-	char* dropped_file_path;
-
-	scrollUp = false;
-	scrollDown = false;
+	char* dropped_filedir;
 
 	while(SDL_PollEvent(&e))
 	{
+		ImGui_ImplSDL2_ProcessEvent(&e);
+
 		switch(e.type)
 		{
 			case SDL_MOUSEWHEEL:
-				
-				if (e.wheel.y > 0)
-				{
-					scrollUp = true;
-					//scrollDown = false;
-				}
-				else if (e.wheel.y < 0)
-				{
-					//scrollUp = false;
-					scrollDown = true;
-				}
-			//mouse_z = e.wheel.y;
+			mouse_z = e.wheel.y;
 			break;
 
 			case SDL_MOUSEMOTION:
@@ -125,24 +116,25 @@ update_status ModuleInput::PreUpdate(float dt)
 			quit = true;
 			break;
 
+			case SDL_DROPFILE:
+				dropped_filedir = e.drop.file;
+				App->resources->DragDropFile(dropped_filedir);
+				SDL_free(dropped_filedir);
+				break;
+
 			case SDL_WINDOWEVENT:
 			{
-				if(e.window.event == SDL_WINDOWEVENT_RESIZED)
-					App->renderer3D->OnResize(e.window.data1, e.window.data2);
+				if (e.window.event == SDL_WINDOWEVENT_RESIZED)
+				{
+					App->window->OnResize(e.window.data1, e.window.data2);
+				}
 			}
-			break;
-
-			case SDL_DROPFILE:
-				dropped_file_path = e.drop.file;
-
-				App->importer->ImportExternalFiles(dropped_file_path);
-
-				SDL_free(dropped_file_path);
-			break;
 		}
 	}
 
-	if(quit == true || keyboard[SDL_SCANCODE_ESCAPE] == KEY_UP)
+	
+	//if(quit == true || keyboard[SDL_SCANCODE_ESCAPE] == KEY_UP)
+	if (quit == true)
 		return UPDATE_STOP;
 
 	return UPDATE_CONTINUE;

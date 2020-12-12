@@ -1,279 +1,321 @@
-#include "Application.h"
-#include "Globals.h"
 #include "GuiConfiguration.h"
-#include "GuiWindow.h"
-#include "ImGui/imconfig.h"
 #include "ImGui/imgui.h"
-#include "ImGui/imgui_impl_sdl.h"
-#include "ImGui/imgui_impl_opengl3.h"
-#include "Glew/include/glew.h"
-#include <gl/GL.h>
-#include <gl/GLU.h>
+#include "Application.h"
+#include "glew/include/glew.h"
+#include "Component_Camera.h"
+#include "Time.h"
 
 
-using namespace ImGui;
-
-GuiConfiguration::GuiConfiguration() : GuiWindow()
+GuiConfiguration::GuiConfiguration() : GuiWindow() 
 {
-	is_on = false;
+	type = WindowType::CONFIGURATION_WINDOW;
+
+	fps_log.resize(100, 0);
+	ms_log.resize(100, 0);
+
+	current_theme = 1;
 }
 
-GuiConfiguration::~GuiConfiguration()
-{}
-
-bool GuiConfiguration::Start()
+GuiConfiguration::~GuiConfiguration() 
 {
-	bool ret = true;
-
-	SDL_VERSION(&sdlVersion);
-	cpu_cache = SDL_GetCPUCacheLineSize();
-	cpu_count = SDL_GetCPUCount();
-	ram = SDL_GetSystemRAM() / 1000;
-
-	return ret;
-}
-
-bool GuiConfiguration::CleanUp()
-{
-
-	return true;
+	fps_log.clear();
+	ms_log.clear();
 }
 
 void GuiConfiguration::Draw()
 {
-	GLint total_memory = 0;
-	GLint memory_usage = 0;
-	GLint dedicated_memory = 0;
-	GLint available_memory = 0;
-
-	//hardaware
-	glGetIntegerv(GL_GPU_MEMORY_INFO_TOTAL_AVAILABLE_MEMORY_NVX, &total_memory);
-	glGetIntegerv(GL_GPU_MEMORY_INFO_CURRENT_AVAILABLE_VIDMEM_NVX, &available_memory);
-	glGetIntegerv(GL_GPU_MEMORY_INFO_DEDICATED_VIDMEM_NVX, &dedicated_memory);
-	memory_usage = total_memory - available_memory;
-
-	Begin("Configuration", &is_on);
-	SetNextWindowSize(ImVec2(370, 795), ImGuiCond_Once);
-	SetWindowPos(ImVec2(0, 20), ImGuiCond_Once);
-
-	if (CollapsingHeader("Application"))
+	if (ImGui::Begin("Configuration", &visible))
 	{
-		Text("Engine Name: %s", TITLE);
-		
-		static char organization[9] = "UPC CITM";
-		Text("Organization: %s", organization);
-
-		if (vector_fps.size() != 100)
+		if (ImGui::CollapsingHeader("Application"))
 		{
-			vector_fps.push_back(App->GetFPS());
-			vector_ms.push_back(App->GetMS());
+			static int fps_cap = App->GetFPSCap();
+			if (ImGui::SliderInt("Max FPS", &fps_cap, 10, 120)) {
+				App->SetFPSCap(fps_cap);
+			}
+
+			char title[25];
+			//FPS graph
+			fps_log.erase(fps_log.begin());
+			fps_log.push_back(App->GetFPS());
+			//if (fps_log[fps_log.size() - 1] != 0) {
+			sprintf_s(title, 25, "Framerate %.1f", fps_log[fps_log.size() - 1]);
+			sprintf_s(title, 25, "Framerate %.1f", fps_log[fps_log.size() - 1]);
+			ImGui::PlotHistogram("##framerate", &fps_log[0], fps_log.size(), 0, title, 0.0f, 100.0f, ImVec2(310, 100));
+			//}
+
+			//Ms graph
+			ms_log.erase(ms_log.begin());
+			ms_log.push_back(App->GetLastDt() * 1000);
+			//if(ms_log[ms_log.size() - 1] != 0){
+			sprintf_s(title, 25, "Milliseconds %.1f", ms_log[ms_log.size() - 1]);
+			ImGui::PlotHistogram("##milliseconds", &ms_log[0], ms_log.size(), 0, title, 0.0f, 40.0f, ImVec2(310, 100));
+			//}
 		}
-		else
+
+		if (ImGui::CollapsingHeader("Window"))
 		{
-			vector_fps.erase(vector_fps.begin());
-			vector_fps.push_back(App->GetFPS());
+			static float brightness = App->window->GetBrightness();
+			if (ImGui::SliderFloat("Brightness", &brightness, 0.0f, 1.0f))
+				App->window->SetBrightness(brightness);
 
-			vector_ms.erase(vector_ms.begin());
-			vector_ms.push_back(App->GetMS());
+			static int width, height;
+			App->window->GetSize(width, height);
+
+			if ((ImGui::SliderInt("Width", &width, 640, 3840) || ImGui::SliderInt("Height", &height, 360, 2160)))
+				App->window->SetSize(width, height);
+
+			static bool fullscreen = App->window->fullscreen;
+			static bool fullscreen_desktop = App->window->fullscreen_desktop;
+			static bool resizable = App->window->resizable;
+			static bool borderless = App->window->borderless;
+
+			if (ImGui::Checkbox("Fullscreen", &fullscreen))
+				App->window->SetFullscreen(fullscreen);
+
+			ImGui::SameLine();
+			if (ImGui::Checkbox("Resizable", &resizable))
+				App->window->SetResizable(resizable);
+
+			if (ImGui::Checkbox("Borderless", &borderless))
+				App->window->SetBorderless(borderless);
+
+			ImGui::SameLine();
+			if (ImGui::Checkbox("Fullscreen Desktop", &fullscreen_desktop))
+				App->window->SetFullscreenDesktop(fullscreen_desktop);
+
+			//Style
+			const char* items[] = { "Classic", "Dark", "Light" };
+			if (ImGui::Combo("Interface Style", &current_theme, items, IM_ARRAYSIZE(items)))
+			{
+				std::string theme = std::string(items[current_theme]);
+				if (theme == "Dark") ImGui::StyleColorsDark();
+				else if (theme == "Classic") ImGui::StyleColorsClassic();
+				else if (theme == "Light") ImGui::StyleColorsLight();
+			}
 		}
 
+		if (ImGui::CollapsingHeader("Renderer"))
+		{
+			static bool depth_test = glIsEnabled(GL_DEPTH_TEST);
+			if (ImGui::Checkbox("Depth Test", &depth_test))
+				App->renderer3D->SetCapActive(GL_DEPTH_TEST, depth_test);
 
-		int zero = 0;
-		Text("Framerate %.1f", vector_fps[vector_fps.size() - 1]);
-		PlotHistogram("##framerate", &vector_fps[0], vector_fps.size(), 0, NULL, 0.0f, 100.0f, ImVec2(310, 100));
-		Text("Milliseconds %.1f", vector_ms[vector_ms.size() - 1]);
-		PlotHistogram("##milliseconds", &vector_ms[0], vector_ms.size(), 0, NULL, 0.0f, 40.0f, ImVec2(310, 100));
+			ImGui::SameLine();
+			static bool cull_face = glIsEnabled(GL_CULL_FACE);
+			if (ImGui::Checkbox("Cull Face", &cull_face))
+				App->renderer3D->SetCapActive(GL_CULL_FACE, cull_face);
+
+			static bool texture_2D = glIsEnabled(GL_TEXTURE_2D);
+			if (ImGui::Checkbox("Texture 2D", &texture_2D))
+				App->renderer3D->SetCapActive(GL_TEXTURE_2D, texture_2D);
+
+			ImGui::SameLine();
+			static bool lighting = glIsEnabled(GL_LIGHTING);
+			if (ImGui::Checkbox("Lighting", &lighting))
+				App->renderer3D->SetCapActive(GL_LIGHTING, lighting);
+
+
+			static bool color_material = glIsEnabled(GL_COLOR_MATERIAL);
+			if (ImGui::Checkbox("Color Material", &color_material))
+				App->renderer3D->SetCapActive(GL_COLOR_MATERIAL, color_material);
+
+			static bool vsync = App->renderer3D->vsync;
+			if (ImGui::Checkbox("VSYNC", &vsync))
+				App->renderer3D->SetVSYNC(vsync);
+
+			if (ImGui::BeginMenu("Shading Mode"))
+			{
+				if (ImGui::MenuItem("Solid", NULL, App->renderer3D->display_mode == DisplayMode::SOLID))
+					App->renderer3D->SetDisplayMode(DisplayMode::SOLID);
+				if (ImGui::MenuItem("Wireframe", NULL, App->renderer3D->display_mode == DisplayMode::WIREFRAME))
+					App->renderer3D->SetDisplayMode(DisplayMode::WIREFRAME);
+				ImGui::EndMenu();
+			}
+		}
+
+		if (ImGui::CollapsingHeader("Camera")) {
+			static ImVec4 color = ImVec4(App->camera->background.r, App->camera->background.g, App->camera->background.b, App->camera->background.a);
+
+			if (ImGui::ColorEdit3("Background Color", (float*)&color)) {
+				App->camera->SetBackgroundColor(color.x, color.y, color.z, color.w);
+			}
+
+			ImGui::SliderFloat("Mouse Sensitivity", &App->camera->sensitivity, 0.0f, 50.0f);
+			ImGui::SliderFloat("Movement Speed", &App->camera->move_speed, 0.0f, 50.0f);
+			ImGui::SliderFloat("Drag Speed", &App->camera->orbit_speed, 0.0f, 10.0f);
+			ImGui::SliderFloat("Zoom Speed", &App->camera->zoom_speed, 0.0f, 50.0f);
+
+			ImGui::Spacing();
+			ImGui::Separator();
+			ImGui::Spacing();
+
+			const char* items[] = { "Vertical", "Horizontal" };
+			if (ImGui::Combo("Fixed FOV", &cameraFov, items, IM_ARRAYSIZE(items)))
+			{
+				std::string currentFov = std::string(items[cameraFov]);
+				if (currentFov == "Vertical") App->camera->SetFixedFOV(FixedFOV::FIXED_VERTICAL_FOV);
+				else if (currentFov == "Horizontal") App->camera->SetFixedFOV(FixedFOV::FIXED_HORIZONTAL_FOV);
+			}
+
+			ImGui::Spacing();
+
+			bool currentFixedFOV = App->camera->GetFixedFOV() == FixedFOV::FIXED_VERTICAL_FOV;
+			//Fixed Vertical FOV Settings
+			if (currentFixedFOV)
+			{
+				float verticalFOV = App->camera->GetVerticalFieldOfView() * RADTODEG;
+				if (ImGui::SliderFloat("Vertical FOV", &verticalFOV, 20.0f, 60.0f))
+					App->camera->SetVerticalFieldOfView(verticalFOV * DEGTORAD, App->gui->image_size.x, App->gui->image_size.y);
+
+				ImGui::Spacing();
+				ImGui::Text("Horizontal FOV: %.2f", App->camera->GetHorizontalFieldOfView() * RADTODEG);
+			}
+			//Fixed Horizontal FOV Settings
+			else
+			{
+				float horizontalFOV = App->camera->GetHorizontalFieldOfView() * RADTODEG;
+				if (ImGui::SliderFloat("Horizontal FOV", &horizontalFOV, 55.0f, 110.0f))
+					App->camera->SetHorizontalFieldOfView(horizontalFOV * DEGTORAD, App->gui->image_size.x, App->gui->image_size.y);
+
+				ImGui::Spacing();
+				ImGui::Text("Vertical FOV: %.2f", App->camera->GetVerticalFieldOfView() * RADTODEG);
+			}
+			ImGui::Spacing();
+		}
+
+		if (ImGui::CollapsingHeader("Hardware"))
+		{
+			ImVec4 values_color(1.0f, 1.0f, 0.0f, 1.0f);
+
+			//SDL Version
+			SDL_version version;
+			SDL_GetVersion(&version);
+			ImGui::Text("SDL Version:");
+			ImGui::SameLine();
+			ImGui::TextColored(values_color, "%d.%d.%d", version.major, version.minor, version.patch);
+
+			ImGui::Spacing();
+			ImGui::Separator();
+			ImGui::Spacing();
+
+			//Hardware
+			static Specs specs = App->GetSpecs();
+			//CPU
+			ImGui::Text("CPUs:");
+			ImGui::SameLine();
+			ImGui::TextColored(values_color, "%d (Cache: %dkb)", specs.cpu_count, specs.cache);
+			//RAM
+			ImGui::Text("System RAM:");
+			ImGui::SameLine();
+			ImGui::TextColored(values_color, "%.1f Gb", specs.ram);
+			//Caps
+			ImGui::Text("Caps:");
+			ImGui::SameLine();
+			ImGui::TextColored(values_color, "%s", specs.caps.c_str());
+
+			ImGui::Spacing();
+			ImGui::Separator();
+			ImGui::Spacing();
+
+			//GPU
+			ImGui::Text("GPU:");
+			ImGui::SameLine();
+			ImGui::TextColored(values_color, "%s", specs.gpu);
+
+			ImGui::Text("Brand:");
+			ImGui::SameLine();
+			ImGui::TextColored(values_color, "%s", specs.gpu_brand);
+
+			//VRAM
+			GLint vram_budget, vram_usage, vram_available, vram_reserved;
+
+			GetMemoryStatistics(specs.gpu_brand, vram_budget, vram_usage, vram_available, vram_reserved);
+
+			ImGui::Text("VRAM Budget:");
+			ImGui::SameLine();
+			ImGui::TextColored(values_color, "%.1f Mb", vram_budget * 0.001f);
+
+			ImGui::Text("VRAM Available:");
+			ImGui::SameLine();
+			ImGui::TextColored(values_color, "%.1f Mb", vram_available * 0.001f);
+
+		}
+
+		if (ImGui::CollapsingHeader("Input"))
+		{
+			ImGui::Text("Mouse X: %d", App->input->GetMouseX());
+			ImGui::Text("Mouse Y: %d", App->input->GetMouseY());
+
+			ImGui::Spacing();
+
+			ImGui::Text("Current Window Mouse X: %.2f", App->gui->mouseScenePosition.x);
+			ImGui::Text("Current Window Mouse Y: %.2f", App->gui->mouseScenePosition.y);
+
+			ImGui::Spacing();
+
+			ImGui::Text("Normalized Mouse X: %.2f", App->gui->mouseScenePosition.x / App->gui->image_size.x);
+			ImGui::Text("Normalized Mouse Y: %.2f", App->gui->mouseScenePosition.y / App->gui->image_size.y);
+
+			ImGui::Spacing();
+
+			float normalized_x = App->gui->mouseScenePosition.x / App->gui->image_size.x;
+			float normalized_y = App->gui->mouseScenePosition.y / App->gui->image_size.y;
+
+			normalized_x = (normalized_x - 0.5f) * 2.0f;
+			normalized_y = -(normalized_y - 0.5f) * 2.0f;
+
+			ImGui::Text("Near Plane Mouse X: %.2f", normalized_x);
+			ImGui::Text("Near Plane Mouse Y: %.2f", normalized_y);
+		}
+
+		if (ImGui::CollapsingHeader("Time"))
+		{
+			ImGui::Text("Frame Count: %d", Time::frameCount);
+
+			ImGui::Spacing();
+			ImGui::Separator();
+
+			ImGui::Text("Real Time");
+			ImGui::Spacing();
+			ImGui::Text("Delta Time: %.3f", Time::realClock.dt);
+			ImGui::Text("Time Since Startup %.3f", Time::realClock.timeSinceStartup());
+
+			ImGui::Spacing();
+			ImGui::Separator();
+
+			ImGui::Text("Game Time");
+			ImGui::Spacing();
+			ImGui::Text("Delta time %.3f", Time::gameClock.dt);
+			ImGui::Text("Time Scale: %.2f", Time::gameClock.timeScale);
+			ImGui::Text("Time since game start: %.2f", Time::gameClock.timeSinceStartup());
+		}
+
+		if (ImGui::CollapsingHeader("File Manager"))
+		{
+			//ImGui::Checkbox("Normalize imported meshes", &FileManager::normalize_scales);
+		}
+
 	}
-
-	if (CollapsingHeader("Window"))
-	{
-		int values = 1.000;
-
-		//Checkbox("Active");
-		Text("Icon: *default*");
-
-		if (SliderFloat("Brightness", &App->window->brightness, 0.0f, 1.0f))
-		{
-			SDL_SetWindowBrightness(App->window->window, App->window->brightness);
-			SDL_UpdateWindowSurface(App->window->window);
-		}
-
-
-		if (SliderInt("Width", &App->window->width, 1, 2000) || SliderInt("Height", &App->window->height, 1, 2000))
-		{
-			SDL_SetWindowSize(App->window->window, App->window->width, App->window->height);
-			SDL_UpdateWindowSurface(App->window->window);
-		}
-
-		if (Checkbox("Fullscreen", &App->window->fullscreen))
-		{
-			if (App->window->fullscreen)
-				SDL_SetWindowFullscreen(App->window->window, SDL_WINDOW_FULLSCREEN);
-			else
-				SDL_SetWindowFullscreen(App->window->window, App->window->flags);
-		}
-		if (Checkbox("Borderless", &App->window->borderless))
-		{
-			SDL_SetWindowBordered(App->window->window, (SDL_bool)!App->window->borderless);
-		}
-		SameLine();
-		if (Checkbox("Fullscreen Desktop", &App->window->fullscreen_desktop))
-		{
-			if (App->window->fullscreen_desktop)
-				SDL_SetWindowFullscreen(App->window->window, SDL_WINDOW_FULLSCREEN_DESKTOP);
-			else
-				SDL_SetWindowFullscreen(App->window->window, App->window->flags);
-		}
-		ImGui::Text("Theme: ");
-		SameLine();
-		if (ImGui::SmallButton("Dark")) ImGui::StyleColorsDark();
-		SameLine();
-		if (ImGui::SmallButton("Light")) ImGui::StyleColorsLight();
-		SameLine();
-		if (ImGui::SmallButton("Classic")) ImGui::StyleColorsClassic();	
-	}
-
-	if (CollapsingHeader("3D Renderer"))
-	{
-		if (Checkbox("Depth test", &depth_test))
-		{
-			if (depth_test)
-				glDisable(GL_DEPTH_TEST);
-			else
-				glEnable(GL_DEPTH_TEST);
-		}
-		if (Checkbox("Backface culling", &cull_face))
-		{
-			if (cull_face)
-				glDisable(GL_CULL_FACE);
-			else
-				glEnable(GL_CULL_FACE);
-		}
-		if (Checkbox("Lightning", &lightning))
-		{
-			if (lightning)
-				glEnable(GL_LIGHTING);
-			else
-				glDisable(GL_LIGHTING);
-		}
-		if (Checkbox("Color material", &color_material))
-		{
-			if (color_material)
-				glDisable(GL_COLOR_MATERIAL);
-			else
-				glEnable(GL_COLOR_MATERIAL);
-		}
-		if (Checkbox("Texture 2D", &texture2D))
-		{
-			if (texture2D)
-				glEnable(GL_TEXTURE_2D);
-			else
-				glDisable(GL_TEXTURE_2D);
-		}
-		if (Checkbox("Wireframe", &wireframe))
-		{
-			if (wireframe)
-				glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-			else
-				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		}
-	}
-
-	if (CollapsingHeader("File System"))
-	{
-		Text("Base Path:");
-		TextColored(ImVec4(1.0f, 1.0f, 0.5f, 1.0f), "%s", SDL_GetBasePath());
-		Text("Read Paths:");
-		TextColored(ImVec4(1.0f, 1.0f, 0.5f, 1.0f), ".");
-		Text("Write Paths:");
-		TextColored(ImVec4(1.0f, 1.0f, 0.5f, 1.0f), ".");
-	}
-
-	if (CollapsingHeader("Input"))
-	{
-		//Checkbox("Active");
-		Text("Mouse Position:");
-		SameLine();
-		TextColored(ImVec4(1.0f, 1.0f, 0.5f, 1.0f), "%i,%i", App->input->GetMouseX(), App->input->GetMouseY());
-		Text("Mouse Motion:");
-		SameLine();
-		TextColored(ImVec4(1.0f, 1.0f, 0.5f, 1.0f), "%i,%i", App->input->GetMouseXMotion(), App->input->GetMouseYMotion());
-		Text("Mouse Wheel:");
-		SameLine();
-		TextColored(ImVec4(1.0f, 1.0f, 0.5f, 1.0f), "%i", App->input->GetMouseZ());
-		Separator();
-		Text("Show Mouse Historial");
-	}
-
-	if (CollapsingHeader("Hardware"))
-	{
-		//Checkbox("Active");
-		Text("SDL Version:");
-		SameLine();
-		TextColored(ImVec4(1.0f, 1.0f, 0.5f, 1.0f), "%d.%d.%d", sdlVersion.major, sdlVersion.minor, sdlVersion.patch);
-		Text("OpenGL version supported:");
-		SameLine();
-		TextColored(ImVec4(1.0f, 1.0f, 0.5f, 1.0f), "%s", glGetString(GL_VERSION));
-		Text("GLSL:");
-		SameLine();
-		TextColored(ImVec4(1.0f, 1.0f, 0.5f, 1.0f), "%s", glGetString(GL_SHADING_LANGUAGE_VERSION));
-		Text("ImGui version:");
-		SameLine();
-		TextColored(ImVec4(1.0f, 1.0f, 0.5f, 1.0f), IMGUI_VERSION);
-
-		Separator();
-		Text("CPUs:");
-		SameLine();
-		TextColored(ImVec4(1.0f, 1.0f, 0.5f, 1.0f), "%i (Cache:%ikb)", cpu_count, cpu_cache);
-		Text("System RAM:");
-		SameLine();
-		TextColored(ImVec4(1.0f, 1.0f, 0.5f, 1.0f), "%iGb", ram);
-		Text("Caps: ");
-		SameLine();
-		if (SDL_HasAVX)
-			TextColored(ImVec4(1.0f, 1.0f, 0.5f, 1.0f), "AVX");
-		SameLine();
-		if (SDL_HasMMX)
-			TextColored(ImVec4(1.0f, 1.0f, 0.5f, 1.0f), "MMX");
-		SameLine();
-		if (SDL_HasSSE)
-			TextColored(ImVec4(1.0f, 1.0f, 0.5f, 1.0f), "SSE");
-		SameLine();
-		if (SDL_HasSSE2)
-			TextColored(ImVec4(1.0f, 1.0f, 0.5f, 1.0f), "SSE2");
-		SameLine();
-		if (SDL_HasSSE3)
-			TextColored(ImVec4(1.0f, 1.0f, 0.5f, 1.0f), "SSE3");
-		SameLine();
-		if (SDL_HasSSE41)
-			TextColored(ImVec4(1.0f, 1.0f, 0.5f, 1.0f), "SSE4");
-		SameLine();
-		if (SDL_HasSSE42)
-			TextColored(ImVec4(1.0f, 1.0f, 0.5f, 1.0f), "SSE42");
-		SameLine();
-		if (SDL_HasRDTSC)
-			TextColored(ImVec4(1.0f, 1.0f, 0.5f, 1.0f), "RDTSC");
-
-		Separator();
-		Text("GPU:");
-		SameLine();
-		TextColored(ImVec4(1.0, 1.0f, 0.5f, 1.0f), "%s", glGetString(GL_VENDOR));
-		Text("Brand:");
-		SameLine();
-		TextColored(ImVec4(1.0, 1.0f, 0.5f, 1.0f), "%s", glGetString(GL_RENDERER));
-		Text("VRAM Budget:");
-		SameLine();
-		TextColored(ImVec4(1.0, 1.0f, 0.5f, 1.0f), "%.1f Mb", (total_memory * 0.001));
-		Text("VRAM Usage:");
-		SameLine();
-		TextColored(ImVec4(1.0, 1.0f, 0.5f, 1.0f), "%.1f Mb", (memory_usage * 0.001));
-		Text("VRAM Available:");
-		SameLine();
-		TextColored(ImVec4(1.0, 1.0f, 0.5f, 1.0f), "%.1f Mb", (available_memory * 0.001));
-		Text("GPU:");
-		SameLine();
-		TextColored(ImVec4(1.0, 1.0f, 0.5f, 1.0f), "%.1f Mb", (dedicated_memory * 0.001));
-	}
-
 	ImGui::End();
+}
+
+void GuiConfiguration::GetMemoryStatistics(const char* gpu_brand, GLint& vram_budget, GLint& vram_usage, GLint& vram_available, GLint& vram_reserved)
+{
+	if (strcmp(gpu_brand, "NVIDIA Corporation") == 0)
+	{
+		glGetIntegerv(GL_GPU_MEMORY_INFO_TOTAL_AVAILABLE_MEMORY_NVX, &vram_budget);
+		glGetIntegerv(GL_GPU_MEMORY_INFO_DEDICATED_VIDMEM_NVX, &vram_usage);
+		glGetIntegerv(GL_GPU_MEMORY_INFO_CURRENT_AVAILABLE_VIDMEM_NVX, &vram_available);
+		glGetIntegerv(GL_GPU_MEMORY_INFO_EVICTED_MEMORY_NVX, &vram_reserved);
+	}
+	else if (strcmp(gpu_brand, "ATI Technologies") == 0)
+	{
+		//glGetIntegerv(GL_GPU_MEMORY_INFO_TOTAL_AVAILABLE_MEMORY_NVX, &vram_budget);
+		vram_budget = -1;
+		//glGetIntegerv(GL_GPU_MEMORY_INFO_DEDICATED_VIDMEM_NVX, &vram_usage);
+		vram_usage = -1;
+		glGetIntegerv(GL_VBO_FREE_MEMORY_ATI, &vram_available);
+		//glGetIntegerv(GL_GPU_MEMORY_INFO_EVICTED_MEMORY_NVX, &vram_reserved);
+		vram_reserved = -1;
+	}
 }

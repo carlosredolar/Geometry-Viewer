@@ -1,50 +1,62 @@
-#pragma once
-#ifndef __Component_Transform_H__
+#ifndef __TRANSFORM_H__
+#define __TRANSFORM_H__
 
 #include "Component.h"
-#include "GameObject.h"
-#include "Globals.h"
 #include "MathGeoLib/include/MathGeoLib.h"
+
+class Component_Mesh;
+class JsonArray;
 
 class Component_Transform : public Component {
 public:
-
-	//Constructor
-	Component_Transform(GameObject* ownerGameObject, bool enabled = true);
-
-	//Destructor
+	Component_Transform();
+	Component_Transform(float3 position, Quat rotation, float3 scale);
 	~Component_Transform();
 
-	//Update
 	void Update() override;
+	void OnGUI() override;
 
-	void SetTransform(float4x4 transform);
-	void SetTransform(float3 pos, Quat rotation, float3 scale);
-	void SetTransform(float3 pos, float3 rotation, float3 scale);
+	void Save(JsonArray& save_array) override;
+	void Load(JsonObj& load_object) override;
 
-	void CleanUp();
+	void Set(float4x4 transform);
 
-	float4x4	GetLocalTransform();
-	float4x4	GetGlobalTransform();
-	void		UpdateLocalTransform();
-	void		UpdateGlobalTransform(float4x4);
+	float4x4 GetLocalTransform();
+	float4x4 GetGlobalTransform();
+	void SetGlobalTransform(float4x4 newTransform);
 
-	float3		GetPosition() const;
-	Quat		GetRotation() const;
-	float3		GetRotationEuler() const;
-	float3		GetScale() const;
+	void UpdateLocalTransform();
+	void UpdateTRS();
+	void UpdateGlobalTransform();
+	void UpdateGlobalTransform(float4x4 parentGlobalTransform);
+	void ChangeParentTransform(float4x4 newParentGlobalTransform);
+
+	void ResetTransform();
+
+	void SetPosition(float x, float y, float z);
+	void SetPosition(float3 new_position);
+	float3 GetPosition();
+
+	void SetRotation(float x, float y, float z);
+	void SetRotation(Quat new_rotation);
+	void SetRotation(float i, float j, float k, float w);
+	Quat GetRotation();
+	void UpdateEulerRotation();
+
+	void SetScale(float x, float y, float z);
+	void SetScale(float3 new_scale);
+	void SetProportionalScale(float multiplier);
+	float3 GetScale();
 
 private:
+	float4x4 _localTransform = float4x4::identity;
+	float4x4 _globalTransform = float4x4::identity;
+	float4x4 _parentGlobalTransform = float4x4::identity;
 
-	void GenerateEulerFromRot();
-
-	//Transformation values
-	float4x4 localTransform;
-	float4x4 globalTransform;
 	float3 position;
-	Quat rotation;
-	float3 scale;
-	float3 rotationEuler;
+	Quat _rotation;
+	float3 _scale;
+	float3 _eulerRotation;
 };
 
-#endif // !__Component_Transform_H__
+#endif //__TRANSFORM_H__

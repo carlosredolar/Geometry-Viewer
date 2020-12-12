@@ -1,49 +1,49 @@
 #pragma once
-#ifndef __COMPONENT_H__
-#define __COMPONENT_H__
+#include "Globals.h"
+#include <string>
 
 class GameObject;
+class JsonObj;
+class JsonArray;
+class Resource;
+enum ResourceType;
 
-class Component {
-
-public:
-
-	static enum class COMPONENT_TYPE {
-		TRANSFORM,
-		MESH,
-		TEXTURE,
-		NONE
-	};
-
-	//Constructor
-	Component(COMPONENT_TYPE type, GameObject* ownerGameObject, bool enabled = true);
-
-	//Destructor
-	~Component();
-
-	//Update
-	virtual void Update();
-
-	//Enable Component
-	virtual void Enable();
-
-	//Disable Component
-	virtual void Disable();
-
-	//Check if component is enabled
-	virtual bool IsEnabled();
-
-	//Get component type
-	COMPONENT_TYPE GetType();
-
-	//Public variables
-	bool enabled;
-	GameObject* ownerGameObject;
-
-private:
-
-	COMPONENT_TYPE	type;
-
+enum ComponentType {
+	TRANSFORM,
+	MESH,
+	MATERIAL, 
+	CAMERA, 
+	LIGHT
 };
 
-#endif // !__COMPONENT_H_
+class Component {
+public: 
+	Component(ComponentType type);
+	Component(ComponentType type, GameObject* gameObject);
+	virtual ~Component();
+	virtual void Update();
+	virtual void Enable();
+	virtual void Disable();
+
+	virtual void Save(JsonArray& save_array) {};
+	virtual void Load(JsonObj& load_object) {};
+
+	bool IsEnabled();
+	ComponentType GetType();
+	virtual void OnGUI() = 0;
+
+	void SetGameObject(GameObject* gameObject);
+	GameObject* GetGameObject();
+	virtual void SetResourceUID(uint UID);
+	virtual Resource* GetResource(ResourceType type) { return nullptr; };
+
+public:
+	std::string name;
+
+protected:
+	ComponentType type;
+	GameObject* ownerGameObject;
+	bool enabled;
+
+	uint _resourceUID;
+};

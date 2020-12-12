@@ -1,65 +1,79 @@
 #pragma once
+
 #ifndef __GAMEOBJECT_H__
 #define __GAMEOBJECT_H__
 
-#include <vector>
+#include "Globals.h"
 #include "Component.h"
+
+#include <vector>
 #include <string>
 
-class GameObject
-{
-public:
-	//Constructor
-	GameObject(const char* name, GameObject* parent, bool enabled = true);
+#include "MathGeoLib/include/MathGeoLib.h"
 
-	//Destructor
+class Component_Transform;
+class Component_Mesh;
+
+class JsonObj;
+class JsonArray;
+
+class GameObject {
+public:
+	GameObject();
+	GameObject(Component_Mesh* mesh);
 	~GameObject();
 
-	void Update(); //Update childs and components
-	void Enable(); //Enable GameObject
-	void Disable(); //Disable GameObject
-	bool IsEnabled(); //Return if enabled
+	void Update();
+	bool IsVisible();
+	void OnGUI();
 
-	GameObject* const GetParent() const; //Get it's parent
-	void AddGameObjectAsChild(GameObject* gameObject); //Add another GameObject as a child
-	void ChangeParent(GameObject* newParent); //Change parent
+	void Save(JsonArray& save_array);
+	uint Load(JsonObj* object);
+	uint LoadNodeData(JsonObj* object);
 
-	std::vector<GameObject*>* const GetChilds(); //Get a pointer to this game object childs vector
-	void SeparateChild(GameObject* child); //Separate child from this game object
-	void DeleteChild(GameObject* child);//Delete child
-	void GetChildsNewParent();	//Send this game object childs to this parent
+	//GameObject functions
+	void SetName(const char* nameGameObject);
+	const char* GetName();
+	void SetTransform(Component_Transform transform);
+	Component_Transform* GetTransform();
 
-	//Add a component to this game object
-	Component* CreateComponent(Component::COMPONENT_TYPE type);
-
-	//Check and add component
-	void CheckAddComponent(Component* new_comp);
-
-	//Get a pointer to this game object components vector
-	std::vector<Component*>* const GetComponents();
-
-	//Get the component between <>
+	//Component functions
+	std::vector<Component*> GetComponents();
+	Component* AddComponent(ComponentType type);
+	void AddComponent(Component* component);
+	bool DeleteComponent(Component* component);
 	template<typename Type>
-	Type* GetComponent();
+	Type* GetComponent(); 	//Get the component between <>
+	
+	//Children functions
+	void AddChild(GameObject* child);
+	int GetChildrenAmount();
+	GameObject* GetChildAt(int index);
+	bool RemoveChild(GameObject* gameObject);
+	void DeleteAllChildren();
+	void UpdateChildrenTransforms();
 
-	//Get a reference to this game object name
-	const char* const GetName();
+	//Parent functions
+	GameObject* GetParent();
+	void SetParent(GameObject* parentGameObject);
+	void ChangeParent(GameObject* newParent);
 
-	//Change game object's name. Passed by reference
-	void ChangeName(char* new_name);
+public: 
+	uint UUID = 0;
 
-	void DeleteComponents();
+	bool toDelete;
 
-	int id;
-
-	bool selected;
+	OBB obb;
+	AABB aabb;
 
 private:
-	GameObject*					parent;
-	std::string					name;
-	bool						enabled;
-	std::vector<Component*>		components;
-	std::vector<GameObject*>	childs;
+	bool enabled;
+	bool isVisible;
+	std::string name;
+	GameObject* parent;
+	Component_Transform* transform;
+	std::vector<Component*> components;
+	std::vector<GameObject*> children;
 };
 
 template<typename Type>

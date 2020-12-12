@@ -2,16 +2,22 @@
 
 class Application;
 
+class JsonObj;
+
 class Module
 {
 private :
 	bool enabled;
 
-public:
-	Application* App;
+public: 
+	const char* name = "No Name Module";
 
-	Module(Application* parent, bool start_enabled = true) : App(parent)
-	{}
+public:
+
+	Module(bool start_enabled = true) 
+	{
+		enabled = true;
+	}
 
 	virtual ~Module()
 	{}
@@ -19,6 +25,11 @@ public:
 	virtual bool Init() 
 	{
 		return true; 
+	}
+
+	virtual bool LoadConfig(JsonObj& object)
+	{
+		return true;
 	}
 
 	virtual bool Start()
@@ -40,6 +51,8 @@ public:
 	{
 		return UPDATE_CONTINUE;
 	}
+
+	virtual void OnFrameEnd() {}
 
 	virtual bool CleanUp() 
 	{ 

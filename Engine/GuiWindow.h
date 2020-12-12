@@ -1,20 +1,24 @@
-#ifndef __GUIWINDOW_H__
-#define __GUIWINDOW_H__
+#pragma once
 
-#include "SDL/include/SDL.h"
-
-class GuiWindow
-{
-public:
-	GuiWindow();
-	virtual ~GuiWindow();
-
-	virtual bool IsActive();
-	virtual void Draw() = 0;
-
-
-public:
-	bool is_on = false;
+enum WindowType {
+	HIERARCHY_WINDOW,
+	INSPECTOR_WINDOW,
+	SCENE_WINDOW,
+	//CONSOLE_WINDOW,
+	ASSETS_WINDOW,
+	CONFIGURATION_WINDOW,
+	IMPORT_WINDOW,
+	MAX_WINDOWS
 };
 
-#endif 
+class GuiWindow {
+public:
+	GuiWindow() : visible(false){};
+	virtual ~GuiWindow() {};
+	virtual bool Init() { return true; };
+	virtual void Draw() = 0;
+
+public:
+	bool visible;
+	WindowType type = MAX_WINDOWS;
+};
