@@ -41,5 +41,5 @@ GameObject* Component::GetGameObject()
 
 void Component::SetResourceUID(uint UID)
 {
-    _resourceUID = UID;
+    resourceUID = UID;
 }

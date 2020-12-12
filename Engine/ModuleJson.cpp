@@ -32,11 +32,7 @@ JsonObj::~JsonObj()
 {
 	objectObj = nullptr;
 
-	if (rootObj != nullptr)
-	{
-		//json_value_free(rootObj);
-		rootObj = nullptr;
-	}
+	if (rootObj != nullptr)	rootObj = nullptr;
 }
 
 void JsonObj::Release()

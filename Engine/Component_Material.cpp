@@ -10,7 +10,7 @@
 #include "ResourceMaterial.h"
 #include "GuiAssets.h"
 
-Component_Material::Component_Material() : Component(ComponentType::MATERIAL), checkersImageActive(false), _resource(nullptr), colored(false), _diffuseTexture(nullptr)
+Component_Material::Component_Material() : Component(ComponentType::MATERIAL), checkersImageActive(false), materialResource(nullptr), colored(false), _diffuseTexture(nullptr)
 {
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 	glGenTextures(1, &checkersID);
@@ -25,7 +25,7 @@ Component_Material::Component_Material() : Component(ComponentType::MATERIAL), c
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-Component_Material::Component_Material(GameObject* gameObject) : Component(ComponentType::MATERIAL, gameObject), checkersImageActive(false), _resource(nullptr), colored(false), _diffuseTexture(nullptr)
+Component_Material::Component_Material(GameObject* gameObject) : Component(ComponentType::MATERIAL, gameObject), checkersImageActive(false), materialResource(nullptr), colored(false), _diffuseTexture(nullptr)
 {
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 	glGenTextures(1, &checkersID);
@@ -42,10 +42,10 @@ Component_Material::Component_Material(GameObject* gameObject) : Component(Compo
 
 Component_Material::~Component_Material()
 {
-	if (_resource != nullptr)
+	if (materialResource != nullptr)
 	{
-		App->resources->ReleaseResource(_resourceUID);
-		_resource = nullptr;
+		App->resources->ReleaseResource(resourceUID);
+		materialResource = nullptr;
 
 		if (_diffuseTexture != nullptr)
 		{
@@ -61,15 +61,15 @@ void Component_Material::Update() {}
 
 void Component_Material::SetResourceUID(uint UID)
 {
-	_resourceUID = UID;
-	_resource = dynamic_cast<ResourceMaterial*>(App->resources->RequestResource(UID));
+	resourceUID = UID;
+	materialResource = dynamic_cast<ResourceMaterial*>(App->resources->RequestResource(UID));
 
-	if (_resource->diffuseTextureUID != 0)
+	if (materialResource->diffuseTextureUID != 0)
 	{
 		if (_diffuseTexture != nullptr)
 			App->resources->ReleaseResource(_diffuseTexture->GetUID());
 
-		_diffuseTexture = dynamic_cast<ResourceTexture*>(App->resources->RequestResource(_resource->diffuseTextureUID));
+		_diffuseTexture = dynamic_cast<ResourceTexture*>(App->resources->RequestResource(materialResource->diffuseTextureUID));
 	}
 
 	if (_diffuseTexture == nullptr)
@@ -89,7 +89,7 @@ void Component_Material::Save(JsonArray& save_array)
 	JsonObj save_object;
 
 	save_object.AddInt("Type", type);
-	save_object.AddInt("Material UID", _resource->GetUID());
+	save_object.AddInt("Material UID", materialResource->GetUID());
 
 	if (_diffuseTexture != nullptr)
 		save_object.AddInt("Texture UID", _diffuseTexture->GetUID());
@@ -100,13 +100,13 @@ void Component_Material::Save(JsonArray& save_array)
 void Component_Material::Load(JsonObj& load_object)
 {
 	int materialUID = load_object.GetInt("Material UID");
-	_resource = (ResourceMaterial*)App->resources->RequestResource(materialUID);
+	materialResource = (ResourceMaterial*)App->resources->RequestResource(materialUID);
 
 	int textureUID = load_object.GetInt("Texture UID", -1);
 
-	if (_resource != nullptr && textureUID != -1) 
+	if (materialResource != nullptr && textureUID != -1) 
 	{
-		_resource->diffuseTextureUID = textureUID;
+		materialResource->diffuseTextureUID = textureUID;
 		_diffuseTexture = (ResourceTexture*)App->resources->RequestResource(textureUID);
 	}
 
@@ -194,7 +194,7 @@ void Component_Material::OnGUI()
 			}
 		}
 
-		ImGui::Text("UID: %d", _resourceUID);
+		ImGui::Text("UID: %d", resourceUID);
 	}
 }
 
