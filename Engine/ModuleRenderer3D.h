@@ -11,6 +11,7 @@ typedef unsigned int GLenum;
 typedef unsigned char GLubyte;
 typedef void* SDL_GLContext;
 class Component_Camera;
+struct ImVec4;
 
 enum DisplayMode
 {
@@ -34,7 +35,7 @@ public:
 	void OnResize(int width, int height);
 	void UpdateProjectionMatrix(float* projectionMatrix);
 
-	void DrawAABB(float3* aabb);
+	void DrawAABB(float3* aabb, ImVec4 color);
 	DisplayMode GetDisplayMode();
 	void SetDisplayMode(DisplayMode display);
 	void SetMainCamera(Component_Camera* camera);

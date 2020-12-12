@@ -66,7 +66,9 @@ void GameObject::Update()
 
 					if (App->scene->showBB)
 					{
-						App->renderer3D->DrawAABB(cornerPoints);
+						ImVec4 color = ImGui::GetStyleColorVec4(ImGuiCol_Button);
+
+						App->renderer3D->DrawAABB(cornerPoints, color);
 					}
 					
 

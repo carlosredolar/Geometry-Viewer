@@ -244,8 +244,10 @@ void ModuleRenderer3D::UpdateProjectionMatrix(float* projectionMatrix)
 	glLoadMatrixf(App->camera->GetProjectionMatrix());
 }
 
-void ModuleRenderer3D::DrawAABB(float3* cornerPoints)
+void ModuleRenderer3D::DrawAABB(float3* cornerPoints, ImVec4 color)
 {
+	glDisable(GL_LIGHTING);
+	glColor3f(color.x, color.y, color.z);
 	glBegin(GL_LINES);
 
 	glVertex3f(cornerPoints[0].x, cornerPoints[0].y, cornerPoints[0].z);
@@ -285,6 +287,8 @@ void ModuleRenderer3D::DrawAABB(float3* cornerPoints)
 	glVertex3f(cornerPoints[3].x, cornerPoints[3].y, cornerPoints[3].z);
 
 	glEnd();
+	glColor3f(1.0f, 1.0f, 1.0f);
+	glEnable(GL_LIGHTING);
 }
 
 DisplayMode ModuleRenderer3D::GetDisplayMode() { return display_mode; }
