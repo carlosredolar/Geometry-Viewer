@@ -151,7 +151,7 @@ update_status ModuleCamera3D::Update(float dt)
 		SelectGO();
 	}
 		
-	
+	RenderRay();
 
 	position += newPos;
 	camera->SetPosition(position);
@@ -278,7 +278,8 @@ void ModuleCamera3D::SetBackgroundColor(float r, float g, float b, float w)
 	background = { r,g,b,w };
 }
 
-GameObject* ModuleCamera3D::SelectGO() {
+GameObject* ModuleCamera3D::SelectGO() 
+{
 
 	float normalized_x = App->gui->mouseScenePosition.x / App->gui->image_size.x;
 	float normalized_y = App->gui->mouseScenePosition.y / App->gui->image_size.y;
@@ -287,13 +288,17 @@ GameObject* ModuleCamera3D::SelectGO() {
 
 	ray = LineSegment();
 
-	glBegin(GL_LINES);
-	glVertex3f(ray.a.x, ray.a.y, ray.a.z);
-	glVertex3f(ray.b.x, ray.b.y, ray.b.z);
-	glEnd();
-
 	LOG("X: %.1f Y: %.1f", normalized_x, normalized_y);
 
 	return nullptr;
+}
+
+void ModuleCamera3D::RenderRay() 
+{
+	glBegin(GL_LINES);
+	//glColor3f(1.0f, 1.0f, 1.0f);
+	glVertex3f(ray.a.x, ray.a.y, ray.a.z);
+	glVertex3f(ray.b.x, ray.b.y, ray.b.z);
+	glEnd();
 }
 

@@ -39,6 +39,8 @@ public:
 	void SetVerticalFieldOfView(float verticalFOV, int screen_width, int screen_height);
 	void SetHorizontalFieldOfView(float horizontalFOV, int screen_width, int screen_height);
 
+	void RenderRay();
+
 	void Reset();
 	void SetBackgroundColor(float r, float g, float b, float w);
 
