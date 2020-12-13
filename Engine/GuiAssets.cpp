@@ -31,15 +31,15 @@ void GuiAssets::Draw()
         ImGuiWindowFlags windowFlags = ImGuiWindowFlags_AlwaysVerticalScrollbar;
 
         ImGui::BeginChild("Tree", ImVec2(ImGui::GetWindowContentRegionWidth() * 0.15f, ImGui::GetContentRegionAvail().y), false, windowFlags);
-		ImGui::Text("Assets");
+		if (ImGui::Button("Assets")) currentFolder = "Assets";
+
 		RenderDirectory("Assets", nullptr);
         ImGui::EndChild();
 
 		ImGui::SameLine();
-        ImGui::BeginChild("Folder", ImVec2(0, ImGui::GetContentRegionAvail().y), true);
+		ImGui::BeginChild("Folder", ImVec2(0, ImGui::GetContentRegionAvail().y), true);
 		RenderFolder();
-
-        ImGui::EndChild();
+		ImGui::EndChild();
 	}
 	ImGui::End();
 }

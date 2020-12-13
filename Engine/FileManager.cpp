@@ -48,7 +48,6 @@ void FileManager::GetPhysFSVersion(std::string& version_str)
 
 void FileManager::CreateLibraryDirectories()
 {
-	CreateDir("Assets/Config/");
 	CreateDir("Assets/Textures/");
 	CreateDir("Assets/Models/");
 	CreateDir("Assets/Scenes/");

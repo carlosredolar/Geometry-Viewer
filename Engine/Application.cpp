@@ -95,7 +95,7 @@ bool Application::Init()
 	uint size = FileManager::Load("Library/Config/config.json", &buffer);
 	JsonObj config(buffer);
 
-	engine_name = config.GetString("engineName", "Genesis Engine");
+	engine_name = config.GetString("engineName", "R-Engine");
 	engine_version = config.GetString("version", "0.0");
 
 	JsonArray modules_array(config.GetArray("modules_config"));

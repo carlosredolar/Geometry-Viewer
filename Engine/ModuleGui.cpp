@@ -287,20 +287,22 @@ bool ModuleGui::CreateMenuBar() {
 	{
 		if (ImGui::BeginMenu("File"))
 		{
-			if (ImGui::MenuItem("Save Scene"))
+			if (ImGui::MenuItem("Save"))
 			{
 				file_dialog = opened;
 				scene_operation = SceneOperation::SAVE;
 			}
-			else if (ImGui::MenuItem("Load Scene"))
+			else if (ImGui::MenuItem("Load"))
 			{
 				file_dialog = opened;
 				scene_operation = SceneOperation::LOAD;
 			}
-			else if (ImGui::MenuItem("Exit"))
+			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.972, 0.105, 0.105, 1.f));
+			if (ImGui::MenuItem("Quit"))
 			{
 				ret = false;
 			}
+			ImGui::PopStyleColor();
 			ImGui::EndMenu();
 		}
 	
@@ -347,9 +349,11 @@ bool ModuleGui::CreateMenuBar() {
 				windows[CONFIGURATION_WINDOW]->visible = !windows[CONFIGURATION_WINDOW]->visible;
 			ImGui::EndMenu();
 		}
-
+		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.95f, 0.5f, 0.07f, 1.0f));
 		if (ImGui::BeginMenu("About"))
 		{
+			ImGui::PopStyleColor();
+			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
 			ImGui::TextColored(ImVec4(0.95f, 0.5f, 0.07f, 1.0f), "R-Engine");
 			ImGui::Separator();
 
@@ -418,12 +422,9 @@ bool ModuleGui::CreateMenuBar() {
 			ImGui::TextWrapped("Copyright (c) 2020 oscarroyo4 & carlosredolar");
 			ImGui::Spacing();
 			ImGui::TextWrapped(
-				"Permission is hereby granted, free of charge, to any person obtaining a copy"
-				"of this software and associated documentation files Genesis Engine, to deal"
-				"in the Software without restriction, including without limitation the rights"
-				"to use, copy, modify, merge, publish, distribute, sublicense, and /or sell"
-				"copies of the Software, and to permit persons to whom the Software is"
-				"furnished to do so, subject to the following conditions : ");
+				"Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files R-Engine, to deal"
+				"in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and /or sell"
+				"copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions : ");
 			ImGui::Spacing();
 
 			ImGui::TextWrapped(
@@ -432,16 +433,13 @@ bool ModuleGui::CreateMenuBar() {
 			ImGui::Spacing();
 
 			ImGui::TextWrapped(
-				"THE SOFTWARE IS PROVIDED 'AS I', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR"
-				"IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,"
-				"FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE"
-				"AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER"
-				"LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,"
-				"OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE"
+				"THE SOFTWARE IS PROVIDED 'AS I', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,"
+				"FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER"
+				"LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE"
 				"SOFTWARE.");
 			ImGui::EndMenu();
 		}
-
+		ImGui::PopStyleColor();
 		ImGui::EndMainMenuBar();
 	}
 

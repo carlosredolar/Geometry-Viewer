@@ -88,20 +88,15 @@ private:
 private:
 	int	   argc;
 	char** args;
-
 	float	dt;
 	float	fps;
 	float	capped_ms;
 	std::vector<Module*> moudlesList;
-
 	const char* config_path;
-
 	bool wantToSave;
 	bool wantToLoad;
-
 	const char* fileToLoad;
 	const char* fileToSave;
-
 	std::stack<Module*> endFrameTasks;
 };
 

@@ -139,7 +139,7 @@ void GuiConfiguration::Draw()
 
 			ImGui::SliderFloat("Mouse Sensitivity", &App->camera->sensitivity, 0.0f, 50.0f);
 			ImGui::SliderFloat("Movement Speed", &App->camera->movementSpeed, 0.0f, 50.0f);
-			ImGui::SliderFloat("Drag Speed", &App->camera->orbitingSpeed, 0.0f, 10.0f);
+			ImGui::SliderFloat("Orbit Speed", &App->camera->orbitingSpeed, 0.0f, 10.0f);
 			ImGui::SliderFloat("Zoom Speed", &App->camera->zoomSpeed, 0.0f, 50.0f);
 
 			ImGui::Spacing();
