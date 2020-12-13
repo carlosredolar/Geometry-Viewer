@@ -12,26 +12,19 @@
 #include <string>
 #include <algorithm>
 
-#include "glew/include/glew.h"
+#include "Glew/include/glew.h"
 #include "ImGui/imgui_impl_sdl.h"
 #include "ImGui/imgui_impl_opengl3.h"
 
 #include "MathGeoLib/include/MathGeoLib.h"
 #include "Assimp/include/version.h"
 
-//Windows
 #include "GuiHierarchy.h"
 #include "GuiInspector.h"
 #include "GuiScene.h"
 #include "GuiAssets.h"
 #include "GuiConfiguration.h"
 #include "GuiImport.h"
-
-#ifdef _WIN32
-#define IM_NEWLINE  "\r\n"
-#else
-#define IM_NEWLINE  "\n"
-#endif
 
 ModuleGui::ModuleGui(bool start_enabled) : Module(start_enabled)
 {
@@ -40,7 +33,7 @@ ModuleGui::ModuleGui(bool start_enabled) : Module(start_enabled)
 	sceneWindowFocused = false;
 	showGameButtons = true;
 
-	image_size = { 0,0 };
+	sceneRenderSize = { 0,0 };
 
 	windows[HIERARCHY_WINDOW] = new GuiHierarchy();
 	windows[INSPECTOR_WINDOW] = new GuiInspector();
@@ -106,31 +99,31 @@ update_status ModuleGui::Draw()
 	PlayStopButtons();
 
 	//Console
-	if (show_console_window)
+	if (consoleWindow)
 	{
-		if (ImGui::Begin("Console", &show_console_window, ImGuiWindowFlags_MenuBar)) 
+		if (ImGui::Begin("Console", &consoleWindow, ImGuiWindowFlags_MenuBar)) 
 		{
 			if (ImGui::BeginMenuBar()) 
 			{
 				if (ImGui::MenuItem("Clear"))
 				{
-					console_log.clear();
+					consoleLog.clear();
 				}
 				ImGui::EndMenuBar();
 			}
 
-			for (int i = 0; i < console_log.size(); i++)
+			for (int i = 0; i < consoleLog.size(); i++)
 			{
-				if (console_log[i].warning_level == 0) //Normal log
+				if (consoleLog[i].warning_level == 0) //Normal log
 				{
-					ImGui::Text(console_log[i].log_text.c_str());
+					ImGui::Text(consoleLog[i].text.c_str());
 				}
-				else if (console_log[i].warning_level == 1) //Warning
+				else if (consoleLog[i].warning_level == 1) //Warning
 				{
-					ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), console_log[i].log_text.c_str());
+					ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), consoleLog[i].text.c_str());
 				}
 				else //Error
-					ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), console_log[i].log_text.c_str());
+					ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), consoleLog[i].text.c_str());
 			}
 
 			if (newLog)
@@ -142,9 +135,9 @@ update_status ModuleGui::Draw()
 		ImGui::End();
 	}
 
-	if (resources_window)
+	if (resourcesWindow)
 	{
-		if (ImGui::Begin("Resources", &resources_window))
+		if (ImGui::Begin("Resources", &resourcesWindow))
 		{
 			App->resources->OnGUI();
 		}
@@ -172,7 +165,7 @@ bool ModuleGui::CleanUp()
 	ImGui_ImplSDL2_Shutdown();
 	ImGui::DestroyContext();
 
-	console_log.clear();
+	consoleLog.clear();
 
 	for (size_t i = 0; i < MAX_WINDOWS; i++)
 	{
@@ -200,10 +193,10 @@ bool ModuleGui::LoadConfig(JsonObj& config)
 	windows[ASSETS_WINDOW]->visible = window.GetBool("visible");
 
 	window = jsonWindows.GetObjectInArray("console");
-	show_console_window = window.GetBool("visible");
+	consoleWindow = window.GetBool("visible");
 
 	window = jsonWindows.GetObjectInArray("resources");
-	resources_window = window.GetBool("visible");
+	resourcesWindow = window.GetBool("visible");
 
 	window = jsonWindows.GetObjectInArray("configuration");
 	windows[CONFIGURATION_WINDOW]->visible = window.GetBool("visible");
@@ -216,16 +209,23 @@ bool ModuleGui::IsSceneFocused()
 	return sceneWindowFocused;
 }
 
+void ModuleGui::ScreenResized(ImVec2 windowSize)
+{
+	sceneRenderSize = windowSize;
+
+	App->camera->ScreenResized(sceneRenderSize.x, sceneRenderSize.y);
+	App->renderer3D->ScreenResized(sceneRenderSize.x, sceneRenderSize.y);
+}
+
 bool ModuleGui::MouseOnScene()
 {
-	return mouseScenePosition.x > 0 && mouseScenePosition.x < image_size.x 
-		   && mouseScenePosition.y > 0 && mouseScenePosition.y < image_size.y;
+	return mouseScenePosition.x > 0 && mouseScenePosition.x < sceneRenderSize.x && mouseScenePosition.y > 0 && mouseScenePosition.y < sceneRenderSize.y;
 }
 
 void ModuleGui::AddConsoleLog(const char* log, int warning_level)
 {
-	log_message message = { log, warning_level };
-	console_log.push_back(message);
+	messageToLog message = { log, warning_level };
+	consoleLog.push_back(message);
 	
 	newLog = true;
 }
@@ -234,13 +234,12 @@ update_status ModuleGui::DockSpace(bool* p_open)
 {
 	update_status ret = UPDATE_CONTINUE;
 
-	static bool opt_fullscreen = true;
-	static bool opt_padding = false;
-	static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
+	static bool fullscreenSetting = true;
+	static bool paddingSetting = false;
+	static ImGuiDockNodeFlags dockspaceFlags = ImGuiDockNodeFlags_None;
+	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoDocking;
 
-	ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking;
-
-	if (opt_fullscreen)
+	if (fullscreenSetting)
 	{
 		ImGuiViewport* viewport = ImGui::GetMainViewport();
 		ImGui::SetNextWindowPos(viewport->GetWorkPos());
@@ -248,37 +247,33 @@ update_status ModuleGui::DockSpace(bool* p_open)
 		ImGui::SetNextWindowViewport(viewport->ID);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-		window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-		window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+		windowFlags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+		windowFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
 	}
 	else
 	{
-		dockspace_flags &= ~ImGuiDockNodeFlags_PassthruCentralNode;
+		dockspaceFlags &= ~ImGuiDockNodeFlags_PassthruCentralNode;
 	}
 
-	if (!opt_padding)
+	if (!paddingSetting)
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 
-	if(ImGui::Begin("DockSpace", p_open, window_flags)){
-		if (!opt_padding)
-			ImGui::PopStyleVar();
-
-		if (opt_fullscreen)
-			ImGui::PopStyleVar(2);
+	if (ImGui::Begin("DockSpace", p_open, windowFlags))
+	{
+		if (!paddingSetting) ImGui::PopStyleVar();
+		if (fullscreenSetting) ImGui::PopStyleVar(2);
 
 		// DockSpace
 		ImGuiIO& io = ImGui::GetIO();
 		if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
 		{
 			ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
-			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
+			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspaceFlags);
 		}
 
-		//main bar
-		if (CreateMenuBar())
-			ret = UPDATE_CONTINUE;
-		else
-			ret = UPDATE_STOP;
+		// Create main window bar
+		if (CreateMenuBar()) ret = UPDATE_CONTINUE;
+		else ret = UPDATE_STOP;
 	}
 	ImGui::End();
 
@@ -331,8 +326,6 @@ bool ModuleGui::CreateMenuBar() {
 				}
 				ImGui::EndMenu();
 			}
-
-
 			ImGui::EndMenu();
 		}
 
@@ -346,10 +339,10 @@ bool ModuleGui::CreateMenuBar() {
 				windows[SCENE_WINDOW]->visible = !windows[SCENE_WINDOW]->visible;
 			else if (ImGui::MenuItem("Assets", NULL, windows[ASSETS_WINDOW]->visible))
 				windows[ASSETS_WINDOW]->visible = !windows[ASSETS_WINDOW]->visible;
-			else if (ImGui::MenuItem("Console", NULL, show_console_window))
-				show_console_window = !show_console_window;
-			else if (ImGui::MenuItem("Resources", NULL, resources_window))
-				resources_window = !resources_window;
+			else if (ImGui::MenuItem("Console", NULL, consoleWindow))
+				consoleWindow = !consoleWindow;
+			else if (ImGui::MenuItem("Resources", NULL, resourcesWindow))
+				resourcesWindow = !resourcesWindow;
 			else if (ImGui::MenuItem("Configuration", NULL, windows[CONFIGURATION_WINDOW]->visible))
 				windows[CONFIGURATION_WINDOW]->visible = !windows[CONFIGURATION_WINDOW]->visible;
 			ImGui::EndMenu();
@@ -618,17 +611,7 @@ void ModuleGui::DrawDirectoryRecursive(const char* directory, const char* filter
 					App->Load(selected_file);
 				}
 			}
-
 			ImGui::TreePop();
 		}
 	}
 }
-
-void ModuleGui::OnResize(ImVec2 window_size)
-{
-	image_size = window_size;
-
-	App->camera->OnResize(image_size.x, image_size.y);
-	App->renderer3D->OnResize(image_size.x, image_size.y);
-}
-

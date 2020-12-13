@@ -150,7 +150,7 @@ void ModuleScene::EditTransform()
 		float4x4 objectTransform = selectedGameObject->GetTransform()->GetGlobalTransform().Transposed();
 
 		ImGuizmo::SetDrawlist();
-		ImGuizmo::SetRect(App->gui->sceneWindowOrigin.x, App->gui->sceneWindowOrigin.y, App->gui->image_size.x, App->gui->image_size.y);
+		ImGuizmo::SetRect(App->gui->sceneWindowOrigin.x, App->gui->sceneWindowOrigin.y, App->gui->sceneRenderSize.x, App->gui->sceneRenderSize.y);
 
 		float tempTransform[16];
 		memcpy(tempTransform, objectTransform.ptr(), 16 * sizeof(float));

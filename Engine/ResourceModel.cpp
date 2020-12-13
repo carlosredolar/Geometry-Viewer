@@ -1,52 +1,55 @@
 #include "ResourceModel.h"
 #include "Application.h"
 #include "ModuleJson.h"
-#include "ImportingSettings.h"
+
 #include "Component_Camera.h"
 #include "Component_Light.h"
 
-ResourceModel::ResourceModel(uint UID) : Resource(UID, ResourceType::RESOURCE_MODEL) {}
+#include "ImportingSettings.h"
+
+ResourceModel::ResourceModel(uint UID) : Resource(UID, ResourceType::RESOURCE_MODEL) 
+{}
 
 ResourceModel::~ResourceModel()
 {
-	nodes.clear();
-	meshes.clear();
-	materials.clear();
-	textures.clear();
+	for (size_t i = 0; i < cameras.size(); i++)
+	{
+		cameras[i] = nullptr;
+	}
 
 	for (size_t i = 0; i < lights.size(); i++)
 	{
 		lights[i] = nullptr;
 	}
-	lights.clear();
 
-	for (size_t i = 0; i < cameras.size(); i++)
-	{
-		cameras[i] = nullptr;
-	}
+	nodes.clear();
+	meshes.clear();
+	materials.clear();
+	textures.clear();
 	cameras.clear();
+	lights.clear();
 }
 
-uint ResourceModel::Save(JsonObj& base_object)
+uint ResourceModel::Save(JsonObj& savingObj)
 {
 	return 1;
 }
 
-uint ResourceModel::SaveMeta(JsonObj& base_object, uint last_modification)
+uint ResourceModel::SaveMeta(JsonObj& savingObj, uint lastMod)
 {
-	base_object.AddInt("UID", _uid);
-	base_object.AddString("Library path", App->resources->GetLibraryPath(_uid));
-	base_object.AddInt("lastModified", last_modification);
+	savingObj.AddInt("UID", _uid);
+	savingObj.AddString("Library path", App->resources->GetLibraryPath(_uid));
+	savingObj.AddInt("lastModified", lastMod);
 
-	ModelImportingSettings importingOptions = App->resources->modelImportSettings;
+	ModelImportingSettings importingSettings = App->resources->modelImportSettings;
 
-	base_object.AddFloat("global scale", (float)importingOptions.globalScale);
-	base_object.AddInt("forward axis", (int)importingOptions.forwardAxis);
-	base_object.AddInt("up axis", (int)importingOptions.upAxis);
-	base_object.AddBool("ignore cameras", importingOptions.ignoreCameras);
-	base_object.AddBool("ignore lights", importingOptions.ignoreLights);
+	savingObj.AddFloat("global scale", (float)importingSettings.globalScale);
+	savingObj.AddInt("forward axis", (int)importingSettings.forwardAxis);
+	savingObj.AddInt("up axis", (int)importingSettings.upAxis);
+	savingObj.AddBool("ignore cameras", importingSettings.ignoreCameras);
+	savingObj.AddBool("ignore lights", importingSettings.ignoreLights);
 
-	JsonArray nodes_array = base_object.AddArray("Nodes");
+	JsonArray nodes_array = savingObj.AddArray("Nodes");
 
 	for (size_t i = 0; i < nodes.size(); i++)
 	{
@@ -75,13 +78,13 @@ uint ResourceModel::SaveMeta(JsonObj& base_object, uint last_modification)
 		nodes_array.AddObject(node_object);
 	}
 
-	JsonArray lights_array = base_object.AddArray("Lights");
+	JsonArray lights_array = savingObj.AddArray("Lights");
 	for (size_t i = 0; i < lights.size(); i++)
 	{
 		lights[i]->Save(lights_array);
 	}
 
-	JsonArray cameras_array = base_object.AddArray("Cameras");
+	JsonArray cameras_array = savingObj.AddArray("Cameras");
 	for (size_t i = 0; i < cameras.size(); i++)
 	{
 		cameras[i]->Save(cameras_array);

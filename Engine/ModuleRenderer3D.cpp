@@ -125,7 +125,6 @@ bool ModuleRenderer3D::Init()
 		glEnable(GL_CULL_FACE);
 		glEnable(GL_COLOR_MATERIAL);
 		glEnable(GL_TEXTURE_2D);
-		//glEnable(GL_POLYGON_SMOOTH);
 		glEnable(GL_LIGHTING);
 		glEnable(GL_STENCIL_TEST);
 		lights[0].Active(true);
@@ -151,7 +150,6 @@ bool ModuleRenderer3D::LoadConfig(JsonObj& config)
 update_status ModuleRenderer3D::PreUpdate(float dt)
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
-
 	Color c = App->camera->background;
 	glClearColor(c.r, c.g, c.b, c.a);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -160,12 +158,9 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 	glLoadIdentity();
 	glLoadMatrixf(App->camera->GetViewMatrix());
 
-	//light 0 on cam pos
 	float3 cameraPosition = App->camera->GetPosition();
 	lights[0].SetPos(cameraPosition.x, cameraPosition.y, cameraPosition.z);
-
-	for (uint i = 0; i < MAX_LIGHTS; ++i)
-		lights[i].Render();
+	for (uint i = 0; i < MAX_LIGHTS; ++i) lights[i].Render();
 
 	return UPDATE_CONTINUE;
 }
@@ -173,14 +168,10 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 update_status ModuleRenderer3D::Update(float dt)
 {
 	update_status ret = UPDATE_CONTINUE;
-
-	//DrawDirectModeCube();
 	DrawRay();
-
 	return ret;
 }
 
-// PostUpdate present buffer to screen
 update_status ModuleRenderer3D::PostUpdate(float dt)
 {
 	glBindVertexArray(0);
@@ -214,7 +205,7 @@ bool ModuleRenderer3D::CleanUp()
 }
 
 
-void ModuleRenderer3D::OnResize(int width, int height)
+void ModuleRenderer3D::ScreenResized(int width, int height)
 {
 	glViewport(0, 0, width, height);
 
@@ -244,56 +235,7 @@ void ModuleRenderer3D::UpdateProjectionMatrix(float* projectionMatrix)
 	glLoadMatrixf(App->camera->GetProjectionMatrix());
 }
 
-void ModuleRenderer3D::DrawAABB(float3* cornerPoints, ImVec4 color)
-{
-	glDisable(GL_LIGHTING);
-	glColor3f(color.x, color.y, color.z);
-	glBegin(GL_LINES);
-
-	glVertex3f(cornerPoints[0].x, cornerPoints[0].y, cornerPoints[0].z);
-	glVertex3f(cornerPoints[1].x, cornerPoints[1].y, cornerPoints[1].z);
-
-	glVertex3f(cornerPoints[0].x, cornerPoints[0].y, cornerPoints[0].z);
-	glVertex3f(cornerPoints[2].x, cornerPoints[2].y, cornerPoints[2].z);
-
-	glVertex3f(cornerPoints[2].x, cornerPoints[2].y, cornerPoints[2].z);
-	glVertex3f(cornerPoints[3].x, cornerPoints[3].y, cornerPoints[3].z);
-
-	glVertex3f(cornerPoints[1].x, cornerPoints[1].y, cornerPoints[1].z);
-	glVertex3f(cornerPoints[3].x, cornerPoints[3].y, cornerPoints[3].z);
-
-	glVertex3f(cornerPoints[0].x, cornerPoints[0].y, cornerPoints[0].z);
-	glVertex3f(cornerPoints[4].x, cornerPoints[4].y, cornerPoints[4].z);
-
-	glVertex3f(cornerPoints[5].x, cornerPoints[5].y, cornerPoints[5].z);
-	glVertex3f(cornerPoints[4].x, cornerPoints[4].y, cornerPoints[4].z);
-
-	glVertex3f(cornerPoints[5].x, cornerPoints[5].y, cornerPoints[5].z);
-	glVertex3f(cornerPoints[1].x, cornerPoints[1].y, cornerPoints[1].z);
-
-	glVertex3f(cornerPoints[5].x, cornerPoints[5].y, cornerPoints[5].z);
-	glVertex3f(cornerPoints[7].x, cornerPoints[7].y, cornerPoints[7].z);
-
-	glVertex3f(cornerPoints[7].x, cornerPoints[7].y, cornerPoints[7].z);
-	glVertex3f(cornerPoints[6].x, cornerPoints[6].y, cornerPoints[6].z);
-
-	glVertex3f(cornerPoints[6].x, cornerPoints[6].y, cornerPoints[6].z);
-	glVertex3f(cornerPoints[2].x, cornerPoints[2].y, cornerPoints[2].z);
-
-	glVertex3f(cornerPoints[6].x, cornerPoints[6].y, cornerPoints[6].z);
-	glVertex3f(cornerPoints[4].x, cornerPoints[4].y, cornerPoints[4].z);
-
-	glVertex3f(cornerPoints[7].x, cornerPoints[7].y, cornerPoints[7].z);
-	glVertex3f(cornerPoints[3].x, cornerPoints[3].y, cornerPoints[3].z);
-
-	glEnd();
-	glColor3f(1.0f, 1.0f, 1.0f);
-	glEnable(GL_LIGHTING);
-}
-
-DisplayMode ModuleRenderer3D::GetDisplayMode() { return display_mode; }
-
-void ModuleRenderer3D::SetDisplayMode(DisplayMode display) 
+void ModuleRenderer3D::SetDisplayMode(RenderMode display) 
 { 
 	GLenum face = GL_FRONT;
 
@@ -302,14 +244,28 @@ void ModuleRenderer3D::SetDisplayMode(DisplayMode display)
 	if (!glIsEnabled(GL_CULL_FACE_MODE))
 		face = GL_FRONT_AND_BACK;
 
-	if (display == SOLID) 
+	switch (display)
 	{
+	case SOLID:
 		glPolygonMode(face, GL_FILL);
-	}
-	else if (display == WIREFRAME)
-	{
+		glDisable(GL_POLYGON_SMOOTH);
+		break;
+	case WIREFRAME:
 		glPolygonMode(face, GL_LINE);
+		glDisable(GL_POLYGON_SMOOTH);
+		break;
+	case SOLIDWIRE:
+		glPolygonMode(face, GL_FILL);
+		glEnable(GL_POLYGON_SMOOTH);
+		break;
+	default:
+		break;
 	}
+}
+
+RenderMode ModuleRenderer3D::GetDisplayMode()
+{
+	return display_mode;
 }
 
 void ModuleRenderer3D::SetMainCamera(Component_Camera* camera)
@@ -431,8 +387,6 @@ void ModuleRenderer3D::DrawDirectModeCube()
 		}
 	}
 
-	//GnTexture* Lenna = TextureImporter::LoadTexture("Assets/Textures/Lenna.png");
-
 	GLuint textureID;
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 	glGenTextures(1, &textureID);
@@ -442,8 +396,6 @@ void ModuleRenderer3D::DrawDirectModeCube()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, CHECKERS_WIDTH, CHECKERS_HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, checkerImage);
-	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, Lenna->width, Lenna->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, Lenna->data);
 
 	{
 		glBegin(GL_TRIANGLES);
@@ -542,9 +494,52 @@ void ModuleRenderer3D::DrawDirectModeCube()
 	glDeleteTextures(1, &textureID);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	ilBindImage(0);
-	//ilDeleteImages(1, &Lenna->id);
 }
 
-void ModuleRenderer3D::BeginDebugDraw() {}
 
-void ModuleRenderer3D::EndDebugDraw() {}
+void ModuleRenderer3D::DrawAABB(float3* cornerPoints, ImVec4 color)
+{
+	glDisable(GL_LIGHTING);
+	glColor3f(color.x, color.y, color.z);
+	glBegin(GL_LINES);
+
+	glVertex3f(cornerPoints[0].x, cornerPoints[0].y, cornerPoints[0].z);
+	glVertex3f(cornerPoints[1].x, cornerPoints[1].y, cornerPoints[1].z);
+
+	glVertex3f(cornerPoints[0].x, cornerPoints[0].y, cornerPoints[0].z);
+	glVertex3f(cornerPoints[2].x, cornerPoints[2].y, cornerPoints[2].z);
+
+	glVertex3f(cornerPoints[2].x, cornerPoints[2].y, cornerPoints[2].z);
+	glVertex3f(cornerPoints[3].x, cornerPoints[3].y, cornerPoints[3].z);
+
+	glVertex3f(cornerPoints[1].x, cornerPoints[1].y, cornerPoints[1].z);
+	glVertex3f(cornerPoints[3].x, cornerPoints[3].y, cornerPoints[3].z);
+
+	glVertex3f(cornerPoints[0].x, cornerPoints[0].y, cornerPoints[0].z);
+	glVertex3f(cornerPoints[4].x, cornerPoints[4].y, cornerPoints[4].z);
+
+	glVertex3f(cornerPoints[5].x, cornerPoints[5].y, cornerPoints[5].z);
+	glVertex3f(cornerPoints[4].x, cornerPoints[4].y, cornerPoints[4].z);
+
+	glVertex3f(cornerPoints[5].x, cornerPoints[5].y, cornerPoints[5].z);
+	glVertex3f(cornerPoints[1].x, cornerPoints[1].y, cornerPoints[1].z);
+
+	glVertex3f(cornerPoints[5].x, cornerPoints[5].y, cornerPoints[5].z);
+	glVertex3f(cornerPoints[7].x, cornerPoints[7].y, cornerPoints[7].z);
+
+	glVertex3f(cornerPoints[7].x, cornerPoints[7].y, cornerPoints[7].z);
+	glVertex3f(cornerPoints[6].x, cornerPoints[6].y, cornerPoints[6].z);
+
+	glVertex3f(cornerPoints[6].x, cornerPoints[6].y, cornerPoints[6].z);
+	glVertex3f(cornerPoints[2].x, cornerPoints[2].y, cornerPoints[2].z);
+
+	glVertex3f(cornerPoints[6].x, cornerPoints[6].y, cornerPoints[6].z);
+	glVertex3f(cornerPoints[4].x, cornerPoints[4].y, cornerPoints[4].z);
+
+	glVertex3f(cornerPoints[7].x, cornerPoints[7].y, cornerPoints[7].z);
+	glVertex3f(cornerPoints[3].x, cornerPoints[3].y, cornerPoints[3].z);
+
+	glEnd();
+	glColor3f(1.0f, 1.0f, 1.0f);
+	glEnable(GL_LIGHTING);
+}

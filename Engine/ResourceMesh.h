@@ -9,7 +9,7 @@ public:
 	ResourceMesh(uint UID);
 	~ResourceMesh();
 
-	void Load(JsonObj& base_object);
+	void Load(JsonObj& loadingObj);
 
 	void GenerateBuffers();
 	void DeleteBuffers();
@@ -29,7 +29,7 @@ public:
 
 	uint texcoordsBuffer = 0;
 	uint amountTexCoords = 0;
-	float* texCoords = nullptr;
+	float* textureCoords = nullptr;
 
 	float* colors = nullptr;;
 

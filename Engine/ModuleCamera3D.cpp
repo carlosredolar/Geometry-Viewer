@@ -15,19 +15,19 @@ ModuleCamera3D::ModuleCamera3D(bool start_enabled) : Module(start_enabled)
 {
 	name = "camera";
 
+	position = float3(40.0f, 15.0f, 45.0f);
+	reference = float3(0.0f, 0.0f, 0.0f);
+
 	X = float3(1.0f, 0.0f, 0.0f);
 	Y = float3(0.0f, 1.0f, 0.0f);
 	Z = float3(0.0f, 0.0f, 1.0f);
-
-	position = float3(40.0f, 15.0f, 45.0f);
-	reference = float3(0.0f, 0.0f, 0.0f);
 
 	camera = new Component_Camera();
 	camera->SetPosition(float3(position));
 	camera->SetReference(reference);
 	Look(reference);
 
-	background = { 0.12f, 0.12f, 0.12f, 1.0f };
+	background = { 0.15f, 0.15f, 0.15f, 1.0f };
 }
 
 ModuleCamera3D::~ModuleCamera3D()
@@ -37,7 +37,6 @@ bool ModuleCamera3D::Init() {
 	return true;
 }
 
-// -----------------------------------------------------------------
 bool ModuleCamera3D::Start()
 {
 	LOG("Setting up the camera");
@@ -48,32 +47,28 @@ bool ModuleCamera3D::Start()
 
 bool ModuleCamera3D::LoadConfig(JsonObj& config)
 {
-	move_speed = config.GetFloat("move_speed");
-	drag_speed = config.GetFloat("drag_speed");
-	orbit_speed = config.GetFloat("orbit_speed");
-	zoom_speed = config.GetFloat("zoom_speed");
+	movementSpeed = config.GetFloat("move_speed");
+	dragingSpeed = config.GetFloat("drag_speed");
+	orbitingSpeed = config.GetFloat("orbit_speed");
+	zoomSpeed = config.GetFloat("zoom_speed");
 	sensitivity = config.GetFloat("sensitivity");
 
 	return true;
 }
 
-// -----------------------------------------------------------------
 bool ModuleCamera3D::CleanUp()
 {
-	LOG("Cleaning camera");
-
+	LOG("Cleaning scene camera");
 	delete camera;
 	camera = nullptr;
-
 	return true;
 }
 
-void ModuleCamera3D::OnResize(int width, int height)
+void ModuleCamera3D::ScreenResized(int width, int height)
 {
 	camera->AdjustFieldOfView(width, height);
 }
 
-// -----------------------------------------------------------------
 update_status ModuleCamera3D::Update(float dt)
 {
 	if (!App->gui->IsSceneFocused())
@@ -87,9 +82,9 @@ update_status ModuleCamera3D::Update(float dt)
 
 	//Up/Down
 	if (App->input->GetKey(SDL_SCANCODE_O) == KEY_REPEAT) 
-		newPos.y += move_speed * dt;
+		newPos.y += movementSpeed * dt;
 	if (App->input->GetKey(SDL_SCANCODE_L) == KEY_REPEAT) 
-		newPos.y -= move_speed * dt;
+		newPos.y -= movementSpeed * dt;
 
 	if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN) 
 	{
@@ -102,21 +97,21 @@ update_status ModuleCamera3D::Update(float dt)
 
 	//Forwards/Backwards
 	if ((App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) || (App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)) 
-		newPos += camera->GetFrustum().front * move_speed * speed_multiplier * dt;
+		newPos += camera->GetFrustum().front * movementSpeed * speed_multiplier * dt;
 	if ((App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) || (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)) 
-		newPos -= camera->GetFrustum().front * move_speed * speed_multiplier * dt;
+		newPos -= camera->GetFrustum().front * movementSpeed * speed_multiplier * dt;
 
 	//Left/Right
 	if ((App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) || (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)) 
-		newPos += camera->GetFrustum().WorldRight() * move_speed * speed_multiplier * dt;
+		newPos += camera->GetFrustum().WorldRight() * movementSpeed * speed_multiplier * dt;
 	if ((App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) || (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT))
-		newPos -= camera->GetFrustum().WorldRight() * move_speed * speed_multiplier * dt;
+		newPos -= camera->GetFrustum().WorldRight() * movementSpeed * speed_multiplier * dt;
 
 	//Drag
 	if ((App->input->GetMouseButton(SDL_BUTTON_MIDDLE) == KEY_REPEAT))
 	{
-		newPos -= camera->GetFrustum().WorldRight() * App->input->GetMouseXMotion() * drag_speed * dt;
-		newPos += camera->GetFrustum().up * App->input->GetMouseYMotion() * drag_speed * dt;
+		newPos -= camera->GetFrustum().WorldRight() * App->input->GetMouseXMotion() * dragingSpeed * dt;
+		newPos += camera->GetFrustum().up * App->input->GetMouseYMotion() * dragingSpeed * dt;
 	}
 
 	// Zoom 
@@ -125,18 +120,18 @@ update_status ModuleCamera3D::Update(float dt)
 	{
 		if (App->input->GetMouseZ() > 0)
 		{
-			position += camera->GetFrustum().front * zoom_speed * distanceToReference * dt;
+			position += camera->GetFrustum().front * zoomSpeed * distanceToReference * dt;
 			LookAt(reference);
 		}
 		else if (App->input->GetMouseZ() < 0)
 		{
-			position -= camera->GetFrustum().front * zoom_speed * distanceToReference * dt;
+			position -= camera->GetFrustum().front * zoomSpeed * distanceToReference * dt;
 			LookAt(reference);
 		}
 	}
 	else if (App->input->GetMouseZ() < 0)
 	{
-		position -= camera->GetFrustum().front * zoom_speed * distanceToReference * dt;
+		position -= camera->GetFrustum().front * zoomSpeed * distanceToReference * dt;
 		LookAt(reference);
 	}
 
@@ -189,8 +184,8 @@ void ModuleCamera3D::Orbit(float dt)
 	int dx = -App->input->GetMouseXMotion();
 	int dy = -App->input->GetMouseYMotion();
 
-	Quat y_rotation(camera->GetFrustum().up, dx * dt * orbit_speed * 0.1f);
-	Quat x_rotation(camera->GetFrustum().WorldRight(), dy * dt * orbit_speed * 0.1f);
+	Quat y_rotation(camera->GetFrustum().up, dx * dt * orbitingSpeed * 0.1f);
+	Quat x_rotation(camera->GetFrustum().WorldRight(), dy * dt * orbitingSpeed * 0.1f);
 
 	float3 distance = position - reference;
 	distance = x_rotation.Transform(distance);
@@ -201,7 +196,6 @@ void ModuleCamera3D::Orbit(float dt)
 	camera->Look(reference);
 }
 
-// -----------------------------------------------------------------
 float* ModuleCamera3D::GetViewMatrix()
 {
 	return camera->GetViewMatrix();
@@ -281,8 +275,8 @@ void ModuleCamera3D::SetBackgroundColor(float r, float g, float b, float w)
 GameObject* ModuleCamera3D::SelectGO() 
 {
 
-	float normalized_x = ((App->gui->mouseScenePosition.x / App->gui->image_size.x) - 0.5f)*2;
-	float normalized_y = -((App->gui->mouseScenePosition.y / App->gui->image_size.y) - 0.5f)*2;
+	float normalized_x = ((App->gui->mouseScenePosition.x / App->gui->sceneRenderSize.x) - 0.5f)*2;
+	float normalized_y = -((App->gui->mouseScenePosition.y / App->gui->sceneRenderSize.y) - 0.5f)*2;
 
 	ray = camera->GetFrustum().UnProjectLineSegment(normalized_x, normalized_y);
 

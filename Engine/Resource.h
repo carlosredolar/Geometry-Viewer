@@ -24,9 +24,9 @@ public:
 	ResourceType GetType();
 	uint GetUID();
 
-	virtual uint Save(JsonObj& base_object) { return -1; };
-	virtual uint SaveMeta(JsonObj& base_object, uint last_modification) { return -1; };
-	virtual void Load(JsonObj& base_object) {};
+	virtual uint Save(JsonObj& savingObj) { return -1; };
+	virtual uint SaveMeta(JsonObj& savingObj, uint lastMod) { return -1; };
+	virtual void Load(JsonObj& loadingObj) {};
 
 public: 
 	std::string name;

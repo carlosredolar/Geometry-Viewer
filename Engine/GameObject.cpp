@@ -60,8 +60,7 @@ void GameObject::Update()
 
 					aabb.SetNegativeInfinity();
 					aabb.Enclose(obb);
-
-					
+										
 					if (App->scene->showBB)
 					{
 						float3 cornerPoints[8];
@@ -78,10 +77,7 @@ void GameObject::Update()
 						{
 							mesh->Update();
 						}
-					}
-					
-
-					
+					}	
 				}
 				else
 				{

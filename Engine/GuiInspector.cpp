@@ -8,9 +8,7 @@ GuiInspector::GuiInspector() : GuiWindow()
 	type = WindowType::INSPECTOR_WINDOW;
 }
 
-GuiInspector::~GuiInspector()
-{
-}
+GuiInspector::~GuiInspector() {}
 
 void GuiInspector::Draw()
 {
