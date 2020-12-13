@@ -93,12 +93,12 @@ void Component_Material::Load(JsonObj& loadObject)
 
 void Component_Material::OnGUI()
 {
-	ImGui::Spacing();
 	if (ImGui::CollapsingHeader("Material", ImGuiTreeNodeFlags_DefaultOpen))
 	{
-		if (ImGui::Checkbox("Enabled", &enabled)) {}
+		ImGui::Checkbox(" Enabled ", &enabled);
 
 		ImGui::SameLine();
+
 		if (ImGui::Checkbox("Checkers Image Active", &checkersImageActive))
 		{
 			if (checkersImageActive)
@@ -180,13 +180,15 @@ void Component_Material::OnGUI()
 
 void Component_Material::BindTexture()
 {
-	if (!checkersImageActive)
-	{
-		diffuseTexture->BindTexture();
-	}
-	else 
-	{
-		glBindTexture(GL_TEXTURE_2D, checkersID);
+	if (enabled) {
+		if (!checkersImageActive)
+		{
+			diffuseTexture->BindTexture();
+		}
+		else
+		{
+			glBindTexture(GL_TEXTURE_2D, checkersID);
+		}
 	}
 }
 

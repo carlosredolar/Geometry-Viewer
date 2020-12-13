@@ -36,5 +36,4 @@ private:
 
 	ResourceMaterial* materialResource;
 	ResourceTexture* diffuseTexture;
-
 };
