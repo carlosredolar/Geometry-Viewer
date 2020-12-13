@@ -283,21 +283,29 @@ GameObject* ModuleCamera3D::SelectGO()
 	//LOG("X: %.1f Y: %.1f", normalized_x, normalized_y); //click point pos
 
 	std::vector<GameObject*> sceneGO = App->scene->GetAllGameObjects();
-
-	for (size_t i = 0; i < sceneGO.size(); i++)
+	float nearestIntersectDist = camera->GetFrustum().farPlaneDistance;
+	int nearestGOIndex = -1;
+	bool hit = false;
+	
+	for (int i = 0; i < sceneGO.size(); i++)
 	{
-		bool hit = ray.Intersects(sceneGO[i]->GetAABB());
-
+		hit = ray.Intersects(sceneGO[i]->GetAABB());
+		
 		if (hit)
 		{
-			float distance;
-			float hit_point;
+			float entranceDist;
+			float exitDist;
 
-			hit = ray.Intersects(sceneGO[i]->GetAABB(), distance, hit_point);
-			
-			return sceneGO[i];
+			hit = ray.Intersects(sceneGO[i]->GetAABB(), entranceDist, exitDist);
+
+			if (entranceDist < nearestIntersectDist)
+			{
+				nearestIntersectDist = entranceDist;
+				nearestGOIndex = i;
+			}			
 		}
 	}
+	if (nearestGOIndex !=-1) return sceneGO[nearestGOIndex];
 
 	return nullptr;
 }

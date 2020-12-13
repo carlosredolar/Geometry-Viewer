@@ -39,7 +39,7 @@ bool ModuleScene::Start()
 	App->renderer3D->SetMainCamera(camera->GetComponent<Component_Camera>());
 
 	//Create initial gameObject
-	GameObject* street_environment = App->resources->RequestGameObject("Assets/Models/BakerHouse.fbx");
+	GameObject* street_environment = App->resources->RequestGameObject("Assets/Models/Street environment_V01.fbx");
 	AddGameObject(street_environment);
 	
 	return ret;
