@@ -43,6 +43,8 @@ FBX models can be imported dragging and dropping them onto the engine from the a
 
 *There is an issue when an asset has been already imported and is avaliable on assets window but you try to import it from your computer floder, just import it from the asset window of the program.
 
+*Sometimes when you try to import many assets in a short period of time the program crashes, but just sometimes.
+
 ## Inspector
 
 **Name:** selected object name
