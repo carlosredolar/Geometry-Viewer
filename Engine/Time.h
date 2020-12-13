@@ -3,9 +3,9 @@
 
 #include "Timer.h"
 
-struct GnClock
+struct ClockR
 {
-	GnClock();
+	ClockR();
 	void Start();
 	void Stop();
 	void Pause();
@@ -30,8 +30,8 @@ public:
 	static int frameCount; //frames since game start
 
 public:
-	static GnClock realClock;
-	static GnClock gameClock;
+	static ClockR realClock;
+	static ClockR gameClock;
 };
 
 #endif

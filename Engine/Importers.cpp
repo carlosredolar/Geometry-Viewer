@@ -55,7 +55,7 @@ void ModelImporter::Import(char* fileBuffer, ResourceModel* model, uint size)
 			model->materials.push_back(App->resources->ImportInternalResource(model->assetsFile.c_str(), aimaterial, ResourceType::RESOURCE_MATERIAL));
 		}
 
-		if (!App->resources->modelImportSettings.ignoreLights)
+		if (App->resources->modelImportSettings.importLights)
 		{
 			for (size_t i = 0; i < scene->mNumLights; i++)
 			{
@@ -69,7 +69,7 @@ void ModelImporter::Import(char* fileBuffer, ResourceModel* model, uint size)
 			}
 		}
 
-		if (!App->resources->modelImportSettings.ignoreCameras)
+		if (App->resources->modelImportSettings.importCameras)
 		{
 			for (size_t i = 0; i < scene->mNumCameras; i++)
 			{

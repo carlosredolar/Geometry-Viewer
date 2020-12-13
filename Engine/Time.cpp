@@ -1,7 +1,7 @@
 #include "Time.h"
 
-GnClock Time::realClock;
-GnClock Time::gameClock;
+ClockR Time::realClock;
+ClockR Time::gameClock;
 
 int Time::frameCount = 0;
 
@@ -15,13 +15,13 @@ void Time::Init()
 }
 
 
-GnClock::GnClock()
+ClockR::ClockR()
 {
 	timeScale = 1.0f;
 	paused = false;
 }
 
-void GnClock::Start()
+void ClockR::Start()
 {
 	paused = false;
 	started = true;
@@ -29,39 +29,39 @@ void GnClock::Start()
 	timer.Start();
 }
 
-void GnClock::Stop()
+void ClockR::Stop()
 {
 	paused = false;
 	started = false;
 }
 
-void GnClock::Pause()
+void ClockR::Pause()
 {
 	paused = true;
 	timeScale = 0.0f;
 	timer.Stop();
 }
 
-void GnClock::Resume()
+void ClockR::Resume()
 {
 	paused = false;
 	timeScale = 1.0f;
 	timer.Resume();
 }
 
-void GnClock::Reset()
+void ClockR::Reset()
 {
 	timeScale = 1.0f;
 	paused = false;
 }
 
-void GnClock::Step()
+void ClockR::Step()
 {
 	dt = (float)deltaTimer.Read() / 1000 * timeScale;
 	deltaTimer.Start();
 }
 
-float GnClock::timeSinceStartup()
+float ClockR::timeSinceStartup()
 {
 	if (started)
 		return timer.ReadSec();
@@ -69,7 +69,7 @@ float GnClock::timeSinceStartup()
 		return 0.0f;
 }
 
-float GnClock::deltaTime()
+float ClockR::deltaTime()
 {
 	return dt * timeScale;
 }

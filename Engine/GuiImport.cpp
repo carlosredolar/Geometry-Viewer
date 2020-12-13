@@ -54,11 +54,11 @@ bool GuiImport::DrawModelImportWindow()
 
 		if (ImGui::Combo("Up Axis", &upAxis, possibleAxis, 6)) modelImportSettings.upAxis = (Axis)upAxis;
 
-		ImGui::Checkbox("Ignore Cameras", &modelImportSettings.ignoreCameras);
+		ImGui::Checkbox("Ignore Cameras", &modelImportSettings.importCameras);
 
 		ImGui::Spacing();
 
-		ImGui::Checkbox("Ignore Lights", &modelImportSettings.ignoreLights);
+		ImGui::Checkbox("Ignore Lights", &modelImportSettings.importLights);
 
 		if (ImGui::Button("OK", ImVec2(40, 20))) 
 		{

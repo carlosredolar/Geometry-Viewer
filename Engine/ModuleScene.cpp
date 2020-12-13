@@ -39,27 +39,24 @@ bool ModuleScene::Start()
 	App->renderer3D->SetMainCamera(camera->GetComponent<Component_Camera>());
 
 	//Create initial gameObject
-	GameObject* street_environment = App->resources->RequestGameObject("Assets/Models/BakerHouse.fbx");
+	GameObject* street_environment = App->resources->RequestGameObject("Assets/Models/Street environment_V01.FBX");
 	AddGameObject(street_environment);
 	
 	return ret;
 }
 
-// Clean up all gameObjects
+// Clean up all gameObjects and scene
 bool ModuleScene::CleanUp()
 {
 	LOG("Unloading Intro scene");
-
 	root->DeleteAllChildren();
 	delete root;
 	root = nullptr;
-
 	selectedGameObject = nullptr;
-
 	return true;
 }
 
-// Update: draw background
+// Update: inputs and update gameobjects
 update_status ModuleScene::Update(float dt)
 {
 	//Grid
@@ -101,7 +98,6 @@ void ModuleScene::AddGameObject(GameObject* gameObject)
 {
 	if (gameObject != nullptr) 
 	{
-		//gameObject->SetParent(root);
 		root->AddChild(gameObject);
 		selectedGameObject = gameObject;
 	}

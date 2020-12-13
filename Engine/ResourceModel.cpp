@@ -48,8 +48,8 @@ uint ResourceModel::SaveMeta(JsonObj& savingObj, uint lastMod)
 	savingObj.AddFloat("global scale", (float)importSettings.globalScale);
 	savingObj.AddInt("forward axis", (int)importSettings.forwardAxis);
 	savingObj.AddInt("up axis", (int)importSettings.upAxis);
-	savingObj.AddBool("ignore cameras", importSettings.ignoreCameras);
-	savingObj.AddBool("ignore lights", importSettings.ignoreLights);
+	savingObj.AddBool("ignore cameras", importSettings.importCameras);
+	savingObj.AddBool("ignore lights", importSettings.importLights);
 
 	JsonArray nodes_array = savingObj.AddArray("Nodes");
 
