@@ -23,16 +23,14 @@ void FileManager::Init()
 	
 	SDL_free(base_path);
 
-	AddPath("."); //Adding ProjectFolder (working directory)
+	AddPath(".");
 	AddPath("Assets");
 
 	if (PHYSFS_setWriteDir(".") == 0)
 		LOG_ERROR("File Manager error while creating write dir: %s\n", PHYSFS_getLastError());
 
 	CreateLibraryDirectories();
-
 	std::string path = PHYSFS_getWriteDir();
-
 	normalize_scales = true;
 }
 
@@ -50,11 +48,6 @@ void FileManager::GetPhysFSVersion(std::string& version_str)
 
 void FileManager::CreateLibraryDirectories()
 {
-	//CreateDir(LIBRARY_PATH);
-	//CreateDir(FOLDERS_PATH);
-	//CreateDir(MESHES_PATH);
-	//CreateDir(TEXTURES_PATH);
-	//CreateDir(MATERIALS_PATH);
 	CreateDir("Assets/Config/");
 	CreateDir("Assets/Textures/");
 	CreateDir("Assets/Models/");
@@ -66,14 +59,8 @@ void FileManager::CreateLibraryDirectories()
 	CreateDir("Library/Materials/");
 	CreateDir("Library/Textures/");
 	CreateDir("Library/Scenes/");
-	//CreateDir("Materials/");
-	//CreateDir(ANIMATIONS_PATH);
-	//CreateDir(PARTICLES_PATH);
-	//CreateDir(SHADERS_PATH);
-	//CreateDir(SCENES_PATH);
 }
 
-// Add a new zip file_path or folder
 bool FileManager::AddPath(const char* path_or_zip)
 {
 	bool ret = false;
@@ -88,7 +75,6 @@ bool FileManager::AddPath(const char* path_or_zip)
 	return ret;
 }
 
-// Check if a file_path exists
 bool FileManager::Exists(const char* file) 
 {
 	return PHYSFS_exists(file) != 0;
@@ -104,7 +90,6 @@ bool FileManager::CreateDir(const char* dir)
 	return false;
 }
 
-// Check if a file_path is a directory
 bool FileManager::IsDirectory(const char* file) 
 {
 	return PHYSFS_isDirectory(file) != 0;
@@ -124,11 +109,14 @@ void FileManager::DiscoverFiles(const char* directory, std::vector<std::string>&
 	{
 		std::string str = std::string(directory) + std::string("/") + std::string(*i);
 		if (IsDirectory(str.c_str()))
+		{
 			dir_list.push_back(*i);
+		}
 		else
+		{
 			file_list.push_back(*i);
+		}
 	}
-
 	PHYSFS_freeList(rc);
 }
 
@@ -170,6 +158,11 @@ void FileManager::GetAllFilesWithExtension(const char* directory, const char* ex
 		if (ext == extension)
 			file_list.push_back(files[i]);
 	}
+}
+
+uint64 FileManager::GetLastModTime(const char* filename)
+{
+	return PHYSFS_getLastModTime(filename);
 }
 
 void FileManager::GetRealDir(const char* path, std::string& output) 
@@ -251,8 +244,7 @@ std::string FileManager::NormalizePath(const char* full_path)
 	std::string newPath(full_path);
 	for (int i = 0; i < newPath.size(); ++i)
 	{
-		if (newPath[i] == '\\')
-			newPath[i] = '/';
+		if (newPath[i] == '\\') newPath[i] = '/';
 	}
 	return newPath;
 }
@@ -321,7 +313,6 @@ uint FileManager::Load(const char* file, char** buffer)
 			else
 			{
 				ret = readed;
-				//Adding end of file_path at the end of the buffer. Loading a shader file_path does not add this for some reason
 				(*buffer)[size] = '\0';
 			}
 		}
@@ -345,6 +336,44 @@ bool FileManager::DuplicateFile(const char* file, const char* dstFolder, std::st
 
 	return DuplicateFile(file, finalPath.c_str());
 
+}
+
+std::string FileManager::GetFileExtension(const char* path)
+{
+	std::string format = PathFindExtensionA(path);
+	std::transform(format.begin(), format.end(), format.begin(), [](unsigned char c) { return std::tolower(c); });
+	return format;
+}
+
+std::string FileManager::GetFileNameAndExtension(const char* path)
+{
+	std::string file;
+	std::string file_path;
+	std::string extension;
+	SplitFilePath(path, &file_path, &file, &extension);
+	return file + "." + extension;
+}
+
+std::string FileManager::GetFileName(const char* path)
+{
+	std::string file;
+	std::string file_path;
+	SplitFilePath(path, &file_path, &file);
+	return file;
+}
+
+std::string FileManager::GetFolder(const char* path)
+{
+	std::string folder;
+	SplitFilePath(path, &folder);
+	return folder;
+}
+
+std::string FileManager::ToLower(const char* path)
+{
+	std::string string = path;
+	std::transform(string.begin(), string.end(), string.begin(), [](unsigned char c) { return std::tolower(c); });
+	return string;
 }
 
 bool FileManager::DuplicateFile(const char* srcFile, const char* dstFile)
@@ -390,7 +419,6 @@ int close_sdl_rwops(SDL_RWops* rw)
 	return 0;
 }
 
-// Save a whole buffer to disk
 uint FileManager::Save(const char* file, const void* buffer, unsigned int size, bool append) 
 {
 	unsigned int ret = 0;
@@ -442,11 +470,6 @@ bool FileManager::Delete(const char* file)
 	}
 }
 
-uint64 FileManager::GetLastModTime(const char* filename)
-{
-	return PHYSFS_getLastModTime(filename);
-}
-
 std::string FileManager::GetUniqueName(const char* path, const char* name)
 {
 	std::vector<std::string> files, dirs;
@@ -458,8 +481,6 @@ std::string FileManager::GetUniqueName(const char* path, const char* name)
 	for (uint i = 0; i < 50 && unique == false; ++i)
 	{
 		unique = true;
-
-		//Build the compare name (name_i)
 		if (i > 0)
 		{
 			finalName = std::string(name).append("_");
@@ -467,8 +488,6 @@ std::string FileManager::GetUniqueName(const char* path, const char* name)
 				finalName.append("0");
 			finalName.append(std::to_string(i));
 		}
-
-		//Iterate through all the files to find a matching name
 		for (uint f = 0; f < files.size(); ++f)
 		{
 			if (finalName == files[f])
@@ -480,46 +499,6 @@ std::string FileManager::GetUniqueName(const char* path, const char* name)
 	}
 	return finalName;
 }
-
-std::string FileManager::GetFileExtension(const char* path)
-{
-	std::string format = PathFindExtensionA(path);
-	std::transform(format.begin(), format.end(), format.begin(), [](unsigned char c) { return std::tolower(c); });
-	return format;
-}
-
-std::string FileManager::GetFileNameAndExtension(const char* path)
-{
-	std::string file;
-	std::string file_path;
-	std::string extension;
-	SplitFilePath(path, &file_path, &file, &extension);
-	return file + "." + extension;
-}
-
-std::string FileManager::GetFileName(const char* path)
-{
-	std::string file;
-	std::string file_path;
-	SplitFilePath(path, &file_path, &file);
-	return file;
-}
-
-std::string FileManager::GetFolder(const char* path)
-{
-	std::string folder;
-	SplitFilePath(path, &folder);
-	return folder;
-}
-
-std::string FileManager::ToLower(const char* path)
-{
-	std::string string = path;
-	std::transform(string.begin(), string.end(), string.begin(), [](unsigned char c) { return std::tolower(c); });
-	return string;
-}
-
-
 
 #pragma endregion 
 

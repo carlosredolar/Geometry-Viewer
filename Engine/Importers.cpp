@@ -153,8 +153,8 @@ uint64 ModelImporter::Save(ResourceModel* model, char** fileBuffer)
 {
 	char* buffer;
 
-	JsonObj base_object;
-	JsonArray nodes_array = base_object.AddArray("Nodes");
+	JsonObj savingObj;
+	JsonArray nodes_array = savingObj.AddArray("Nodes");
 
 	for (size_t i = 0; i < model->nodes.size(); i++)
 	{
@@ -184,20 +184,20 @@ uint64 ModelImporter::Save(ResourceModel* model, char** fileBuffer)
 	}
 
 	//Lights --------------------------------------------------------
-	JsonArray lights_array = base_object.AddArray("Lights");
+	JsonArray lights_array = savingObj.AddArray("Lights");
 	for (size_t i = 0; i < model->lights.size(); i++)
 	{
 		model->lights[i]->Save(lights_array);
 	}
 
 	//Cameras --------------------------------------------------------
-	JsonArray cameras_array = base_object.AddArray("Cameras");
+	JsonArray cameras_array = savingObj.AddArray("Cameras");
 	for (size_t i = 0; i < model->cameras.size(); i++)
 	{
 		model->cameras[i]->Save(cameras_array);
 	}
 
-	uint size = base_object.Save(&buffer);
+	uint size = savingObj.Save(&buffer);
 	*fileBuffer = buffer;
 
 	return size;
@@ -599,7 +599,7 @@ void MeshImporter::Import(const aiMesh* aimesh, ResourceMesh* mesh)
 	}
 
 	mesh->amountTexCoords = aimesh->mNumVertices;
-	mesh->texCoords = new float[mesh->amountVertices * 2]();
+	mesh->textureCoords = new float[mesh->amountVertices * 2]();
 	mesh->colors = new float[mesh->amountIndices * 4]();
 
 	if (aimesh->HasNormals())
@@ -620,16 +620,16 @@ void MeshImporter::Import(const aiMesh* aimesh, ResourceMesh* mesh)
 			mesh->normals[n + 2] = aimesh->mNormals[v].z;
 		}
 
-		//texCoords copying
+		//textureCoords copying
 		if (aimesh->mTextureCoords[0])
 		{
-			mesh->texCoords[tx] = aimesh->mTextureCoords[0][v].x;
-			mesh->texCoords[tx + 1] = aimesh->mTextureCoords[0][v].y;
+			mesh->textureCoords[tx] = aimesh->mTextureCoords[0][v].x;
+			mesh->textureCoords[tx + 1] = aimesh->mTextureCoords[0][v].y;
 		}
 		else
 		{
-			mesh->texCoords[tx] = 0.0f;
-			mesh->texCoords[tx + 1] = 0.0f;
+			mesh->textureCoords[tx] = 0.0f;
+			mesh->textureCoords[tx + 1] = 0.0f;
 		}
 
 		//color copying
@@ -681,9 +681,9 @@ uint64 MeshImporter::Save(ResourceMesh* mesh, char** fileBuffer)
 	memcpy(cursor, mesh->normals, bytes);
 	cursor += bytes;
 
-	//store texCoords
+	//store textureCoords
 	bytes = sizeof(float) * mesh->amountTexCoords * 2;
-	memcpy(cursor, mesh->texCoords, bytes);
+	memcpy(cursor, mesh->textureCoords, bytes);
 
 	*fileBuffer = buffer;
 
@@ -727,10 +727,10 @@ bool MeshImporter::Load(char* fileBuffer, ResourceMesh* mesh, uint size)
 	memcpy(mesh->normals, cursor, bytes);
 	cursor += bytes;
 
-	//load texCoords
+	//load textureCoords
 	bytes = sizeof(float) * mesh->amountTexCoords * 2;
-	mesh->texCoords = new float[mesh->amountTexCoords * 2];
-	memcpy(mesh->texCoords, cursor, bytes);
+	mesh->textureCoords = new float[mesh->amountTexCoords * 2];
+	memcpy(mesh->textureCoords, cursor, bytes);
 	cursor += bytes;
 
 	LOG("%s loaded in %d ms", mesh->libraryFile.c_str(), timer.Read());
@@ -777,13 +777,12 @@ void MaterialImporter::Import(const aiMaterial* aimaterial, ResourceMaterial* ma
 
 uint64 MaterialImporter::Save(ResourceMaterial* material, char** fileBuffer)
 {
-	JsonObj base_object;
-	base_object.AddInt("diffuseTexture", material->diffuseTextureUID);
-
-	base_object.AddColor("diffuseColor", material->diffuseColor);
+	JsonObj savingObj;
+	savingObj.AddInt("diffuseTexture", material->diffuseTextureUID);
+	savingObj.AddColor("diffuseColor", material->diffuseColor);
 
 	char* buffer;
-	uint size = base_object.Save(&buffer);
+	uint size = savingObj.Save(&buffer);
 	*fileBuffer = buffer;
 
 	return size;
@@ -940,7 +939,7 @@ void TextureImporter::Import(char* fileBuffer, ResourceTexture* texture, uint si
 	{
 		LOG("Texture loaded successfully from: %s in %d ms", texture->assetsFile.c_str(), timer.Read());
 
-		texture->FillData(ilGetData(), (uint)imageID, ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT));
+		texture->ApplyData(ilGetData(), (uint)imageID, ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT));
 	}
 
 	ilBindImage(0);
@@ -1008,7 +1007,7 @@ bool TextureImporter::Load(char* fileBuffer, ResourceTexture* texture, uint size
 	ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE);
 
 	LOG("Texture loaded successfully from: %s in %d ms", texture->libraryFile.c_str(), timer.Read());
-	texture->FillData(ilGetData(), (uint)imageID, ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT));
+	texture->ApplyData(ilGetData(), (uint)imageID, ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT));
 
 	error = ilGetError();
 	if (error != IL_NO_ERROR)
@@ -1021,7 +1020,7 @@ bool TextureImporter::Load(char* fileBuffer, ResourceTexture* texture, uint size
 	else
 	{
 		//LOG("Texture loaded successfully from: %s in %d ms", texture->libraryFile.c_str(), timer.Read());
-		//texture->FillData(ilGetData(), (uint)imageID, ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT));
+		//texture->ApplyData(ilGetData(), (uint)imageID, ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT));
 	}
 
 	ilBindImage(0);

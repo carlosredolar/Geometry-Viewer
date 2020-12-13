@@ -183,7 +183,7 @@ void ModuleWindow::SetBorderless(bool setBorderless)
 		SDL_SetWindowBordered(window, SDL_TRUE);
 }
 
-void ModuleWindow::OnResize(int g_width, int g_height)
+void ModuleWindow::ScreenResized(int g_width, int g_height)
 {
 	width = g_width;
 	height = g_height;

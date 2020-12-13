@@ -793,16 +793,16 @@ bool ModuleResources::SaveResource(Resource* resource)
 
 bool ModuleResources::SaveMetaFile(Resource* resource)
 {
-	JsonObj base_object;
-	resource->SaveMeta(base_object, FileManager::GetLastModTime(resource->assetsFile.c_str()));
+	JsonObj savingObj;
+	resource->SaveMeta(savingObj, FileManager::GetLastModTime(resource->assetsFile.c_str()));
 
 	char* meta_buffer = NULL;
-	uint meta_size = base_object.Save(&meta_buffer);
+	uint meta_size = savingObj.Save(&meta_buffer);
 
 	std::string meta_file_name = resource->assetsFile + ".meta";
 	FileManager::Save(meta_file_name.c_str(), meta_buffer, meta_size);
 
-	base_object.Release();
+	savingObj.Release();
 	RELEASE_ARRAY(meta_buffer);
 
 	return true;

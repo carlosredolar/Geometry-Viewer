@@ -37,19 +37,14 @@ void GuiConfiguration::Draw()
 			//FPS graph
 			fps_log.erase(fps_log.begin());
 			fps_log.push_back(App->GetFPS());
-			//if (fps_log[fps_log.size() - 1] != 0) {
-			sprintf_s(title, 25, "Framerate %.1f", fps_log[fps_log.size() - 1]);
 			sprintf_s(title, 25, "Framerate %.1f", fps_log[fps_log.size() - 1]);
 			ImGui::PlotHistogram("##framerate", &fps_log[0], fps_log.size(), 0, title, 0.0f, 100.0f, ImVec2(310, 100));
-			//}
 
 			//Ms graph
 			ms_log.erase(ms_log.begin());
 			ms_log.push_back(App->GetLastDt() * 1000);
-			//if(ms_log[ms_log.size() - 1] != 0){
 			sprintf_s(title, 25, "Milliseconds %.1f", ms_log[ms_log.size() - 1]);
 			ImGui::PlotHistogram("##milliseconds", &ms_log[0], ms_log.size(), 0, title, 0.0f, 40.0f, ImVec2(310, 100));
-			//}
 		}
 
 		if (ImGui::CollapsingHeader("Window"))
@@ -125,10 +120,12 @@ void GuiConfiguration::Draw()
 
 			if (ImGui::BeginMenu("Shading Mode"))
 			{
-				if (ImGui::MenuItem("Solid", NULL, App->renderer3D->display_mode == DisplayMode::SOLID))
-					App->renderer3D->SetDisplayMode(DisplayMode::SOLID);
-				if (ImGui::MenuItem("Wireframe", NULL, App->renderer3D->display_mode == DisplayMode::WIREFRAME))
-					App->renderer3D->SetDisplayMode(DisplayMode::WIREFRAME);
+				if (ImGui::MenuItem("Solid", NULL, App->renderer3D->display_mode == RenderMode::SOLID))
+					App->renderer3D->SetDisplayMode(RenderMode::SOLID);
+				if (ImGui::MenuItem("Wireframe", NULL, App->renderer3D->display_mode == RenderMode::WIREFRAME))
+					App->renderer3D->SetDisplayMode(RenderMode::WIREFRAME);
+				if (ImGui::MenuItem("Solid with wireframe", NULL, App->renderer3D->display_mode == RenderMode::SOLIDWIRE))
+					App->renderer3D->SetDisplayMode(RenderMode::SOLIDWIRE);
 				ImGui::EndMenu();
 			}
 		}
@@ -141,9 +138,9 @@ void GuiConfiguration::Draw()
 			}
 
 			ImGui::SliderFloat("Mouse Sensitivity", &App->camera->sensitivity, 0.0f, 50.0f);
-			ImGui::SliderFloat("Movement Speed", &App->camera->move_speed, 0.0f, 50.0f);
-			ImGui::SliderFloat("Drag Speed", &App->camera->orbit_speed, 0.0f, 10.0f);
-			ImGui::SliderFloat("Zoom Speed", &App->camera->zoom_speed, 0.0f, 50.0f);
+			ImGui::SliderFloat("Movement Speed", &App->camera->movementSpeed, 0.0f, 50.0f);
+			ImGui::SliderFloat("Drag Speed", &App->camera->orbitingSpeed, 0.0f, 10.0f);
+			ImGui::SliderFloat("Zoom Speed", &App->camera->zoomSpeed, 0.0f, 50.0f);
 
 			ImGui::Spacing();
 			ImGui::Separator();
@@ -160,22 +157,21 @@ void GuiConfiguration::Draw()
 			ImGui::Spacing();
 
 			bool currentFixedFOV = App->camera->GetFixedFOV() == FOV::VERTICAL_FOV;
-			//Fixed Vertical FOV Settings
+
 			if (currentFixedFOV)
 			{
 				float verticalFOV = App->camera->GetVerticalFieldOfView() * RADTODEG;
 				if (ImGui::SliderFloat("Vertical FOV", &verticalFOV, 20.0f, 60.0f))
-					App->camera->SetVerticalFieldOfView(verticalFOV * DEGTORAD, App->gui->image_size.x, App->gui->image_size.y);
+					App->camera->SetVerticalFieldOfView(verticalFOV * DEGTORAD, App->gui->sceneRenderSize.x, App->gui->sceneRenderSize.y);
 
 				ImGui::Spacing();
 				ImGui::Text("Horizontal FOV: %.2f", App->camera->GetHorizontalFieldOfView() * RADTODEG);
 			}
-			//Fixed Horizontal FOV Settings
 			else
 			{
 				float horizontalFOV = App->camera->GetHorizontalFieldOfView() * RADTODEG;
 				if (ImGui::SliderFloat("Horizontal FOV", &horizontalFOV, 55.0f, 110.0f))
-					App->camera->SetHorizontalFieldOfView(horizontalFOV * DEGTORAD, App->gui->image_size.x, App->gui->image_size.y);
+					App->camera->SetHorizontalFieldOfView(horizontalFOV * DEGTORAD, App->gui->sceneRenderSize.x, App->gui->sceneRenderSize.y);
 
 				ImGui::Spacing();
 				ImGui::Text("Vertical FOV: %.2f", App->camera->GetVerticalFieldOfView() * RADTODEG);
@@ -253,13 +249,13 @@ void GuiConfiguration::Draw()
 
 			ImGui::Spacing();
 
-			ImGui::Text("Normalized Mouse X: %.2f", App->gui->mouseScenePosition.x / App->gui->image_size.x);
-			ImGui::Text("Normalized Mouse Y: %.2f", App->gui->mouseScenePosition.y / App->gui->image_size.y);
+			ImGui::Text("Normalized Mouse X: %.2f", App->gui->mouseScenePosition.x / App->gui->sceneRenderSize.x);
+			ImGui::Text("Normalized Mouse Y: %.2f", App->gui->mouseScenePosition.y / App->gui->sceneRenderSize.y);
 
 			ImGui::Spacing();
 
-			float normalized_x = App->gui->mouseScenePosition.x / App->gui->image_size.x;
-			float normalized_y = App->gui->mouseScenePosition.y / App->gui->image_size.y;
+			float normalized_x = App->gui->mouseScenePosition.x / App->gui->sceneRenderSize.x;
+			float normalized_y = App->gui->mouseScenePosition.y / App->gui->sceneRenderSize.y;
 
 			normalized_x = (normalized_x - 0.5f) * 2.0f;
 			normalized_y = -(normalized_y - 0.5f) * 2.0f;
@@ -289,12 +285,6 @@ void GuiConfiguration::Draw()
 			ImGui::Text("Time Scale: %.2f", Time::gameClock.timeScale);
 			ImGui::Text("Time since game start: %.2f", Time::gameClock.timeSinceStartup());
 		}
-
-		if (ImGui::CollapsingHeader("File Manager"))
-		{
-			//ImGui::Checkbox("Normalize imported meshes", &FileManager::normalize_scales);
-		}
-
 	}
 	ImGui::End();
 }

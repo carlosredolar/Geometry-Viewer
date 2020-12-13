@@ -12,8 +12,8 @@
 
 typedef int GLint;
 
-struct log_message {
-	std::string log_text;
+struct messageToLog {
+	std::string text;
 	int warning_level;
 };
 
@@ -34,7 +34,7 @@ public:
 	bool MouseOnScene();
 	void AddConsoleLog(const char* log, int warning_level);
 
-	void OnResize(ImVec2 window_size);
+	void ScreenResized(ImVec2 window_size);
 	void LoadFile(const char* filter_extension, const char* from_dir);
 	void SaveFile(const char* filter_extension, const char* from_dir);
 	void DrawDirectoryRecursive(const char* directory, const char* filter_extension);
@@ -47,7 +47,7 @@ private:
 	void PlayStopButtons();
 
 public:
-	ImVec2 image_size;
+	ImVec2 sceneRenderSize;
 	ImVec2 sceneWindowOrigin;
 	ImVec2 mouseScenePosition;
 	bool sceneWindowFocused;
@@ -56,8 +56,8 @@ public:
 private:
 
 	bool show_project_window;
-	bool show_console_window;
-	bool resources_window;
+	bool consoleWindow;
+	bool resourcesWindow;
 	bool newLog;
 
 	//edit subwindows
@@ -66,7 +66,7 @@ private:
 	//menus
 	bool* open_dockspace;
 
-	std::vector<log_message> console_log;
+	std::vector<messageToLog> consoleLog;
 
 	enum
 	{

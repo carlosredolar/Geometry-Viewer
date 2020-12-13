@@ -4,20 +4,20 @@
 #include "Application.h"
 
 ResourceTexture::ResourceTexture(uint UID) : Resource(UID, ResourceType::RESOURCE_TEXTURE),
-_id(0), _width(-1), _height(-1), _data(nullptr) , _gpu_ID(0)
+textureID(0), textureWidth(-1), textureHeight(-1), textureData(nullptr) , gpuID(0)
 {}
 
 ResourceTexture::~ResourceTexture() 
 {
-	_data = nullptr;
-	glDeleteTextures(1, &_gpu_ID);
+	textureData = nullptr;
+	glDeleteTextures(1, &gpuID);
 }
 
 void ResourceTexture::GenerateBuffers()
 {
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	glGenTextures(1, &_gpu_ID);
-	glBindTexture(GL_TEXTURE_2D, _gpu_ID);
+	glGenTextures(1, &gpuID);
+	glBindTexture(GL_TEXTURE_2D, gpuID);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -25,62 +25,54 @@ void ResourceTexture::GenerateBuffers()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glGenerateMipmap(GL_TEXTURE_2D);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _width, _height, 0, GL_RGBA, GL_UNSIGNED_BYTE, _data);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureData);
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void ResourceTexture::BindTexture()
 {
-	glBindTexture(GL_TEXTURE_2D, _gpu_ID);
+	glBindTexture(GL_TEXTURE_2D, gpuID);
 }
 
-void ResourceTexture::FillData(GLubyte* data, uint id, int width, int height)
+uint ResourceTexture::SaveMeta(JsonObj& savingObj, uint lastMod)
 {
-	_data = data;
-	_id = id;
-	_width = width;
-	_height = height;
-}
-
-uint ResourceTexture::SaveMeta(JsonObj& base_object, uint last_modification)
-{
-	base_object.AddInt("UID", _uid);
-	base_object.AddInt("lastModified", last_modification);
-	base_object.AddString("Library path", libraryFile.c_str());
-
+	savingObj.AddInt("UID", _uid);
+	savingObj.AddInt("lastModified", lastMod);
+	savingObj.AddString("Library path", libraryFile.c_str());
 	TextureWrap textureWrap = TextureWrap::REPEAT;
 	TextureFiltering textureFiltering = TextureFiltering::NEAREST;
 	
-	TextureImportSettings importingOptions = App->resources->textureImportSettings;
 
-	base_object.AddInt("texture_wrap", (int)App->resources->textureImportSettings.textureWrap);
-	base_object.AddInt("texture_filtering", (int)App->resources->textureImportSettings.textureFiltering);
-	base_object.AddBool("flip", importingOptions.flip);
-	base_object.AddBool("alienify", importingOptions.alienify);
-	base_object.AddBool("blur_average", importingOptions.blurAverage);
-	base_object.AddBool("blur_gaussian", importingOptions.blurGaussian);
-	base_object.AddBool("equalize", importingOptions.equalize);
-	base_object.AddBool("negativity", importingOptions.negativity);
-	base_object.AddBool("noise", importingOptions.noise);
-	base_object.AddFloat("noise_tolerance", importingOptions.noiseTolerance);
-	base_object.AddBool("pixelize", importingOptions.pixelize);
-	base_object.AddFloat("pixel_size", importingOptions.pixelizeSize);
-	base_object.AddFloat("gamma_correction", importingOptions.gammaCorrection);
-	base_object.AddBool("sharpeining", importingOptions.sharpening);
-	base_object.AddFloat("sharpening_factor", importingOptions.sharpeningFactor);
-	base_object.AddInt("sharpening_iterations", importingOptions.sharpeningIterations);
-	base_object.AddFloat("contrast", importingOptions.contrast);
+	TextureImportSettings importOptions = App->resources->textureImportSettings;
+
+	savingObj.AddInt("texture_wrap", (int)App->resources->textureImportSettings.textureWrap);
+	savingObj.AddInt("texture_filtering", (int)App->resources->textureImportSettings.textureFiltering);
+	savingObj.AddBool("flip", importOptions.flip);
+	savingObj.AddBool("blur_average", importOptions.blurAverage);
+	savingObj.AddInt("sharpening_iterations", importOptions.sharpeningIterations);
+	savingObj.AddBool("blur_gaussian", importOptions.blurGaussian);
+	savingObj.AddFloat("pixel_size", importOptions.pixelizeSize);
+	savingObj.AddFloat("gamma_correction", importOptions.gammaCorrection);
+	savingObj.AddFloat("sharpening_factor", importOptions.sharpeningFactor);
+	savingObj.AddBool("equalize", importOptions.equalize);
+	savingObj.AddBool("negativity", importOptions.negativity);
+	savingObj.AddBool("noise", importOptions.noise);
+	savingObj.AddBool("alienify", importOptions.alienify);
+	savingObj.AddFloat("noise_tolerance", importOptions.noiseTolerance);
+	savingObj.AddBool("pixelize", importOptions.pixelize);
+	savingObj.AddBool("sharpeining", importOptions.sharpening);
+	savingObj.AddFloat("contrast", importOptions.contrast);
 
 	return 1;
 }
 
-void ResourceTexture::Load(JsonObj& base_object)
+void ResourceTexture::Load(JsonObj& loadingObj)
 {
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	glGenTextures(1, &_gpu_ID);
-	glBindTexture(GL_TEXTURE_2D, _gpu_ID);
+	glGenTextures(1, &gpuID);
+	glBindTexture(GL_TEXTURE_2D, gpuID);
 
-	TextureWrap textureWrap = (TextureWrap)base_object.GetInt("textureWrap", 2);
+	TextureWrap textureWrap = (TextureWrap)loadingObj.GetInt("textureWrap", 2);
 
 	switch (textureWrap)
 	{
@@ -104,30 +96,55 @@ void ResourceTexture::Load(JsonObj& base_object)
 		break;
 	}
 
-	TextureFiltering textureFiltering = (TextureFiltering)base_object.GetInt("textureFiltering", 0);
+	TextureFiltering textureFiltering = (TextureFiltering)loadingObj.GetInt("textureFiltering", 0);
 
-	if (textureFiltering == TextureFiltering::NEAREST) {
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	}
-	else {
+	if (textureFiltering == TextureFiltering::LINEAR) 
+	{
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	}
+	else 
+	{
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	}
 
 	//glGenerateMipmap(GL_TEXTURE_2D);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _width, _height, 0, GL_RGBA, GL_UNSIGNED_BYTE, _data);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureData);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 }
 
-uint ResourceTexture::GetID() {	return _id; }
+void ResourceTexture::ApplyData(GLubyte* data, uint id, int width, int height)
+{
+	textureData = data;
+	textureID = id;
+	textureWidth = width;
+	textureHeight = height;
+}
 
-int ResourceTexture::GetWidth() { return _width; }
+uint ResourceTexture::GetID() 
+{	
+	return textureID; 
+}
 
-int ResourceTexture::GetHeight() {	return _height; }
+int ResourceTexture::GetWidth() 
+{ 
+	return textureWidth; 
+}
 
-GLubyte* ResourceTexture::GetData() { return _data; }
+int ResourceTexture::GetHeight() 
+{	
+	return textureHeight;
+}
 
-uint ResourceTexture::GetGpuID() { return _gpu_ID; }
+GLubyte* ResourceTexture::GetData() 
+{ 
+	return textureData; 
+}
+
+uint ResourceTexture::GetGpuID() 
+{ 
+	return gpuID; 
+}
 

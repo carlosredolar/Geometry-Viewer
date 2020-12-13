@@ -30,7 +30,7 @@ public:
 	void SetFullscreenDesktop(bool setFullscreenDesktop);
 	void SetResizable(bool setResizable);
 	void SetBorderless(bool setBorderless);
-	void OnResize(int width, int height);
+	void ScreenResized(int width, int height);
 
 private:
 	float brightness;

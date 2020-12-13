@@ -22,7 +22,7 @@ public:
 	JsonObj(JSON_Object* object);
 	~JsonObj();
 
-	JSON_Object* GetJSONObject();
+	JSON_Object* GetJsonObject();
 	JSON_Value* GetValue();
 	void Release();
 

@@ -13,10 +13,11 @@ typedef void* SDL_GLContext;
 class Component_Camera;
 struct ImVec4;
 
-enum DisplayMode
+enum RenderMode
 {
 	SOLID,
-	WIREFRAME
+	WIREFRAME,
+	SOLIDWIRE
 };
 
 class ModuleRenderer3D : public Module
@@ -32,27 +33,22 @@ public:
 	update_status PostUpdate(float dt) override;
 	bool CleanUp();
 	
-	void OnResize(int width, int height);
+	void ScreenResized(int width, int height);
 	void UpdateProjectionMatrix(float* projectionMatrix);
 
-	void DrawAABB(float3* aabb, ImVec4 color);
-	void DrawRay();
-
-	DisplayMode GetDisplayMode();
-	void SetDisplayMode(DisplayMode display);
+	void SetDisplayMode(RenderMode display);
+	RenderMode GetDisplayMode();
 	void SetMainCamera(Component_Camera* camera);
 	Component_Camera* GetMainCamera();
 
 	void SetCap(GLenum cap, bool enabled);
 	void SetVSync(bool enabled);
+	void DrawAABB(float3* aabb, ImVec4 color);
+	void DrawRay();
 	
 private:
 	void GenerateBuffers();
 	void DrawDirectModeCube();
-	void BeginDebugDraw();
-	void EndDebugDraw();
-
-	GLuint frameBuffer;
 
 public:
 	GLuint colorTexture;
@@ -63,7 +59,7 @@ public:
 	Component_Light lights[MAX_LIGHTS];
 	SDL_GLContext context;
 
-	DisplayMode display_mode;
+	RenderMode display_mode;
 
 	LineSegment _ray;
 
@@ -74,6 +70,6 @@ public:
 
 private:
 	bool debug;
-
 	Component_Camera* mainCamera;
+	GLuint frameBuffer;
 };

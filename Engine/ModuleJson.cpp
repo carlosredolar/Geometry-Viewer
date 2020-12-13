@@ -1,7 +1,7 @@
 #include "ModuleJson.h"
 #include "parson/parson.h"
 
-//GnJSONObject ====================================================
+//Json Object
 
 JsonObj::JsonObj()
 {
@@ -40,7 +40,7 @@ void JsonObj::Release()
 	json_value_free(rootObj);
 }
 
-JSON_Object* JsonObj::GetJSONObject()
+JSON_Object* JsonObj::GetJsonObject()
 {
 	return objectObj;
 }
@@ -61,39 +61,72 @@ uint JsonObj::Save(char** buffer)
 JSON_Array* JsonObj::GetArray(const char* name)
 {
 	if (json_object_has_value(objectObj, name) == 1)
+	{
 		return json_object_get_array(objectObj, name);
+	}
 	else
 		return nullptr;
-}
-
-int JsonObj::GetInt(const char* name, int default)
-{
-	if (json_object_has_value(objectObj, name) == 1)
-		return json_object_get_number(objectObj, name);
-	else
-		return default;
-}
-
-float JsonObj::GetFloat(const char* name, float default)
-{
-	if (json_object_has_value(objectObj, name) == 1)
-		return json_object_get_number(objectObj, name);
-	else
-		return default;
 }
 
 bool JsonObj::GetBool(const char* name, bool default)
 {
 	if (json_object_has_value(objectObj, name) == 1)
+	{
 		return json_object_get_boolean(objectObj, name);
+	}
 	else
+	{
 		return default;
+	}
+}
+
+int JsonObj::GetInt(const char* name, int default)
+{
+	if (json_object_has_value(objectObj, name) == 1)
+	{
+		return json_object_get_number(objectObj, name);
+	}
+	else
+	{
+		return default;
+	}
+}
+
+float JsonObj::GetFloat(const char* name, float default)
+{
+	if (json_object_has_value(objectObj, name) == 1)
+	{
+		return json_object_get_number(objectObj, name);
+	}
+	else
+	{
+		return default;
+	}
 }
 
 const char* JsonObj::GetString(const char* name, const char* default)
 {
 	if (json_object_has_value(objectObj, name) == 1)
 		return json_object_get_string(objectObj, name);
+	else
+		return default;
+}
+
+Color JsonObj::GetColor(const char* name, Color default)
+{
+	if (json_object_has_value(objectObj, name) == 1)
+	{
+		Color color;
+
+		JSON_Array* array;
+		array = json_object_get_array(objectObj, name);
+
+		color.r = json_array_get_number(array, 0);
+		color.g = json_array_get_number(array, 1);
+		color.b = json_array_get_number(array, 2);
+
+		return color;
+	}
 	else
 		return default;
 }
@@ -137,25 +170,6 @@ Quat JsonObj::GetQuaternion(const char* name, Quat default)
 		return default;
 }
 
-Color JsonObj::GetColor(const char* name, Color default)
-{
-	if (json_object_has_value(objectObj, name) == 1)
-	{
-		Color color;
-
-		JSON_Array* array;
-		array = json_object_get_array(objectObj, name);
-
-		color.r = json_array_get_number(array, 0);
-		color.g = json_array_get_number(array, 1);
-		color.b = json_array_get_number(array, 2);
-
-		return color;
-	}
-	else
-		return default;
-}
-
 void JsonObj::AddInt(const char* name, int number)
 {
 	json_object_set_number(objectObj, name, number);
@@ -177,6 +191,11 @@ void JsonObj::AddFloat3(const char* name, float3 number)
 	json_array_append_number(_array, number.z);
 }
 
+void JsonObj::AddBool(const char* name, bool boolean)
+{
+	json_object_set_boolean(objectObj, name, boolean);
+}
+
 void JsonObj::AddQuaternion(const char* name, Quat number)
 {
 	JSON_Value* value = json_value_init_array();
@@ -187,11 +206,6 @@ void JsonObj::AddQuaternion(const char* name, Quat number)
 	json_array_append_number(_array, number.y);
 	json_array_append_number(_array, number.z);
 	json_array_append_number(_array, number.w);
-}
-
-void JsonObj::AddBool(const char* name, bool boolean)
-{
-	json_object_set_boolean(objectObj, name, boolean);
 }
 
 void JsonObj::AddString(const char* name, const char* string)
@@ -230,7 +244,7 @@ JsonArray JsonObj::AddArray(JsonArray array)
 	return JsonArray();
 }
 
-//JsonArray =====================================================
+//Json Array
 
 JsonArray::JsonArray() : _array(nullptr), _nested(false)
 {
@@ -238,9 +252,11 @@ JsonArray::JsonArray() : _array(nullptr), _nested(false)
 	json_value_get_array(_value);
 }
 
-JsonArray::JsonArray(JSON_Array* array, JSON_Object* root_object) : _array(array) {}
+JsonArray::JsonArray(JSON_Array* array) : _array(array), _value(nullptr) 
+{}
 
-JsonArray::JsonArray(JSON_Array* array) : _array(array), _value(nullptr) {}
+JsonArray::JsonArray(JSON_Array* array, JSON_Object* root_object) : _array(array) 
+{}
 
 JsonArray::JsonArray(const char* name) : _nested(false)
 {
@@ -265,8 +281,7 @@ JsonObj JsonArray::GetObjectInArray(const char* name)
 		JSON_Object* object = json_array_get_object(_array, i);
 		const char* objectName = json_object_get_string(object, "name");
 
-		if (strcmp(name, objectName) == 0)
-			return JsonObj(object);
+		if (strcmp(name, objectName) == 0) return JsonObj(object);
 	}
 
 	LOG_ERROR("JSON object %s could not be found", name);
@@ -297,4 +312,3 @@ void JsonArray::AddString(const char* string)
 {
 	json_array_append_string(_array, string);
 }
-

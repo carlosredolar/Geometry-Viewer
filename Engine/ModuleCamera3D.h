@@ -18,7 +18,7 @@ public:
 	update_status Update(float dt);
 	bool CleanUp();
 
-	void OnResize(int width, int height);
+	void ScreenResized(int width, int height);
 
 	bool LoadConfig(JsonObj& config) override;
 
@@ -51,10 +51,10 @@ private:
 public:
 	Color background;
 
-	float move_speed;
-	float drag_speed;
-	float orbit_speed;
-	float zoom_speed;
+	float movementSpeed;
+	float dragingSpeed;
+	float orbitingSpeed;
+	float zoomSpeed;
 	float sensitivity;
 
 	LineSegment ray;

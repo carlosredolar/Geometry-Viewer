@@ -53,9 +53,10 @@ void GuiScene::Draw()
 
 		if (App->in_game) DrawInGameDataOverlay();
 
-		if (App->gui->image_size.x != window_size.x || App->gui->image_size.y != window_size.y) App->gui->OnResize(window_size);
 
-		ImGui::Image((ImTextureID)App->renderer3D->colorTexture, App->gui->image_size, ImVec2(0.0f, 1.0f), ImVec2(1.0f, 0.0f));
+		if (App->gui->sceneRenderSize.x != window_size.x || App->gui->sceneRenderSize.y != window_size.y) App->gui->ScreenResized(window_size);
+
+		ImGui::Image((ImTextureID)App->renderer3D->colorTexture, App->gui->sceneRenderSize, ImVec2(0.0f, 1.0f), ImVec2(1.0f, 0.0f));
 		ImGui::PushID(SCENE_WINDOW);
 		if (ImGui::BeginDragDropTarget())
 		{
@@ -75,7 +76,7 @@ void GuiScene::Draw()
 		ImGui::PopID();
 
 		App->scene->EditTransform();
-		
+
 	}
 
 	ImGui::End();
