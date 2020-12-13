@@ -126,17 +126,16 @@ update_status ModuleCamera3D::Update(float dt)
 			position -= camera->GetFrustum().front * zoomSpeed * distanceToReference * dt;
 			LookAt(reference);
 		}
-	}
 
+		if ((App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT) && (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT))
+		{
+			Orbit(dt);
+		}
 
-	if ((App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT) && (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT))
-	{
-		Orbit(dt);
-	} 
-		
-	if (!(App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT) && (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN) && !(ImGuizmo::IsOver()))
-	{
-		App->scene->selectedGameObject = SelectGO();
+		if (!(App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT) && (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN) && !(ImGuizmo::IsOver()))
+		{
+			App->scene->selectedGameObject = SelectGO();
+		}
 	}
 		
 	//RenderRay();
@@ -272,21 +271,51 @@ GameObject* ModuleCamera3D::SelectGO()
 	//LOG("X: %.1f Y: %.1f", normalized_x, normalized_y); //click point pos
 
 	std::vector<GameObject*> sceneGO = App->scene->GetAllGameObjects();
-
-	for (size_t i = 0; i < sceneGO.size(); i++)
+	float nearestIntersectDist = camera->GetFrustum().farPlaneDistance;
+	int nearestGOIndex = -1;
+	bool hit = false;
+	
+	for (int i = 0; i < sceneGO.size(); i++)
 	{
-		bool hit = ray.Intersects(sceneGO[i]->GetAABB());
-
+		hit = ray.Intersects(sceneGO[i]->GetAABB());
+		
 		if (hit)
 		{
-			float distance;
-			float hit_point;
+			float entranceDist;
+			float exitDist;
 
-			hit = ray.Intersects(sceneGO[i]->GetAABB(), distance, hit_point);
-			
-			return sceneGO[i];
+			hit = ray.Intersects(sceneGO[i]->GetAABB(), entranceDist, exitDist);
+
+			LineSegment localRay = ray;
+			localRay.Transform(sceneGO[i]->GetTransform()->GetGlobalTransform().Inverted());
+
+			ResourceMesh* mesh = nullptr; mesh = (ResourceMesh*)sceneGO[i]->GetComponent<Component_Mesh>()->GetResource(ResourceType::RESOURCE_MESH);
+
+			if (mesh != nullptr) {
+				for (int j = 0; j < mesh->amountIndices; j += 3)
+				{
+					float3 v1(mesh->vertices[mesh->indices[j] * 3], mesh->vertices[mesh->indices[j] * 3 + 1], mesh->vertices[mesh->indices[j] * 3 + 2]);
+					float3 v2(mesh->vertices[mesh->indices[j + 1] * 3], mesh->vertices[mesh->indices[j + 1] * 3 + 1], mesh->vertices[mesh->indices[j + 1] * 3 + 2]);
+					float3 v3(mesh->vertices[mesh->indices[j + 2] * 3], mesh->vertices[mesh->indices[j + 2] * 3 + 1], mesh->vertices[mesh->indices[j + 2] * 3 + 2]);
+					const Triangle triangle(v1, v2, v3);
+
+					float dist;
+					float3 intersectionPoint;
+					if (localRay.Intersects(triangle, &dist, &intersectionPoint))
+					{
+						if (entranceDist < nearestIntersectDist)
+						{
+							nearestIntersectDist = entranceDist;
+							nearestGOIndex = i;
+						}
+					}
+				}
+			}					
 		}
 	}
+
+	if (nearestGOIndex !=-1) return sceneGO[nearestGOIndex];
+
 	return nullptr;
 }
 
