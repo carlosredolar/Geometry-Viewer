@@ -1,7 +1,7 @@
 #pragma once
 #include "Module.h"
 #include "Globals.h"
-#include "MathGeoLib/include/MathGeoLib.h"
+#include "Libs/MathGeoLib/include/MathGeoLib.h"
 
 class Component_Camera;
 class GameObject;

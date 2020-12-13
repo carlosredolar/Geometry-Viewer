@@ -1,8 +1,8 @@
 #pragma once
 #include "Module.h"
 #include "Globals.h"
-#include "ImGui/imgui.h"
-#include "ImGuizmo/ImGuizmo.h"
+#include "Libs/ImGui/imgui.h"
+#include "Libs/ImGuizmo/ImGuizmo.h"
 
 #include <vector>
 

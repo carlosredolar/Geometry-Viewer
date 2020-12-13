@@ -12,12 +12,12 @@
 #include <string>
 #include <algorithm>
 
-#include "Glew/include/glew.h"
-#include "ImGui/imgui_impl_sdl.h"
-#include "ImGui/imgui_impl_opengl3.h"
+#include "Libs/Glew/include/glew.h"
+#include "Libs/ImGui/imgui_impl_sdl.h"
+#include "Libs/ImGui/imgui_impl_opengl3.h"
 
-#include "MathGeoLib/include/MathGeoLib.h"
-#include "Assimp/include/version.h"
+#include "Libs/MathGeoLib/include/MathGeoLib.h"
+#include "Libs/Assimp/include/version.h"
 
 #include "GuiHierarchy.h"
 #include "GuiInspector.h"

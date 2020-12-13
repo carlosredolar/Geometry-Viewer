@@ -3,7 +3,7 @@
 #include "FileManager.h"
 #include "ResourceTexture.h"
 #include <algorithm>
-#include "ImGui/imgui.h"
+#include "Libs/ImGui/imgui.h"
 
 GuiAssets::GuiAssets() : GuiWindow()
 {

@@ -3,7 +3,7 @@
 #include "Component_Transform.h"
 #include "Application.h"
 #include "ModuleRenderer3D.h"
-#include "ImGui/imgui.h"
+#include "Libs/ImGui/imgui.h"
 #include "ModuleJson.h"
 
 Component_Camera::Component_Camera() : Component(ComponentType::CAMERA, nullptr), aspectRatio(16.0f/9.0f), fov(HORIZONTAL_FOV) 

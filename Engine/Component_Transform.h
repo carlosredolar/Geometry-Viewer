@@ -1,7 +1,7 @@
 #ifndef __TRANSFORM_H__
 #define __TRANSFORM_H__
 #include "Component.h"
-#include "MathGeoLib/include/MathGeoLib.h"
+#include "Libs/MathGeoLib/include/MathGeoLib.h"
 
 class Component_Mesh;
 class JsonArray;

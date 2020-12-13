@@ -2,7 +2,7 @@
 #include <gl/GL.h>
 #include "Component_Light.h"
 #include "ModuleJson.h"
-#include "ImGui/imgui.h"
+#include "Libs/ImGui/imgui.h"
 
 Component_Light::Component_Light() : Component(ComponentType::LIGHT), reference(-1), position(0.0f, 0.0f, 0.0f)
 {}

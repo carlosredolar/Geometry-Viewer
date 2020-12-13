@@ -1,7 +1,7 @@
 #pragma once
 #include "Module.h"
 #include "Globals.h"
-#include "MathGeoLib/include/MathGeoLib.h"
+#include "Libs/MathGeoLib/include/MathGeoLib.h"
 #include "Component_Light.h"
 
 #define MAX_LIGHTS 8
@@ -32,7 +32,7 @@ public:
 	update_status Update(float dt) override;
 	update_status PostUpdate(float dt) override;
 	bool CleanUp();
-	
+
 	void ScreenResized(int width, int height);
 	void UpdateProjectionMatrix(float* projectionMatrix);
 
@@ -45,7 +45,7 @@ public:
 	void SetVSync(bool enabled);
 	void DrawAABB(float3* aabb, ImVec4 color);
 	void DrawRay();
-	
+
 private:
 	void GenerateBuffers();
 	void DrawDirectModeCube();

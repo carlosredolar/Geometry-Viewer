@@ -1,11 +1,11 @@
 #include "Application.h"
-#include "glew/include/glew.h"
+#include "Libs/Glew/include/glew.h"
 #include "Globals.h"
 #include "FileManager.h"
 #include "Time.h"
 #include "ModuleJson.h"
 
-#include "parson/parson.h"
+#include "Libs/parson/parson.h"
 
 Specs Application::GetSpecs()
 {

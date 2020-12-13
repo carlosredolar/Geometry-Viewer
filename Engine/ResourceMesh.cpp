@@ -1,5 +1,5 @@
 #include "ResourceMesh.h"
-#include "glew/include/glew.h"
+#include "Libs/Glew/include/glew.h"
 
 ResourceMesh::ResourceMesh(uint UID) : Resource(UID, ResourceType::RESOURCE_MESH), amountVertices(0), vertices(nullptr), amountIndices(0), indices(nullptr),
  amountNormals(0), normals(nullptr), textureCoords(nullptr), amountTexCoords(0), colors(nullptr), buffersCreated(false) {}

@@ -1,7 +1,7 @@
 #include "GuiScene.h"
-#include "ImGui/imgui.h"
+#include "Libs/ImGui/imgui.h"
 #include "Application.h"
-#include "glew/include/glew.h"
+#include "Libs/Glew/include/glew.h"
 #include "GuiAssets.h"
 #include "Time.h"
 

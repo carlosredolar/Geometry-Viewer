@@ -20,12 +20,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include "ImGui/imgui.h"
+#include "../ImGui/imgui.h"
 #ifndef IMGUI_DEFINE_MATH_OPERATORS
 #define IMGUI_DEFINE_MATH_OPERATORS
 #endif
 #include "ImGuizmo.h"
-#include "ImGui/imgui_internal.h"
+#include "../ImGui/imgui_internal.h"
 #if !defined(_WIN32) 
 #define _malloca(x) alloca(x)
 #else

@@ -17,7 +17,7 @@
 #include "GuiAssets.h"
 #include <algorithm>
 
-#include "MathGeoLib/include/MathGeoLib.h"
+#include "Libs/MathGeoLib/include/MathGeoLib.h"
 
 ModuleResources::ModuleResources(bool start_enabled) : Module(start_enabled), _toDeleteAsset(-1), _toDeleteResource(-1)
 {

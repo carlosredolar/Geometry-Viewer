@@ -1,6 +1,6 @@
 #include "ResourceTexture.h"
 #include "ModuleJson.h"
-#include "glew/include/glew.h"
+#include "Libs/Glew/include/glew.h"
 #include "Application.h"
 
 ResourceTexture::ResourceTexture(uint UID) : Resource(UID, ResourceType::RESOURCE_TEXTURE),

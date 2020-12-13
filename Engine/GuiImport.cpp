@@ -1,6 +1,6 @@
 #include "GuiImport.h"
 #include "Application.h"
-#include "ImGui/imgui.h"
+#include "Libs/ImGui/imgui.h"
 
 GuiImport::GuiImport() : GuiWindow(), fileToImport(nullptr), currentResourceType(ResourceType::RESOURCE_UNKNOWN)
 {}

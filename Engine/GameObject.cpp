@@ -5,11 +5,11 @@
 #include "Component_Material.h"
 #include "Component_Camera.h"
 #include "Component_Light.h"
-#include "ImGui/imgui.h"
+#include "Libs/ImGui/imgui.h"
 #include "ModuleJson.h"
 #include "Application.h"
 
-#include "MathGeoLib/include/MathGeoLib.h"
+#include "Libs/MathGeoLib/include/MathGeoLib.h"
 
 #include <vector>
 

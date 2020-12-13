@@ -3,8 +3,8 @@
 #include "ModuleInput.h"
 #include "FileManager.h"
 
-#include "ImGui/imgui_internal.h"
-#include "ImGui/imgui_impl_sdl.h"
+#include "Libs/ImGui/imgui_internal.h"
+#include "Libs/ImGui/imgui_impl_sdl.h"
 
 #define MAX_KEYS 300
 

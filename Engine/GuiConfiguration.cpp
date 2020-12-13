@@ -1,7 +1,7 @@
 #include "GuiConfiguration.h"
-#include "ImGui/imgui.h"
 #include "Application.h"
-#include "glew/include/glew.h"
+#include "Libs/ImGui/imgui.h"
+#include "Libs/Glew/include/glew.h"
 #include "Component_Camera.h"
 #include "Time.h"
 

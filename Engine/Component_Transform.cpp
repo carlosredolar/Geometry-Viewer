@@ -2,7 +2,7 @@
 #include "Globals.h"
 #include "GameObject.h"
 #include "ModuleJson.h"
-#include "ImGui/imgui.h"
+#include "Libs/ImGui/imgui.h"
 
 Component_Transform::Component_Transform() : Component(ComponentType::TRANSFORM)
 {

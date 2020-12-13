@@ -5,7 +5,7 @@
 #include "ImportingSettings.h"
 #include <vector>
 #include <string>
-#include "MathGeoLib/include/MathGeoLib.h"
+#include "Libs/MathGeoLib/include/MathGeoLib.h"
 
 //Model Importer
 

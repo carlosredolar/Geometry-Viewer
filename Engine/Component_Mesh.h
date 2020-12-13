@@ -2,7 +2,7 @@
 #include "Globals.h"
 #include "Component.h"
 #include <vector>;
-#include "MathGeoLib/include/MathGeoLib.h"
+#include "Libs/MathGeoLib/include/MathGeoLib.h"
 #include "Component_Material.h"
 
 

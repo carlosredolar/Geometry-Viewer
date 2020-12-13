@@ -8,7 +8,7 @@
 #include "ResourceMesh.h"
 #include "GameObject.h"
 #include "Component_Transform.h"
-#include "glew/include/glew.h"
+#include "Libs/Glew/include/glew.h"
 
 
 ModuleCamera3D::ModuleCamera3D(bool start_enabled) : Module(start_enabled)

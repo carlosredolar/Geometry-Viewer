@@ -7,8 +7,8 @@
 #include "ResourceMesh.h"
 #include "Component_Material.h"
 #include "GameObject.h"
-#include "ImGui/imgui.h"
-#include "glew/include/glew.h"
+#include "Libs/ImGui/imgui.h"
+#include "Libs/Glew/include/glew.h"
 
 
 Component_Mesh::Component_Mesh() : Component(ComponentType::MESH), enableFaceNormals(false), enableVertexNormals(false), name("No name"), meshResource(nullptr)

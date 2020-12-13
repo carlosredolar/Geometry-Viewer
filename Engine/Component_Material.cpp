@@ -7,8 +7,8 @@
 #include "ResourceTexture.h"
 #include "ResourceMaterial.h"
 #include "GuiAssets.h"
-#include "glew/include/glew.h"
-#include "ImGui/imgui.h"
+#include "Libs/Glew/include/glew.h"
+#include "Libs/ImGui/imgui.h"
 
 Component_Material::Component_Material() : Component(ComponentType::MATERIAL), checkersImageActive(false), materialResource(nullptr), colored(false), diffuseTexture(nullptr)
 {
