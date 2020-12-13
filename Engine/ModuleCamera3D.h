@@ -52,7 +52,7 @@ public:
 	Color background;
 
 	float movementSpeed;
-	float dragingSpeed;
+	float panningSpeed;
 	float orbitingSpeed;
 	float zoomSpeed;
 	float sensitivity;
