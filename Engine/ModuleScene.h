@@ -42,6 +42,6 @@ public:
 private:
 	GameObject* root;
 
-	ImGuizmo::OPERATION mCurrentGizmoOperation;
-	ImGuizmo::MODE mCurrentGizmoMode;
+	ImGuizmo::OPERATION CurrentGizmoOperation;
+	ImGuizmo::MODE CurrentGizmoMode;
 };

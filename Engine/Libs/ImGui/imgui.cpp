@@ -9807,7 +9807,7 @@ static void ImGui::NavUpdateWindowing()
         if (move_delta.x != 0.0f || move_delta.y != 0.0f)
         {
             const float NAV_MOVE_SPEED = 800.0f;
-            const float movementSpeed = ImFloor(NAV_MOVE_SPEED * g.IO.DeltaTime * ImMin(g.IO.DisplayFramebufferScale.x, g.IO.DisplayFramebufferScale.y)); // FIXME: Doesn't code variable framerate very well
+            const float movementSpeed = ImFloor(NAV_MOVE_SPEED * g.IO.DeltaTime * ImMin(g.IO.DisplayFramebufferScale.x, g.IO.DisplayFramebufferScale.y));
             SetWindowPos(g.NavWindowingTarget->RootWindow, g.NavWindowingTarget->RootWindow->Pos + move_delta * movementSpeed, ImGuiCond_Always);
             g.NavDisableMouseHover = true;
             MarkIniSettingsDirty(g.NavWindowingTarget);

@@ -75,16 +75,16 @@ update_status ModuleCamera3D::Update(float dt)
 		return UPDATE_CONTINUE;
 
 	float3 newPos = float3::zero;
-	int speed_multiplier = 1;
+	int speed_multiplier = 5;
 
 	if (App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT)
-		speed_multiplier = 2;
+		speed_multiplier = 10;
 
 	//Up/Down
-	if (App->input->GetKey(SDL_SCANCODE_O) == KEY_REPEAT) 
-		newPos.y += movementSpeed * dt;
-	if (App->input->GetKey(SDL_SCANCODE_L) == KEY_REPEAT) 
-		newPos.y -= movementSpeed * dt;
+	if (App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) 
+		newPos.y += movementSpeed * speed_multiplier * dt;
+	if (App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) 
+		newPos.y -= movementSpeed * speed_multiplier * dt;
 
 	if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN) 
 	{
@@ -96,9 +96,9 @@ update_status ModuleCamera3D::Update(float dt)
 	}
 
 	//Forwards/Backwards
-	if ((App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) || (App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)) 
+	if ((App->input->GetKey(SDL_SCANCODE_Z) == KEY_REPEAT) || (App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)) 
 		newPos += camera->GetFrustum().front * movementSpeed * speed_multiplier * dt;
-	if ((App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) || (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)) 
+	if ((App->input->GetKey(SDL_SCANCODE_X) == KEY_REPEAT) || (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)) 
 		newPos -= camera->GetFrustum().front * movementSpeed * speed_multiplier * dt;
 
 	//Left/Right
