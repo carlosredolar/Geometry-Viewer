@@ -9,7 +9,8 @@ GuiHierarchy::GuiHierarchy() : GuiWindow()
 	type = WindowType::HIERARCHY_WINDOW;
 }
 
-GuiHierarchy::~GuiHierarchy() {}
+GuiHierarchy::~GuiHierarchy() 
+{}
 
 void GuiHierarchy::Draw()
 {
@@ -20,7 +21,6 @@ void GuiHierarchy::Draw()
 		PreorderHierarchy(root, id);
 	}
 	ImGui::End();
-
 }
 
 void GuiHierarchy::PreorderHierarchy(GameObject* gameObject, int& id)
@@ -32,7 +32,6 @@ void GuiHierarchy::PreorderHierarchy(GameObject* gameObject, int& id)
 	if (App->scene->selectedGameObject == gameObject) flags |= ImGuiTreeNodeFlags_Selected;
 
 	if (gameObject->GetChildrenAmount() == 0) flags |= ImGuiTreeNodeFlags_Leaf;
-
 
 	if (ImGui::TreeNodeEx(gameObject->GetName(), flags))
 	{
@@ -68,7 +67,7 @@ void GuiHierarchy::PreorderHierarchy(GameObject* gameObject, int& id)
 
 		if (ImGui::BeginPopupContextItem())
 		{
-			if (ImGui::Button("Add Empty Child"))
+			if (ImGui::Button("Add Child"))
 			{
 				gameObject->AddChild(new GameObject());
 				ImGui::CloseCurrentPopup();
@@ -79,14 +78,11 @@ void GuiHierarchy::PreorderHierarchy(GameObject* gameObject, int& id)
 				ImGui::CloseCurrentPopup();
 			}
 			ImGui::EndPopup();
-
 		}
-
 		for (size_t i = 0; i < gameObject->GetChildrenAmount(); i++)
 		{
 			PreorderHierarchy(gameObject->GetChildAt(i), id);
 		}
 		ImGui::TreePop();
-
 	}
 }

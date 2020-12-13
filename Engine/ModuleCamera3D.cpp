@@ -142,7 +142,7 @@ update_status ModuleCamera3D::Update(float dt)
 		}
 	}
 		
-	//RenderRay();
+	RenderRay();
 
 	position += newPosition;
 	camera->SetCameraPosition(position);
@@ -325,9 +325,11 @@ GameObject* ModuleCamera3D::SelectGO()
 
 void ModuleCamera3D::RenderRay() 
 {
+	glColor3f(.0f, 1.0f, .0f);
 	glBegin(GL_LINES);
 	glVertex3f(ray.a.x, ray.a.y, ray.a.z);
 	glVertex3f(ray.b.x, ray.b.y, ray.b.z);
 	glEnd();
+	glColor3f(1.0f, 1.0f, 1.0f);
 }
 
