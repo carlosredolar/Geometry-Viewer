@@ -12,8 +12,8 @@ ModuleScene::ModuleScene(bool start_enabled) : Module(start_enabled), showGrid(t
 {
 	name = "scene";
 
-	mCurrentGizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
-	mCurrentGizmoMode = ImGuizmo::MODE::WORLD;
+	CurrentGizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
+	CurrentGizmoMode = ImGuizmo::MODE::WORLD;
 }
 
 ModuleScene::~ModuleScene() 
@@ -71,13 +71,13 @@ update_status ModuleScene::Update(float dt)
 		selectedGameObject->toDelete = true;
 
 	if ((App->input->GetKey(SDL_SCANCODE_W) == KEY_DOWN))
-		mCurrentGizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
+		CurrentGizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
 
 	else if ((App->input->GetKey(SDL_SCANCODE_E) == KEY_DOWN))
-		mCurrentGizmoOperation = ImGuizmo::OPERATION::ROTATE;
+		CurrentGizmoOperation = ImGuizmo::OPERATION::ROTATE;
 
 	else if ((App->input->GetKey(SDL_SCANCODE_R) == KEY_DOWN))
-		mCurrentGizmoOperation = ImGuizmo::OPERATION::SCALE;
+		CurrentGizmoOperation = ImGuizmo::OPERATION::SCALE;
 
 	//Update GameObjects
 	root->Update();
@@ -151,7 +151,7 @@ void ModuleScene::EditTransform()
 		float tempTransform[16];
 		memcpy(tempTransform, objectTransform.ptr(), 16 * sizeof(float));
 
-		ImGuizmo::Manipulate(viewMatrix.ptr(), projectionMatrix.ptr(), mCurrentGizmoOperation, mCurrentGizmoMode, tempTransform);
+		ImGuizmo::Manipulate(viewMatrix.ptr(), projectionMatrix.ptr(), CurrentGizmoOperation, CurrentGizmoMode, tempTransform);
 
 		if (!(App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT) && (ImGuizmo::IsUsing()))
 		{
