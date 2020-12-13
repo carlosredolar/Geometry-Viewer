@@ -62,7 +62,7 @@ void ModelImporter::Import(char* fileBuffer, ResourceModel* model, uint size)
 				Component_Light* light = new Component_Light();
 				aiLight* ai_light = scene->mLights[i];
 				light->name = ai_light->mName.C_Str();
-				light->SetPos(ai_light->mPosition.x, ai_light->mPosition.y, ai_light->mPosition.z);
+				light->SetPosition(ai_light->mPosition.x, ai_light->mPosition.y, ai_light->mPosition.z);
 				light->ambient = Color(ai_light->mColorAmbient.r, ai_light->mColorAmbient.g, ai_light->mColorAmbient.b);
 				light->diffuse = Color(ai_light->mColorDiffuse.r, ai_light->mColorDiffuse.g, ai_light->mColorDiffuse.b);
 				model->lights.push_back(light);
@@ -76,11 +76,11 @@ void ModelImporter::Import(char* fileBuffer, ResourceModel* model, uint size)
 				Component_Camera* camera = new Component_Camera;
 				aiCamera* aicamera = scene->mCameras[i];
 				camera->name = aicamera->mName.C_Str();
-				camera->SetHorizontalFieldOfView(aicamera->mHorizontalFOV);
-				camera->SetPosition(float3(aicamera->mPosition.x, aicamera->mPosition.y, aicamera->mPosition.z));
-				camera->SetNearPlaneDistance(aicamera->mClipPlaneNear);
-				camera->SetFarPlaneDistance(aicamera->mClipPlaneFar);
-				camera->SetReference(float3(aicamera->mLookAt.x, aicamera->mLookAt.y, aicamera->mLookAt.z));
+				camera->SetHorizontalFOV(aicamera->mHorizontalFOV);
+				camera->SetCameraPosition(float3(aicamera->mPosition.x, aicamera->mPosition.y, aicamera->mPosition.z));
+				camera->SetNearPlane(aicamera->mClipPlaneNear);
+				camera->SetFarPlane(aicamera->mClipPlaneFar);
+				camera->SetCameraReference(float3(aicamera->mLookAt.x, aicamera->mLookAt.y, aicamera->mLookAt.z));
 				model->cameras.push_back(camera);
 			}
 		}
@@ -530,7 +530,7 @@ bool ModelImporter::InternalResourcesExist(const char* path)
 
 void ModelImporter::ConvertToDesiredAxis(aiNode * node, ModelNode & modelNode)
 {
-	ModelImportingSettings importingOptions = App->resources->modelImportSettings;
+	ModelImportSettings importingOptions = App->resources->modelImportSettings;
 	Axis upAxisEnum = importingOptions.upAxis;
 	Axis forwardAxisEnum = importingOptions.forwardAxis;
 
@@ -953,7 +953,7 @@ uint TextureImporter::Save(ResourceTexture* texture, char** fileBuffer)
 
 	ilBindImage(texture->GetID());
 
-	TextureImportingSettings importingOptions = App->resources->textureImportSettings;
+	TextureImportSettings importingOptions = App->resources->textureImportSettings;
 	ApplyImportingOptions(App->resources->textureImportSettings);
 
 	ilSetInteger(IL_DXTC_DATA_FORMAT, IL_DXT5);
@@ -1048,7 +1048,7 @@ ILenum TextureImporter::GetFileFormat(const char* file)
 	return fileFormat;
 }
 
-void TextureImporter::ApplyImportingOptions(TextureImportingSettings importingOptions)
+void TextureImporter::ApplyImportingOptions(TextureImportSettings importingOptions)
 {
 	if (importingOptions.flip) {
 		if (iluFlipImage() == IL_FALSE)

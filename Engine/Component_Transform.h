@@ -1,6 +1,5 @@
 #ifndef __TRANSFORM_H__
 #define __TRANSFORM_H__
-
 #include "Component.h"
 #include "MathGeoLib/include/MathGeoLib.h"
 
@@ -10,14 +9,13 @@ class JsonArray;
 class Component_Transform : public Component {
 public:
 	Component_Transform();
-	Component_Transform(float3 position, Quat rotation, float3 scale);
+	Component_Transform(float3 positionTransform, Quat rotationTransform, float3 scaleTransform);
 	~Component_Transform();
-
 	void Update() override;
 	void OnGUI() override;
 
-	void Save(JsonArray& save_array) override;
-	void Load(JsonObj& load_object) override;
+	void Save(JsonArray& saveArray) override;
+	void Load(JsonObj& loadObject) override;
 
 	void Set(float4x4 transform);
 
@@ -28,35 +26,35 @@ public:
 	void UpdateLocalTransform();
 	void UpdateTRS();
 	void UpdateGlobalTransform();
-	void UpdateGlobalTransform(float4x4 parentGlobalTransform);
+	void UpdateGlobalTransform(float4x4 newParentGlobalTransform);
 	void ChangeParentTransform(float4x4 newParentGlobalTransform);
-
 	void ResetTransform();
 
-	void SetPosition(float x, float y, float z);
-	void SetPosition(float3 new_position);
 	float3 GetPosition();
+	void SetPosition(float x, float y, float z);
+	void SetPosition(float3 newPosition);
 
-	void SetRotation(float x, float y, float z);
-	void SetRotation(Quat new_rotation);
-	void SetRotation(float i, float j, float k, float w);
 	Quat GetRotation();
+	void SetRotation(float x, float y, float z);
+	void SetRotation(Quat newRotation);
+	void SetRotation(float i, float j, float k, float w);
 	void UpdateEulerRotation();
 
-	void SetScale(float x, float y, float z);
-	void SetScale(float3 new_scale);
-	void SetProportionalScale(float multiplier);
 	float3 GetScale();
+	void SetScale(float x, float y, float z);
+	void SetScale(float3 newScale);
+	void SetProportionalScale(float multiplier);
+	
 
 private:
-	float4x4 _localTransform = float4x4::identity;
-	float4x4 _globalTransform = float4x4::identity;
-	float4x4 _parentGlobalTransform = float4x4::identity;
+	float4x4 localTransform = float4x4::identity;
+	float4x4 globalTransform = float4x4::identity;
+	float4x4 parentGlobalTransform = float4x4::identity;
 
 	float3 position;
-	Quat _rotation;
-	float3 _scale;
-	float3 _eulerRotation;
+	Quat rotation;
+	float3 scale;
+	float3 eulerRotation;
 };
 
 #endif //__TRANSFORM_H__

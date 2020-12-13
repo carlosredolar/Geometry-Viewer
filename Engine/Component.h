@@ -2,17 +2,20 @@
 #include "Globals.h"
 #include <string>
 
-class GameObject;
 class JsonObj;
 class JsonArray;
+
+class GameObject;
 class Resource;
+
+
 enum ResourceType;
 
 enum ComponentType {
-	TRANSFORM,
 	MESH,
 	MATERIAL, 
-	CAMERA, 
+	TRANSFORM,
+	CAMERA,
 	LIGHT
 };
 
@@ -25,25 +28,30 @@ public:
 	virtual void Enable();
 	virtual void Disable();
 
-	virtual void Save(JsonArray& save_array) {};
-	virtual void Load(JsonObj& load_object) {};
-
 	bool IsEnabled();
-	ComponentType GetType();
 	virtual void OnGUI() = 0;
 
-	void SetGameObject(GameObject* gameObject);
+	virtual void Save(JsonArray& saveArray) {};
+	virtual void Load(JsonObj& loadObject) {};
+
+	//GameObject
 	GameObject* GetGameObject();
+	void SetGameObject(GameObject* gameObject);
+	
+	//Component
+	ComponentType GetType();
+
+	//Resource
+	virtual Resource* GetResource(ResourceType type);
 	virtual void SetResourceUID(uint UID);
-	virtual Resource* GetResource(ResourceType type) { return nullptr; };
+	
 
 public:
 	std::string name;
 
-protected:
-	ComponentType type;
-	GameObject* ownerGameObject;
 	bool enabled;
 
+	GameObject* ownerGameObject;
+	ComponentType type;	
 	uint resourceUID;
 };

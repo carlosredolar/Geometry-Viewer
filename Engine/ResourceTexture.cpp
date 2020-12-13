@@ -51,7 +51,7 @@ uint ResourceTexture::SaveMeta(JsonObj& base_object, uint last_modification)
 	TextureWrap textureWrap = TextureWrap::REPEAT;
 	TextureFiltering textureFiltering = TextureFiltering::NEAREST;
 	
-	TextureImportingSettings importingOptions = App->resources->textureImportSettings;
+	TextureImportSettings importingOptions = App->resources->textureImportSettings;
 
 	base_object.AddInt("texture_wrap", (int)App->resources->textureImportSettings.textureWrap);
 	base_object.AddInt("texture_filtering", (int)App->resources->textureImportSettings.textureFiltering);

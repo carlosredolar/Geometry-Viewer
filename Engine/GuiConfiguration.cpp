@@ -153,13 +153,13 @@ void GuiConfiguration::Draw()
 			if (ImGui::Combo("Fixed FOV", &cameraFov, items, IM_ARRAYSIZE(items)))
 			{
 				std::string currentFov = std::string(items[cameraFov]);
-				if (currentFov == "Vertical") App->camera->SetFixedFOV(FixedFOV::FIXED_VERTICAL_FOV);
-				else if (currentFov == "Horizontal") App->camera->SetFixedFOV(FixedFOV::FIXED_HORIZONTAL_FOV);
+				if (currentFov == "Vertical") App->camera->SetFixedFOV(FOV::VERTICAL_FOV);
+				else if (currentFov == "Horizontal") App->camera->SetFixedFOV(FOV::HORIZONTAL_FOV);
 			}
 
 			ImGui::Spacing();
 
-			bool currentFixedFOV = App->camera->GetFixedFOV() == FixedFOV::FIXED_VERTICAL_FOV;
+			bool currentFixedFOV = App->camera->GetFixedFOV() == FOV::VERTICAL_FOV;
 			//Fixed Vertical FOV Settings
 			if (currentFixedFOV)
 			{

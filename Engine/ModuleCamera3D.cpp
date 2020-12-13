@@ -23,8 +23,8 @@ ModuleCamera3D::ModuleCamera3D(bool start_enabled) : Module(start_enabled)
 	reference = float3(0.0f, 0.0f, 0.0f);
 
 	camera = new Component_Camera();
-	camera->SetPosition(float3(position));
-	camera->SetReference(reference);
+	camera->SetCameraPosition(float3(position));
+	camera->SetCameraReference(reference);
 	Look(reference);
 
 	background = { 0.12f, 0.12f, 0.12f, 1.0f };
@@ -70,7 +70,7 @@ bool ModuleCamera3D::CleanUp()
 
 void ModuleCamera3D::OnResize(int width, int height)
 {
-	camera->AdjustFieldOfView(width, height);
+	camera->AdjustFOV(width, height);
 }
 
 // -----------------------------------------------------------------
@@ -154,9 +154,9 @@ update_status ModuleCamera3D::Update(float dt)
 	//RenderRay();
 
 	position += newPos;
-	camera->SetPosition(position);
+	camera->SetCameraPosition(position);
 	reference += newPos;
-	camera->SetReference(reference);
+	camera->SetCameraReference(reference);
 
 	return UPDATE_CONTINUE;
 }
@@ -197,7 +197,7 @@ void ModuleCamera3D::Orbit(float dt)
 	distance = y_rotation.Transform(distance);
 
 	position = distance + reference;
-	camera->SetPosition(position);
+	camera->SetCameraPosition(position);
 	camera->Look(reference);
 }
 
@@ -227,14 +227,14 @@ float3 ModuleCamera3D::GetPosition()
 	return position;
 }
 
-FixedFOV ModuleCamera3D::GetFixedFOV()
+FOV ModuleCamera3D::GetFixedFOV()
 {
-	return camera->fixedFOV;
+	return camera->fov;
 }
 
-void ModuleCamera3D::SetFixedFOV(FixedFOV fixedFOV)
+void ModuleCamera3D::SetFixedFOV(FOV fixedFOV)
 {
-	camera->SetFixedFOV(fixedFOV);
+	camera->SetFOV(fixedFOV);
 }
 
 float ModuleCamera3D::GetVerticalFieldOfView()
@@ -250,13 +250,13 @@ float ModuleCamera3D::GetHorizontalFieldOfView()
 
 void ModuleCamera3D::SetVerticalFieldOfView(float verticalFOV, int screen_width, int screen_height)
 {
-	camera->SetVerticalFieldOfView(verticalFOV, screen_width, screen_height);
+	camera->SetVerticalFOV(verticalFOV, screen_width, screen_height);
 	App->renderer3D->UpdateProjectionMatrix(camera->GetProjectionMatrix());
 }
 
 void ModuleCamera3D::SetHorizontalFieldOfView(float horizontalFOV, int screen_width, int screen_height)
 {
-	camera->SetHorizontalFieldOfView(horizontalFOV, screen_width, screen_height);
+	camera->SetHorizontalFOV(horizontalFOV, screen_width, screen_height);
 	App->renderer3D->UpdateProjectionMatrix(camera->GetProjectionMatrix());
 }
 

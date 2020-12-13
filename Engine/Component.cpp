@@ -24,19 +24,24 @@ bool Component::IsEnabled()
     return enabled;
 }
 
+GameObject* Component::GetGameObject()
+{
+    return ownerGameObject;
+}
+
+void Component::SetGameObject(GameObject* gameObject)
+{
+    ownerGameObject = gameObject;
+}
+
 ComponentType Component::GetType()
 {
     return type;
 }
 
-void Component::SetGameObject(GameObject* g_gameObject)
+Resource* Component::GetResource(ResourceType type)
 {
-    ownerGameObject = g_gameObject;
-}
-
-GameObject* Component::GetGameObject()
-{
-    return ownerGameObject;
+    return nullptr;
 }
 
 void Component::SetResourceUID(uint UID)

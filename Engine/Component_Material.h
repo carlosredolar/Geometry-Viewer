@@ -16,23 +16,25 @@ public:
 	~Component_Material();
 
 	void Update() override;
-	void SetResourceUID(uint UID) override;
+	void Save(JsonArray& saveArray) override;
+	void Load(JsonObj& loadObject) override;
+	void OnGUI() override;
 
 	void BindTexture();
 
-	void Save(JsonArray& save_array) override;
-	void Load(JsonObj& load_object) override;
-	void OnGUI() override;
+	void SetResourceUID(uint UID) override;
 
-	void SetTexture(ResourceTexture* texture);
-	void AssignCheckersImage();
 	ResourceTexture* GetDiffuseTexture();
+	void SetTexture(ResourceTexture* texture);
+	void CheckersTexDefault();	
 
 private:
 	bool checkersImageActive;
 	bool colored;
 
-	ResourceMaterial* materialResource;
-	ResourceTexture* _diffuseTexture;
 	uint checkersID;
+
+	ResourceMaterial* materialResource;
+	ResourceTexture* diffuseTexture;
+
 };

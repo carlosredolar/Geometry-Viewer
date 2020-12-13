@@ -5,7 +5,7 @@
 
 class Component_Camera;
 class GameObject;
-enum FixedFOV;
+enum FOV;
 
 class ModuleCamera3D : public Module
 {
@@ -32,8 +32,8 @@ public:
 	float3 GetPosition();
 	GameObject* SelectGO();
 
-	FixedFOV GetFixedFOV();
-	void SetFixedFOV(FixedFOV fixedFOV);
+	FOV GetFixedFOV();
+	void SetFixedFOV(FOV fixedFOV);
 	float GetVerticalFieldOfView();
 	float GetHorizontalFieldOfView();
 	void SetVerticalFieldOfView(float verticalFOV, int screen_width, int screen_height);

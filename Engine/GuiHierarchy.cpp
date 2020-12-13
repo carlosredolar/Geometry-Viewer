@@ -20,20 +20,18 @@ void GuiHierarchy::Draw()
 		PreorderHierarchy(root, id);
 	}
 	ImGui::End();
+
 }
 
 void GuiHierarchy::PreorderHierarchy(GameObject* gameObject, int& id)
 {
 	ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
 
-	if (gameObject == App->scene->GetRoot())
-		flags |= ImGuiTreeNodeFlags_DefaultOpen;
+	if (gameObject == App->scene->GetRoot()) flags |= ImGuiTreeNodeFlags_DefaultOpen;
 
-	if (App->scene->selectedGameObject == gameObject)
-		flags |= ImGuiTreeNodeFlags_Selected;
+	if (App->scene->selectedGameObject == gameObject) flags |= ImGuiTreeNodeFlags_Selected;
 
-	if (gameObject->GetChildrenAmount() == 0)
-		flags |= ImGuiTreeNodeFlags_Leaf;
+	if (gameObject->GetChildrenAmount() == 0) flags |= ImGuiTreeNodeFlags_Leaf;
 
 
 	if (ImGui::TreeNodeEx(gameObject->GetName(), flags))
@@ -42,12 +40,15 @@ void GuiHierarchy::PreorderHierarchy(GameObject* gameObject, int& id)
 			App->scene->selectedGameObject = gameObject;
 
 		ImGui::PushID(id);
+
 		if (ImGui::BeginDragDropSource())
 		{
 			ImGui::SetDragDropPayload("HIERARCHY", &id, sizeof(int));
 			ImGui::Text("Change parent");
 			ImGui::EndDragDropSource();
+
 		}
+
 		if (ImGui::BeginDragDropTarget())
 		{
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HIERARCHY"))
@@ -60,6 +61,7 @@ void GuiHierarchy::PreorderHierarchy(GameObject* gameObject, int& id)
 				target->ChangeParent(gameObject);
 			}
 			ImGui::EndDragDropTarget();
+
 		}
 		ImGui::PopID();
 		id++;
@@ -77,6 +79,7 @@ void GuiHierarchy::PreorderHierarchy(GameObject* gameObject, int& id)
 				ImGui::CloseCurrentPopup();
 			}
 			ImGui::EndPopup();
+
 		}
 
 		for (size_t i = 0; i < gameObject->GetChildrenAmount(); i++)
@@ -84,5 +87,6 @@ void GuiHierarchy::PreorderHierarchy(GameObject* gameObject, int& id)
 			PreorderHierarchy(gameObject->GetChildAt(i), id);
 		}
 		ImGui::TreePop();
+
 	}
 }

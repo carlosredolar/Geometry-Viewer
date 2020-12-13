@@ -25,20 +25,16 @@ void GuiScene::Draw()
 		if (ImGui::BeginMenuBar())
 		{
 			static bool vertex_normals = App->renderer3D->drawVertexNormals;
-			if (ImGui::Checkbox("Vertex Normals", &vertex_normals))
-				App->renderer3D->drawVertexNormals = vertex_normals;
+			if (ImGui::Checkbox("Vertex Normals", &vertex_normals)) App->renderer3D->drawVertexNormals = vertex_normals;
 
 			static bool face_normals = App->renderer3D->drawFaceFormals;
-			if (ImGui::Checkbox("Face Normals", &face_normals))
-				App->renderer3D->drawFaceFormals = face_normals;
+			if (ImGui::Checkbox("Face Normals", &face_normals)) App->renderer3D->drawFaceFormals = face_normals;
 
 			static bool showGrid = App->scene->showGrid;
-			if (ImGui::Checkbox("Show Grid", &showGrid))
-				App->scene->showGrid = showGrid;
+			if (ImGui::Checkbox("Show Grid", &showGrid)) App->scene->showGrid = showGrid;
 
 			static bool showBB = App->scene->showBB;
-			if (ImGui::Checkbox("Show Bounding Boxes", &showBB))
-				App->scene->showBB = showBB;
+			if (ImGui::Checkbox("Show Bounding Boxes", &showBB)) App->scene->showBB = showBB;
 
 			ImGui::Checkbox("Camera Culling", &App->renderer3D->cameraCulling);
 
@@ -46,18 +42,18 @@ void GuiScene::Draw()
 		}
 
 		ImVec2 window_size = ImGui::GetContentRegionAvail();
+
 		App->gui->sceneWindowOrigin = ImGui::GetWindowPos();
 		App->gui->sceneWindowOrigin.x += ImGui::GetWindowContentRegionMin().x;
 		App->gui->sceneWindowOrigin.y += ImGui::GetWindowContentRegionMin().y;
 
+
 		App->gui->mouseScenePosition.x = App->input->GetMouseX() - App->gui->sceneWindowOrigin.x;
 		App->gui->mouseScenePosition.y = App->input->GetMouseY() - App->gui->sceneWindowOrigin.y;
 
-		if (App->in_game)
-			DrawInGameDataOverlay();
+		if (App->in_game) DrawInGameDataOverlay();
 
-		if (App->gui->image_size.x != window_size.x || App->gui->image_size.y != window_size.y)
-			App->gui->OnResize(window_size);
+		if (App->gui->image_size.x != window_size.x || App->gui->image_size.y != window_size.y) App->gui->OnResize(window_size);
 
 		ImGui::Image((ImTextureID)App->renderer3D->colorTexture, App->gui->image_size, ImVec2(0.0f, 1.0f), ImVec2(1.0f, 0.0f));
 		ImGui::PushID(SCENE_WINDOW);
@@ -71,15 +67,20 @@ void GuiScene::Draw()
 				const char* file = assets_window->GetFileAt(payload_n);
 				App->scene->AddGameObject(App->resources->RequestGameObject(file));
 			}
+
 			ImGui::EndDragDropTarget();
+
 		}
+
 		ImGui::PopID();
 
 		App->scene->EditTransform();
-		//ImGui::Image((ImTextureID)App->renderer3D->depthTexture, image_size, ImVec2(0.0f, 1.0f), ImVec2(1.0f, 0.0f));
+		
 	}
+
 	ImGui::End();
 	ImGui::PopStyleVar();
+
 }
 
 void GuiScene::DrawInGameDataOverlay()
@@ -93,23 +94,15 @@ void GuiScene::DrawInGameDataOverlay()
 	window_pos.x += 10.0f;
 	window_pos.y += 10.0f;
 
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(15.0f, 15.0f));
 	ImGui::SetNextWindowPos(window_pos);
 	ImGui::SetNextWindowViewport(viewport->ID);
 
-	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.25f, 0.25f, 0.25f, 0.75f));
 	bool dummy_bool = true;
 	if (ImGui::Begin("Example: Simple overlay", &dummy_bool, window_flags))
 	{
-		ImGui::Text("Game Time");
-		ImGui::Separator();
-		ImGui::Spacing();
-		ImGui::Text("Delta time %.3f", Time::gameClock.dt);
-		ImGui::Text("Time Scale: %.2f", Time::gameClock.timeScale);
-		ImGui::Text("Time since game start: %.2f", Time::gameClock.timeSinceStartup());
-	}
-	ImGui::PopStyleColor();
-	ImGui::PopStyleVar(2);
+		ImGui::TextColored(ImVec4(0.95f, 0.5f, 0.07f, 1.0f), "Game Time:");
+		ImGui::Text("%.1f s", Time::gameClock.timeSinceStartup());
+	}	
 	ImGui::End();
+
 }

@@ -27,7 +27,7 @@ public:
 	bool IsVisible();
 	void OnGUI();
 
-	void Save(JsonArray& save_array);
+	void Save(JsonArray& saveArray);
 	uint Load(JsonObj* object);
 	uint LoadNodeData(JsonObj* object);
 

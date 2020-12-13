@@ -4,9 +4,10 @@
 #include "glmath.h"
 #include "Component.h"
 
+class GameObject;
 class JsonArray;
 class JsonObj;
-class GameObject;
+
 
 class Component_Light : public Component {
 public:
@@ -16,17 +17,20 @@ public:
 
 	void Init();
 	void Update() override;
-	void SetPos(float x, float y, float z);
-	void Active(bool active);
-	void Render();
+	void SetPosition(float x, float y, float z);
+	void Enable(bool enable);
+	
 	void OnGUI() override;
-	void Save(JsonArray& save_array);
-	void Load(JsonObj& load_object);
+
+	void Save(JsonArray& saveArray);
+	void Load(JsonObj& loadObject);
+
+	void Render();
 
 public:
 	vec3 position;
 	Color ambient;
 	Color diffuse;
 
-	int ref;
+	int reference;
 };

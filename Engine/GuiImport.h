@@ -8,17 +8,17 @@ class GuiImport : public GuiWindow {
 public:
 	GuiImport();
 	~GuiImport();
-
 	void Draw() override;
-	bool DrawModelImportingWindow();
-	bool DrawTextureImportingWindow();
+	bool DrawModelImportWindow();
+	bool DrawTextureImportWindow();
 
 	void Enable(const char* file, ResourceType resourceType);
 
 private: 
 	const char* fileToImport;
-	ModelImportingSettings modelImportSettings;
-	TextureImportingSettings textureImportSettings;
+
+	ModelImportSettings modelImportSettings;
+	TextureImportSettings textureImportSettings;
 	ResourceType currentResourceType;
 };
 

@@ -107,10 +107,10 @@ bool ModuleRenderer3D::Init()
 		GLfloat LightModelAmbient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 		glLightModelfv(GL_LIGHT_MODEL_AMBIENT, LightModelAmbient);
 
-		lights[0].ref = GL_LIGHT0;
+		lights[0].reference = GL_LIGHT0;
 		lights[0].ambient.Set(0.25f, 0.25f, 0.25f, 1.0f);
 		lights[0].diffuse.Set(0.75f, 0.75f, 0.75f, 1.0f);
-		lights[0].SetPos(0.0f, 0.0f, 2.5f);
+		lights[0].SetPosition(0.0f, 0.0f, 2.5f);
 		lights[0].Init();
 
 		GLfloat MaterialAmbient[] = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -128,7 +128,7 @@ bool ModuleRenderer3D::Init()
 		//glEnable(GL_POLYGON_SMOOTH);
 		glEnable(GL_LIGHTING);
 		glEnable(GL_STENCIL_TEST);
-		lights[0].Active(true);
+		lights[0].Enable(true);
 	}
 
 	GenerateBuffers();
@@ -162,7 +162,7 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 
 	//light 0 on cam pos
 	float3 cameraPosition = App->camera->GetPosition();
-	lights[0].SetPos(cameraPosition.x, cameraPosition.y, cameraPosition.z);
+	lights[0].SetPosition(cameraPosition.x, cameraPosition.y, cameraPosition.z);
 
 	for (uint i = 0; i < MAX_LIGHTS; ++i)
 		lights[i].Render();

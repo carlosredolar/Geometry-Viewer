@@ -2,9 +2,9 @@
 #include "Globals.h"
 #include "Component.h"
 #include <vector>;
+#include "MathGeoLib/include/MathGeoLib.h"
 #include "Component_Material.h"
 
-#include "MathGeoLib/include/MathGeoLib.h"
 
 class ResourceMesh;
 
@@ -16,15 +16,16 @@ class Component_Mesh : public Component {
 public:
 	Component_Mesh();
 	virtual ~Component_Mesh();
-
-	void Save(JsonArray& save_array) override;
-	void Load(JsonObj& load_object) override;
-	void SetResourceUID(uint UID) override;
-	Resource* GetResource(ResourceType type) override;
-
 	virtual void Update() override;
 	virtual void Render();
 	virtual void OnGUI() override;
+
+	void Save(JsonArray& saveArray) override;
+	void Load(JsonObj& loadObject) override;
+
+	Resource* GetResource(ResourceType type) override;
+	void SetResourceUID(uint UID) override;
+	
 
 	void RenderVertexNormals();
 	void RenderFaceNormals();
@@ -36,19 +37,19 @@ public:
 	const char* name;
 	char* path;
 
+	bool enableVertexNormals;
+	bool enableFaceNormals;
+
 	AABB aabb;
 
 private:
-	bool drawVertexNormals;
-	bool drawFaceFormals;
-
 	ResourceMesh* meshResource;
 	
 };
 
 class PrimitiveGrid {
 public:
-	PrimitiveGrid(int size);
+	PrimitiveGrid(int gridSize);
 	~PrimitiveGrid();
 
 	void Render();

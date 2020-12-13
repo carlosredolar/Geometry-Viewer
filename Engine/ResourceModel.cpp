@@ -38,7 +38,7 @@ uint ResourceModel::SaveMeta(JsonObj& base_object, uint last_modification)
 	base_object.AddString("Library path", App->resources->GetLibraryPath(_uid));
 	base_object.AddInt("lastModified", last_modification);
 
-	ModelImportingSettings importingOptions = App->resources->modelImportSettings;
+	ModelImportSettings importingOptions = App->resources->modelImportSettings;
 
 	base_object.AddFloat("global scale", (float)importingOptions.globalScale);
 	base_object.AddInt("forward axis", (int)importingOptions.forwardAxis);

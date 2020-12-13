@@ -14,16 +14,14 @@ void GuiImport::Draw()
 {
 	if (currentResourceType == ResourceType::RESOURCE_MODEL) 
 	{
-		visible = DrawModelImportingWindow();
+		visible = DrawModelImportWindow();
 	}
 	else if (currentResourceType == ResourceType::RESOURCE_TEXTURE) 
 	{
-		visible = DrawTextureImportingWindow();
+		visible = DrawTextureImportWindow();
 	}
-	else
-	{
-		LOG_ERROR("Trying to import invalid file %s", fileToImport);
-	}
+	else LOG_ERROR("Invalid file %s", fileToImport);
+	
 }
 
 void GuiImport::Enable(const char* file, ResourceType resourceType)
@@ -33,14 +31,14 @@ void GuiImport::Enable(const char* file, ResourceType resourceType)
 	visible = true;
 }
 
-bool GuiImport::DrawModelImportingWindow()
+bool GuiImport::DrawModelImportWindow()
 {
 	bool ret = true;
 
 	if (ImGui::Begin("Import File", NULL))
 	{
 		ImGui::Text("Import Model: %s", fileToImport);
-
+		ImGui::Spacing();
 		ImGui::Spacing();
 		ImGui::Separator();
 		ImGui::Spacing();
@@ -49,12 +47,12 @@ bool GuiImport::DrawModelImportingWindow()
 
 		const char* possibleAxis[] = { "X", "Y", "Z", "-X", "-Y", "-Z" };
 		int forwardAxis = (int)modelImportSettings.forwardAxis;
-		if (ImGui::Combo("Forward Axis", &forwardAxis, possibleAxis, 6))
-			modelImportSettings.forwardAxis = (Axis)forwardAxis;
+
+		if (ImGui::Combo("Forward Axis", &forwardAxis, possibleAxis, 6)) modelImportSettings.forwardAxis = (Axis)forwardAxis;
 
 		int upAxis = (int)modelImportSettings.upAxis;
-		if (ImGui::Combo("Up Axis", &upAxis, possibleAxis, 6))
-			modelImportSettings.upAxis = (Axis)upAxis;
+
+		if (ImGui::Combo("Up Axis", &upAxis, possibleAxis, 6)) modelImportSettings.upAxis = (Axis)upAxis;
 
 		ImGui::Checkbox("Ignore Cameras", &modelImportSettings.ignoreCameras);
 
@@ -69,39 +67,38 @@ bool GuiImport::DrawModelImportingWindow()
 			ret = false;
 		}
 		ImGui::SameLine();
-		if (ImGui::Button("CANCEL", ImVec2(80, 20))) 
-			ret = false;
-		ImGui::SameLine();
-		if (ImGui::Button("Reset"))
-			modelImportSettings = ModelImportingSettings();
+		if (ImGui::Button("CANCEL", ImVec2(80, 20))) ret = false;
+		ImGui::SameLine(); 
+		if (ImGui::Button("Reset")) modelImportSettings = ModelImportSettings();
+
 	}
 	ImGui::End();
 
 	return ret;
 }
 
-bool GuiImport::DrawTextureImportingWindow()
+bool GuiImport::DrawTextureImportWindow()
 {
 	bool ret = true;
 
 	if (ImGui::Begin("Import File", NULL))
 	{
 		ImGui::Text("Import Texture: %s", fileToImport);
-
+		ImGui::Spacing();
 		ImGui::Spacing();
 		ImGui::Separator();
 		ImGui::Spacing();
 
 		const char* textureWrapSettings[] = { "Clamp To Border", "Clamp", "Repeat", "Mirrored Repeat" };
 		int texture_wrap = (int)textureImportSettings.textureWrap;
-		if (ImGui::Combo("Texture Wrap", &texture_wrap, textureWrapSettings, 4))
-			textureImportSettings.textureWrap = (TextureWrap)texture_wrap;
+
+		if (ImGui::Combo("Texture Wrap", &texture_wrap, textureWrapSettings, 4)) textureImportSettings.textureWrap = (TextureWrap)texture_wrap;
 
 		const char* textureFilteringSettings[] = { "Nearest", "Linear" };
 		int texture_filtering = (int)textureImportSettings.textureFiltering;
-		if (ImGui::Combo("Texture Filtering", &texture_filtering, textureFilteringSettings, 2))
-			textureImportSettings.textureFiltering = (TextureFiltering)texture_filtering;
 
+		if (ImGui::Combo("Texture Filtering", &texture_filtering, textureFilteringSettings, 2)) textureImportSettings.textureFiltering = (TextureFiltering)texture_filtering;
+		ImGui::Spacing();
 		ImGui::Spacing();
 		ImGui::Separator();
 		ImGui::Spacing();
@@ -126,6 +123,7 @@ bool GuiImport::DrawTextureImportingWindow()
 		ImGui::Columns(1);
 		ImGui::SliderFloat("Contrast", &textureImportSettings.contrast, 0.0f, 1.7f);
 		ImGui::SliderFloat("Gamma Correction", &textureImportSettings.gammaCorrection, 0.0f, 2.0f);
+		ImGui::Spacing();
 
 		if(textureImportSettings.blurAverage)
 			ImGui::SliderInt("Blur Average Iterations", &textureImportSettings.blur_average_iterations, 1, 10);
@@ -151,8 +149,11 @@ bool GuiImport::DrawTextureImportingWindow()
 			ret = false;
 		ImGui::SameLine();
 		if (ImGui::Button("Reset"))
-			textureImportSettings = TextureImportingSettings();
+			textureImportSettings = TextureImportSettings();
+		ImGui::Spacing();
+
 	}
+
 	ImGui::End();
 
 	return ret;

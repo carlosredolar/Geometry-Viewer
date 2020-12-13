@@ -72,9 +72,9 @@ void GameObject::Update()
 						App->renderer3D->DrawAABB(cornerPoints, color);
 					}
 					
-					if (App->camera->GetCamera()->ContainsAABB(aabb))
+					if (App->camera->GetCamera()->CheckBBOnCamera(aabb))
 					{
-						if (App->renderer3D->GetMainCamera()->ContainsAABB(aabb) || !App->renderer3D->cameraCulling)
+						if (App->renderer3D->GetMainCamera()->CheckBBOnCamera(aabb) || !App->renderer3D->cameraCulling)
 						{
 							mesh->Update();
 						}
@@ -135,31 +135,31 @@ void GameObject::OnGUI()
 	}
 }
 
-void GameObject::Save(JsonArray& save_array)
+void GameObject::Save(JsonArray& saveArray)
 {
-	JsonObj save_object;
+	JsonObj saveObject;
 
-	save_object.AddInt("UUID", UUID);
+	saveObject.AddInt("UUID", UUID);
 
 	if(parent != nullptr)
-		save_object.AddInt("Parent UUID",parent->UUID);
+		saveObject.AddInt("Parent UUID",parent->UUID);
 	else 
-		save_object.AddInt("Parent UUID", 0);
+		saveObject.AddInt("Parent UUID", 0);
 
-	save_object.AddString("Name", name.c_str());
+	saveObject.AddString("Name", name.c_str());
 
-	JsonArray componentsSave = save_object.AddArray("Components");
+	JsonArray componentsSave = saveObject.AddArray("Components");
 
 	for (size_t i = 0; i < components.size(); i++)
 	{
 		components[i]->Save(componentsSave);
 	}
 
-	save_array.AddObject(save_object);
+	saveArray.AddObject(saveObject);
 
 	for (size_t i = 0; i < children.size(); i++)
 	{
-		children[i]->Save(save_array);
+		children[i]->Save(saveArray);
 	}
 }
 

@@ -10,7 +10,7 @@ enum Axis
 	MINUS_Z
 };
 
-struct ModelImportingSettings
+struct ModelImportSettings
 {
 	float globalScale = 1.0f;
 	Axis forwardAxis = Axis::Z;
@@ -34,7 +34,7 @@ enum class TextureFiltering
 	LINEAR
 };
 
-struct TextureImportingSettings
+struct TextureImportSettings
 {
 	TextureWrap textureWrap = TextureWrap::REPEAT;
 	TextureFiltering textureFiltering = TextureFiltering::NEAREST;

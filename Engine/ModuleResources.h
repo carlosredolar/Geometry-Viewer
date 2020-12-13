@@ -75,8 +75,8 @@ public:
 	void AddFileExtension(std::string& file, ResourceType type);
 
 public:
-	ModelImportingSettings modelImportSettings;
-	TextureImportingSettings textureImportSettings;
+	ModelImportSettings modelImportSettings;
+	TextureImportSettings textureImportSettings;
 
 private:
 	void CheckAssets(const char* directory);

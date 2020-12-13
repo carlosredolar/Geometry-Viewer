@@ -75,7 +75,7 @@ namespace MaterialImporter
 }
 
 //Texture Importer
-struct TextureImportingSettings;
+struct TextureImportSettings;
 class ResourceTexture;
 
 typedef unsigned int ILenum;
@@ -90,7 +90,7 @@ namespace TextureImporter
 
 	void UnloadTexture(uint imageID);
 	ILenum GetFileFormat(const char* file);
-	void ApplyImportingOptions(TextureImportingSettings importingOptions);
+	void ApplyImportingOptions(TextureImportSettings importingOptions);
 }
 
 #endif // !_IMPORTERS_H_
