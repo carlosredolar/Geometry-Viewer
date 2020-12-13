@@ -55,7 +55,7 @@ void Component_Mesh::Render()
 
 	Component_Material* material = ownerGameObject->GetComponent<Component_Material>();
 
-	if (material != nullptr)
+	if (material != nullptr && material->IsEnabled())
 		material->BindTexture();
 
 	glDrawElements(GL_TRIANGLES, meshResource->amountIndices, GL_UNSIGNED_INT, NULL);

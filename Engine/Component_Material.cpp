@@ -180,15 +180,13 @@ void Component_Material::OnGUI()
 
 void Component_Material::BindTexture()
 {
-	if (enabled) {
-		if (!checkersImageActive)
-		{
-			diffuseTexture->BindTexture();
-		}
-		else
-		{
-			glBindTexture(GL_TEXTURE_2D, checkersID);
-		}
+	if (!checkersImageActive)
+	{
+		diffuseTexture->BindTexture();
+	}
+	else
+	{
+		glBindTexture(GL_TEXTURE_2D, checkersID);
 	}
 }
 

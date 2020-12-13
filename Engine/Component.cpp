@@ -2,7 +2,7 @@
 
 Component::Component(ComponentType type) : type(type), enabled(true), ownerGameObject(nullptr) {}
 
-Component::Component(ComponentType _type, GameObject* gameObject)
+Component::Component(ComponentType _type, GameObject* gameObject) : enabled(true)
 {
 	type = _type;
     ownerGameObject = gameObject;
