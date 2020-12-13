@@ -143,11 +143,13 @@ void Component_Material::OnGUI()
 			}
 
 			ImGui::Spacing();
-
-			ImGui::Text("Texture Path: %s", diffuseTexture->assetsFile.c_str());
-			ImGui::Spacing();
-			ImGui::Text("Width: %d Height: %d", diffuseTexture->GetWidth(), diffuseTexture->GetHeight());
-			ImGui::Spacing();
+			if (diffuseTexture != nullptr)
+			{
+				ImGui::Text("Texture Path: %s", diffuseTexture->assetsFile.c_str());
+				ImGui::Spacing();
+				ImGui::Text("Width: %d Height: %d", diffuseTexture->GetWidth(), diffuseTexture->GetHeight());
+				ImGui::Spacing();
+			}
 		}
 		else
 		{
