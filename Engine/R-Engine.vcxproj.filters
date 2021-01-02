@@ -34,6 +34,12 @@
     <Filter Include="Sources\Resources">
       <UniqueIdentifier>{53994ff2-06db-4884-98d7-11472700fe11}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\GO&amp;Comp\3D">
+      <UniqueIdentifier>{0c3e2b7e-f40f-40ef-b9c4-2c8989d3d966}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\GO&amp;Comp\2D">
+      <UniqueIdentifier>{117d48ff-74e9-4885-ad2d-f90562af25c6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Module.h">
@@ -87,14 +93,8 @@
     <ClInclude Include="Component.h">
       <Filter>Sources\GO&amp;Comp</Filter>
     </ClInclude>
-    <ClInclude Include="Component_Mesh.h">
-      <Filter>Sources\GO&amp;Comp</Filter>
-    </ClInclude>
     <ClInclude Include="GuiInspector.h">
       <Filter>Sources\Modules\Gui</Filter>
-    </ClInclude>
-    <ClInclude Include="Component_Transform.h">
-      <Filter>Sources\GO&amp;Comp</Filter>
     </ClInclude>
     <ClInclude Include="GuiHierarchy.h">
       <Filter>Sources\Modules\Gui</Filter>
@@ -104,9 +104,6 @@
     </ClInclude>
     <ClInclude Include="ModuleResources.h">
       <Filter>Sources\Modules</Filter>
-    </ClInclude>
-    <ClInclude Include="Component_Material.h">
-      <Filter>Sources\GO&amp;Comp</Filter>
     </ClInclude>
     <ClInclude Include="Component_Camera.h">
       <Filter>Sources\GO&amp;Comp</Filter>
@@ -333,9 +330,6 @@
     <ClInclude Include="GuiAssets.h">
       <Filter>Sources\Modules\Gui</Filter>
     </ClInclude>
-    <ClInclude Include="Component_Light.h">
-      <Filter>Sources\GO&amp;Comp</Filter>
-    </ClInclude>
     <ClInclude Include="GuiScene.h">
       <Filter>Sources\Modules\Gui</Filter>
     </ClInclude>
@@ -359,6 +353,24 @@
     </ClInclude>
     <ClInclude Include="ImportingSettings.h">
       <Filter>Sources\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="Component_Light.h">
+      <Filter>Sources\GO&amp;Comp\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Component_Material.h">
+      <Filter>Sources\GO&amp;Comp\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Component_Mesh.h">
+      <Filter>Sources\GO&amp;Comp\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Component_Image.h">
+      <Filter>Sources\GO&amp;Comp\2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Component_Transform.h">
+      <Filter>Sources\GO&amp;Comp</Filter>
+    </ClInclude>
+    <ClInclude Include="Component_Button.h">
+      <Filter>Sources\GO&amp;Comp\2D</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -410,14 +422,8 @@
     <ClCompile Include="Component.cpp">
       <Filter>Sources\GO&amp;Comp</Filter>
     </ClCompile>
-    <ClCompile Include="Component_Mesh.cpp">
-      <Filter>Sources\GO&amp;Comp</Filter>
-    </ClCompile>
     <ClCompile Include="GuiInspector.cpp">
       <Filter>Sources\Modules\Gui</Filter>
-    </ClCompile>
-    <ClCompile Include="Component_Transform.cpp">
-      <Filter>Sources\GO&amp;Comp</Filter>
     </ClCompile>
     <ClCompile Include="GuiHierarchy.cpp">
       <Filter>Sources\Modules\Gui</Filter>
@@ -427,9 +433,6 @@
     </ClCompile>
     <ClCompile Include="ModuleResources.cpp">
       <Filter>Sources\Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="Component_Material.cpp">
-      <Filter>Sources\GO&amp;Comp</Filter>
     </ClCompile>
     <ClCompile Include="Component_Camera.cpp">
       <Filter>Sources\GO&amp;Comp</Filter>
@@ -572,9 +575,6 @@
     <ClCompile Include="GuiAssets.cpp">
       <Filter>Sources\Modules\Gui</Filter>
     </ClCompile>
-    <ClCompile Include="Component_Light.cpp">
-      <Filter>Sources\GO&amp;Comp</Filter>
-    </ClCompile>
     <ClCompile Include="GuiScene.cpp">
       <Filter>Sources\Modules\Gui</Filter>
     </ClCompile>
@@ -595,6 +595,24 @@
     </ClCompile>
     <ClCompile Include="Importers.cpp">
       <Filter>Sources\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Component_Light.cpp">
+      <Filter>Sources\GO&amp;Comp\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Component_Material.cpp">
+      <Filter>Sources\GO&amp;Comp\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Component_Mesh.cpp">
+      <Filter>Sources\GO&amp;Comp\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Component_Image.cpp">
+      <Filter>Sources\GO&amp;Comp\2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Component_Transform.cpp">
+      <Filter>Sources\GO&amp;Comp</Filter>
+    </ClCompile>
+    <ClCompile Include="Component_Button.cpp">
+      <Filter>Sources\GO&amp;Comp\2D</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

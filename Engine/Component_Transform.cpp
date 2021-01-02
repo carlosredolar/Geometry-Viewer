@@ -4,8 +4,9 @@
 #include "ModuleJson.h"
 #include "Libs/ImGui/imgui.h"
 
-Component_Transform::Component_Transform() : Component(ComponentType::TRANSFORM)
+Component_Transform::Component_Transform(bool isTransform2D) : Component(ComponentType::TRANSFORM)
 {
+	is2D = isTransform2D;
 	position = float3::zero;
 	rotation = Quat::identity;
 	eulerRotation = float3::zero;
@@ -13,18 +14,22 @@ Component_Transform::Component_Transform() : Component(ComponentType::TRANSFORM)
 	localTransform = float4x4::FromTRS(position, rotation, scale);
 	globalTransform = localTransform;
 	parentGlobalTransform = float4x4::identity;
+
+	if (is2D) pivot = float2(.5f, .5f);
 }
 
-Component_Transform::Component_Transform(float3 positionTransform, Quat rotationTransform, float3 scaleTransform) : Component(ComponentType::TRANSFORM)
+Component_Transform::Component_Transform(float3 positionTransform, Quat rotationTransform, float3 scaleTransform, bool isTransform2D) : Component(ComponentType::TRANSFORM)
 {
+	is2D = isTransform2D;
 	position = positionTransform;
 	rotation = rotationTransform;
-	eulerRotation = rotationTransform.ToEulerXYZ();
-	eulerRotation *= RADTODEG;
+	eulerRotation = rotationTransform.ToEulerXYZ() * RADTODEG;
 	scale = scaleTransform;
 	localTransform = float4x4::FromTRS(position, rotation, scale);
 	globalTransform = localTransform;
 	parentGlobalTransform = float4x4::identity;
+
+	if (is2D) pivot = float2(.5f, .5f);
 }
 
 Component_Transform::~Component_Transform() {}
@@ -58,6 +63,17 @@ void Component_Transform::OnGUI()
 			UpdateGlobalTransform();
 			ownerGameObject->UpdateChildrenTransforms();
 		};
+
+		if (is2D)
+		{
+			float piv[2] = { pivot.x, pivot.y };
+			if (ImGui::DragFloat3("Pivot", piv, 0.01f, 0.0f, 1.0f))
+			{
+				SetPivot(piv[0], piv[1]);
+				UpdateGlobalTransform();
+				ownerGameObject->UpdateChildrenTransforms();
+			};
+		}
 
 		if (ImGui::Button("Reset"))
 		{
@@ -234,6 +250,30 @@ void Component_Transform::SetScale(float3 newScale)
 	scale = newScale;
 
 	UpdateGlobalTransform();
+}
+
+float2 Component_Transform::GetPivot()
+{
+	return pivot;
+}
+
+void Component_Transform::SetPivot(float2 newPivot)
+{
+	if (newPivot.x > 1.0f) newPivot.x = 1.0f;
+	if (newPivot.y > 1.0f) newPivot.y = 1.0f;
+	if (newPivot.x < 0.0f) newPivot.x = 0.0f;
+	if (newPivot.y < 0.0f) newPivot.y = 0.0f;
+	pivot = newPivot;
+}
+
+void Component_Transform::SetPivot(float x, float y)
+{
+	float2 newPivot = float2(x, y);
+	if (newPivot.x > 1.0f) newPivot.x = 1.0f;
+	if (newPivot.y > 1.0f) newPivot.y = 1.0f;
+	if (newPivot.x < 0.0f) newPivot.x = 0.0f;
+	if (newPivot.y < 0.0f) newPivot.y = 0.0f;
+	pivot = newPivot;
 }
 
 void Component_Transform::SetProportionalScale(float multiplier)

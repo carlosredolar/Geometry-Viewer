@@ -8,8 +8,8 @@ class JsonArray;
 
 class Component_Transform : public Component {
 public:
-	Component_Transform();
-	Component_Transform(float3 positionTransform, Quat rotationTransform, float3 scaleTransform);
+	Component_Transform(bool isTransform2D = false);
+	Component_Transform(float3 positionTransform, Quat rotationTransform, float3 scaleTransform, bool isTransform2D = false);
 	~Component_Transform();
 	void Update() override;
 	void OnGUI() override;
@@ -44,9 +44,15 @@ public:
 	void SetScale(float x, float y, float z);
 	void SetScale(float3 newScale);
 	void SetProportionalScale(float multiplier);
+
+	float2 GetPivot();
+	void SetPivot(float x, float y);
+	void SetPivot(float2 newPivot);
 	
 
 private:
+	bool is2D = false;
+
 	float4x4 localTransform = float4x4::identity;
 	float4x4 globalTransform = float4x4::identity;
 	float4x4 parentGlobalTransform = float4x4::identity;
@@ -55,6 +61,7 @@ private:
 	Quat rotation;
 	float3 scale;
 	float3 eulerRotation;
+	float2 pivot;
 };
 
 #endif //__TRANSFORM_H__
