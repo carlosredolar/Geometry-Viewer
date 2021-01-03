@@ -10,7 +10,7 @@ class ResourceTexture;
 class Component_Image : public Component {
 
 public:
-	Component_Image();
+	Component_Image(GameObject* parent);
 	~Component_Image();
 
 	void Update() override;
@@ -21,9 +21,15 @@ public:
 
 	void SetResourceUID(uint UID) override;
 
+	void CheckersTexDefault();
+
 	ResourceTexture* GetImage();
 	void SetImage(ResourceTexture* texture);
 private:
+	bool checkersImageActive;
+
+	uint checkersID;
+
 	ResourceTexture* image;
 	Color color;
 };

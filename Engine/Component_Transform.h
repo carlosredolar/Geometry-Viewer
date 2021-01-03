@@ -48,6 +48,8 @@ public:
 	float2 GetPivot();
 	void SetPivot(float x, float y);
 	void SetPivot(float2 newPivot);
+
+	bool IsTransform2D();
 	
 
 private:

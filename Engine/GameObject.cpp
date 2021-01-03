@@ -5,11 +5,13 @@
 #include "Component_Material.h"
 #include "Component_Camera.h"
 #include "Component_Light.h"
+#include "Component_Image.h"
 #include "Libs/ImGui/imgui.h"
 #include "ModuleJson.h"
 #include "Application.h"
-
+#include "ModuleGui.h"
 #include "Libs/MathGeoLib/include/MathGeoLib.h"
+#include "Libs/Glew/include/glew.h"
 
 #include <vector>
 
@@ -23,6 +25,14 @@ GameObject::GameObject(Component_Mesh* mesh) : GameObject()
 {
 	SetName(mesh->name);
 	AddComponent((Component*)mesh);
+}
+
+GameObject::GameObject(Component_Transform* trans) : GameObject()
+{
+	SetName("Empty Game Object");
+	DeleteComponent(transform);
+	AddComponent((Component*)trans);
+	transform = trans;
 }
 
 GameObject::~GameObject()
@@ -46,12 +56,24 @@ void GameObject::Update()
 {
 	if (enabled)
 	{
+		if (transform->IsTransform2D())
+		{
+			glDisable(GL_DEPTH_TEST);
+			glMatrixMode(GL_PROJECTION);
+			glPushMatrix();
+			glLoadIdentity();
+			glOrtho(0, App->gui->sceneRenderSize.x, App->gui->sceneRenderSize.y, 0, 1, -1);
+			glMatrixMode(GL_MODELVIEW);
+			glPushMatrix();
+			glLoadIdentity();
+		}
+
 		for (size_t i = 0; i < components.size(); i++)
 		{
 			//Update Components
-			if (components[i]->IsEnabled()) 
+			if (components[i]->IsEnabled())
 			{
-				if (components[i]->GetType() == ComponentType::MESH) 
+				if (components[i]->GetType() == ComponentType::MESH)
 				{
 					Component_Mesh* mesh = (Component_Mesh*)components[i];
 
@@ -60,7 +82,7 @@ void GameObject::Update()
 
 					aabb.SetNegativeInfinity();
 					aabb.Enclose(obb);
-										
+
 					if (App->scene->showBB)
 					{
 						float3 cornerPoints[8];
@@ -70,20 +92,29 @@ void GameObject::Update()
 
 						App->renderer3D->DrawAABB(cornerPoints, color);
 					}
-					
+
 					if (App->camera->GetCamera()->CheckBBOnCamera(aabb))
 					{
 						if (App->renderer3D->GetMainCamera()->CheckBBOnCamera(aabb) || !App->renderer3D->cameraCulling)
 						{
 							mesh->Update();
 						}
-					}	
+					}
 				}
 				else
 				{
 					components[i]->Update();
 				}
 			}
+		}
+
+		if (transform->IsTransform2D())
+		{
+			glMatrixMode(GL_PROJECTION);
+			glPopMatrix();
+			glMatrixMode(GL_MODELVIEW);
+			glPopMatrix();
+			glEnable(GL_DEPTH_TEST);
 		}
 
 		//Update Children
@@ -259,6 +290,8 @@ Component* GameObject::AddComponent(ComponentType type)
 	case LIGHT:
 		component = new Component_Light(this);
 		break;
+	case IMAGE:
+		component = new Component_Image(this);
 	default:
 		break;
 	}

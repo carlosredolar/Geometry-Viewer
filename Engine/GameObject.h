@@ -21,6 +21,7 @@ class GameObject {
 public:
 	GameObject();
 	GameObject(Component_Mesh* mesh);
+	GameObject(Component_Transform* transform);
 	~GameObject();
 
 	void Update();

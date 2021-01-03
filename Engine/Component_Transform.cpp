@@ -67,7 +67,7 @@ void Component_Transform::OnGUI()
 		if (is2D)
 		{
 			float piv[2] = { pivot.x, pivot.y };
-			if (ImGui::DragFloat3("Pivot", piv, 0.01f, 0.0f, 1.0f))
+			if (ImGui::DragFloat2("Pivot", piv, 0.01f, 0.0f, 1.0f))
 			{
 				SetPivot(piv[0], piv[1]);
 				UpdateGlobalTransform();
@@ -82,6 +82,12 @@ void Component_Transform::OnGUI()
 
 		ImGui::Spacing();
 	}
+
+}
+
+bool Component_Transform::IsTransform2D()
+{
+	return is2D;
 }
 
 void Component_Transform::Save(JsonArray& saveArray)

@@ -23,7 +23,12 @@ public:
 	void SetPressed(ResourceTexture* texture);
 	void SetHovered(ResourceTexture* texture);
 	void SetDeactivated(ResourceTexture* texture);
+
+	void OnClick();
 private:
+	bool active = true;
+	bool changeImage = true;
+
 	ResourceTexture* unpressed;
 	ResourceTexture* pressed;
 	ResourceTexture* hovered;

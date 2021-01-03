@@ -7,14 +7,22 @@
 #include "GuiAssets.h"
 #include "Libs/ImGui/imgui.h"
 
-Component_Button::Component_Button() : Component(ComponentType::TRANSFORM2D)
+Component_Button::Component_Button() : Component(ComponentType::BUTTON)
 {
 	unpressed = nullptr;
+	pressed = nullptr;
+	hovered = nullptr;
+	deactivated = nullptr;
 }
 
 Component_Button::~Component_Button() {}
 
 void Component_Button::Update()
+{
+
+}
+
+void Component_Button::OnClick()
 {
 
 }

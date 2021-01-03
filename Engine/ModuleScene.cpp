@@ -6,6 +6,7 @@
 #include "FileManager.h"
 #include "GameObject.h"
 #include "Component_Transform.h"
+#include "Component_Image.h"
 #include "Component_Camera.h"
 
 ModuleScene::ModuleScene(bool start_enabled) : Module(start_enabled), showGrid(true), selectedGameObject(nullptr), root(nullptr) 
@@ -41,7 +42,11 @@ bool ModuleScene::Start()
 	//Create initial gameObject
 	GameObject* street_environment = App->resources->RequestGameObject("Assets/Models/Street environment_V01.FBX");
 	AddGameObject(street_environment);
-	
+
+	Component_Transform* trans = new Component_Transform(true);
+	GameObject* uiTest = new GameObject(trans);
+	uiTest->AddComponent(IMAGE);
+	AddGameObject(uiTest);
 	return ret;
 }
 
