@@ -90,6 +90,8 @@
     <ClInclude Include="Application.h" />
     <ClInclude Include="Component_Button.h" />
     <ClInclude Include="Component_Canvas.h" />
+    <ClInclude Include="Component_CanvasRenderer.h" />
+    <ClInclude Include="Component_Graphic.h" />
     <ClInclude Include="Component_Image.h" />
     <ClInclude Include="Component_Camera.h" />
     <ClInclude Include="Color.h" />

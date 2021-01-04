@@ -375,6 +375,12 @@
     <ClInclude Include="Component_Canvas.h">
       <Filter>Sources\GO&amp;Comp\2D</Filter>
     </ClInclude>
+    <ClInclude Include="Component_CanvasRenderer.h">
+      <Filter>Sources\GO&amp;Comp\2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Component_Graphic.h">
+      <Filter>Sources\GO&amp;Comp\2D</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleCamera3D.cpp">
