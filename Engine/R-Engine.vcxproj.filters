@@ -626,6 +626,9 @@
     <ClCompile Include="Component_Canvas.cpp">
       <Filter>Sources\GO&amp;Comp\2D</Filter>
     </ClCompile>
+    <ClCompile Include="Component_Graphic.cpp">
+      <Filter>Sources\GO&amp;Comp\2D</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Libs\MathGeoLib\include\Geometry\KDTree.inl">

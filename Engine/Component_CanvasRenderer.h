@@ -22,7 +22,6 @@ public:
 	Component_CanvasRenderer(GameObject* parent);
 	~Component_CanvasRenderer();
 	void Update(float dt);
-	void CleanUp();
 
 	void OnGUI();
 	void Save(JsonArray& saveArray) override;
