@@ -372,6 +372,9 @@
     <ClInclude Include="Component_Button.h">
       <Filter>Sources\GO&amp;Comp\2D</Filter>
     </ClInclude>
+    <ClInclude Include="Component_Canvas.h">
+      <Filter>Sources\GO&amp;Comp\2D</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleCamera3D.cpp">
@@ -612,6 +615,9 @@
       <Filter>Sources\GO&amp;Comp</Filter>
     </ClCompile>
     <ClCompile Include="Component_Button.cpp">
+      <Filter>Sources\GO&amp;Comp\2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Component_Canvas.cpp">
       <Filter>Sources\GO&amp;Comp\2D</Filter>
     </ClCompile>
   </ItemGroup>

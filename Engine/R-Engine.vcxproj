@@ -89,6 +89,7 @@
   <ItemGroup>
     <ClInclude Include="Application.h" />
     <ClInclude Include="Component_Button.h" />
+    <ClInclude Include="Component_Canvas.h" />
     <ClInclude Include="Component_Image.h" />
     <ClInclude Include="Component_Camera.h" />
     <ClInclude Include="Color.h" />
@@ -204,6 +205,7 @@
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="Component_Button.cpp" />
     <ClCompile Include="Component_Camera.cpp" />
+    <ClCompile Include="Component_Canvas.cpp" />
     <ClCompile Include="Component_Image.cpp" />
     <ClCompile Include="Component_Light.cpp" />
     <ClCompile Include="Component_Mesh.cpp" />
