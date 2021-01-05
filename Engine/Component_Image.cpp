@@ -11,39 +11,52 @@
 
 Component_Image::Component_Image(GameObject* parent) : Component_Graphic(ComponentType::IMAGE, parent)
 {
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	glGenTextures(1, &checkersID);
+	glBindTexture(GL_TEXTURE_2D, checkersID);
 
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glGenerateMipmap(GL_TEXTURE_2D);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	color.Set(1, 1, 1, 1);
+
+	CheckersTexDefault();
 }
 
 Component_Image::~Component_Image() {}
 
 void Component_Image::Update() 
 {
+	glEnable(GL_BLEND);
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_LIGHTING);
+	glPushMatrix();
+	glMultMatrixf((float*)& ownerGameObject->GetTransform()->GetGlobalTransform().Transposed());
+	glColor4f(color.r, color.g, color.b, color.a);
 	if (checkersImageActive)
 	{
-		//glBindTexture(GL_TEXTURE_2D, checkersID);
-		//glBegin(GL_QUADS);
-		//glTexCoord2f(0, 1); glVertex2f(0.5f, 0.5f);
-		//glTexCoord2f(1, 1); glVertex2f(3.0f, 0.5f);
-		//glTexCoord2f(1, 0); glVertex2f(3.0f, 1.5f);
-		//glTexCoord2f(0, 0); glVertex2f(0.5f, 1.5f);
-		//glEnd();
+		glBindTexture(GL_TEXTURE_2D, checkersID);
 	}
 	else
 	{
-		//glBindFramebuffer(GL_READ_FRAMEBUFFER, image->GetGpuID());
-		//glBlitFramebuffer(0, 0, image->GetWidth(), image->GetHeight(),
-		//	0, 0, ownerGameObject->GetTransform()->GetScale().x, ownerGameObject->GetTransform()->GetScale().y,
-		//	GL_COLOR_BUFFER_BIT, GL_LINEAR);
-		//glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
-		//------------------------------------
-		//glBindTexture(GL_TEXTURE_2D, image->GetGpuID());
-		//glBegin(GL_QUADS);
-		//glTexCoord2f(0, 1); glVertex2f(0.05f, 0.05f);
-		//glTexCoord2f(1, 1); glVertex2f(0.3f, 0.05f);
-		//glTexCoord2f(1, 0); glVertex2f(0.3f, 0.15f);
-		//glTexCoord2f(0, 0); glVertex2f(0.05f, 0.15f);
-		//glEnd();
+		glBindTexture(GL_TEXTURE_2D, image->GetGpuID());
 	}
+	glBegin(GL_QUADS);
+	glTexCoord2f(0, 0); glVertex2f(0.0f, 0.0f);
+	glTexCoord2f(0, 1); glVertex2f(0.0f, 1.0f);
+	glTexCoord2f(1, 1); glVertex2f(1.0f, 1.0f);
+	glTexCoord2f(1, 0); glVertex2f(1.0f, 0.0f);
+	glEnd();
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glPopMatrix();
+	glEnable(GL_LIGHTING);
+	glEnable(GL_DEPTH_TEST);
+	glDisable(GL_BLEND);
 }
 
 void Component_Image::OnGUI()
@@ -111,6 +124,11 @@ void Component_Image::OnGUI()
 
 				ImGui::EndDragDropTarget();
 			}
+		}
+		float col[4] = { color.r, color.g, color.b, color.a };
+		if (ImGui::DragFloat4("Color", col, 0.1f, 0.0f, 1.0f))
+		{
+			color.Set(col[0], col[1], col[2], col[3]);
 		}
 	}
 }

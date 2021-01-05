@@ -37,13 +37,9 @@ public:
 private:
 	Component_Graphic* graphic = nullptr;
 
-	uint verticesBuffer = 0;
-	uint amountVertices = 0;
 	float* vertices = nullptr;
 
-	uint texcoordsBuffer = 0;
-	uint amountTexCoords = 0;
-	float* textureCoords = nullptr;
+	float2 textureTile;
 };
 
 #endif // !COMPONENT_CANVAS_RENDER_H

@@ -21,11 +21,12 @@ void Component_Graphic::AddCanvasRender() {} // ALWAYS ADDED WHEN THIS COMPONENT
 void Component_Graphic::SyncComponent(GameObject* sync_parent) {}
 void Component_Graphic::DrawGraphic(ResourceTexture* texture) 
 {
+	//DRAW THE CORRESPONDING GRAPHIC
 	if (canvasRenderer != nullptr)
 	{
 		canvasRenderer->DrawGraphic(texture);
 	}
-} //DRAW THE CORRESPONDING GRAPHIC
+}
 void Component_Graphic::DrawTranforms() {} //DRAW THE LIMITS OF THE RECT TRANSFORM (ONLY IN EDIT MODE)
 
 void Component_Graphic::SetNullCanvas() {} //ONLY IF CANVAS IS DELETED AND THIS OBJECT NOT
