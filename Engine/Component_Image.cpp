@@ -9,21 +9,9 @@
 #include "Libs/ImGui/imgui.h"
 #include "Libs/Glew/include/glew.h"
 
-Component_Image::Component_Image(GameObject* parent) : Component(ComponentType::IMAGE, parent)
+Component_Image::Component_Image(GameObject* parent) : Component_Graphic(ComponentType::IMAGE, parent)
 {
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	glGenTextures(1, &checkersID);
-	glBindTexture(GL_TEXTURE_2D, checkersID);
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glGenerateMipmap(GL_TEXTURE_2D);
-
-	glBindTexture(GL_TEXTURE_2D, 0);
-	CheckersTexDefault();
-	image = nullptr;
 }
 
 Component_Image::~Component_Image() {}

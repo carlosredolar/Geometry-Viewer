@@ -1,13 +1,13 @@
 #ifndef __IMAGE_H__
 #define __IMAGE_H__
-#include "Component.h"
+#include "Component_Graphic.h"
 #include "Libs/MathGeoLib/include/MathGeoLib.h"
 #include "Color.h"
 
 class JsonArray;
 class ResourceTexture;
 
-class Component_Image : public Component {
+class Component_Image : public Component_Graphic {
 
 public:
 	Component_Image(GameObject* parent);

@@ -5,7 +5,8 @@
 #include "Libs/MathGeoLib/include/MathGeoLib.h"
 
 class Component_Transform;
-class Component_CanvasRender;
+class ResourceTexture;
+class Component_CanvasRenderer;
 class Component_Canvas;
 class Component_Interactive;
 
@@ -21,12 +22,12 @@ public:
 	void AddCanvas();
 	void AddCanvasRender();
 	void SyncComponent(GameObject* sync_parent);
-	void DrawGraphic();
+	void DrawGraphic(ResourceTexture* texture);
 	void DrawTranforms();
 
 	void SetNullCanvas();
 
-	Component_CanvasRender* GetCanvasRender()const;
+	Component_CanvasRenderer* GetCanvasRenderer()const;
 	bool GetParentActive();
 	virtual int GetWidth()const;
 	virtual int GetHeight()const;
@@ -37,7 +38,7 @@ protected:
 	void GenerateMesh();
 protected:
 	Component_Canvas* canvas = nullptr;
-	Component_CanvasRender* canvasRenderer = nullptr;
+	Component_CanvasRenderer* canvasRenderer = nullptr;
 };
 
 #endif//COMPONENT_GRAPHIC_H

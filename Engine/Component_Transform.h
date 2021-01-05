@@ -51,7 +51,6 @@ public:
 
 	bool IsTransform2D();
 	
-
 private:
 	bool is2D = false;
 

@@ -9,6 +9,7 @@ class Component_Graphic;
 class Component_Text;
 class Component_Image;
 class Component_Canvas;
+class ResourceTexture;
 enum FillMethod;
 
 struct CanvasVertex
@@ -27,9 +28,9 @@ public:
 	void Save(JsonArray& saveArray) override;
 	void Load(JsonObj& loadObject) override;
 
-	void SyncComponent(GameObject* sync_parent);
+	//void SyncComponent(GameObject* sync_parent);
 
-	void DrawGraphic();
+	void DrawGraphic(ResourceTexture* texture);
 
 	void SetGraphic(Component_Graphic* set_graphic);
 	//void SetVertex(data);
