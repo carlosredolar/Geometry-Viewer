@@ -11,12 +11,8 @@ class Component_Image;
 class Component_Canvas;
 class ResourceTexture;
 enum FillMethod;
+struct Color;
 
-struct CanvasVertex
-{
-	float3 position;
-	float2 tex_coords;
-};
 class Component_CanvasRenderer :public Component
 {
 public:
@@ -29,17 +25,15 @@ public:
 
 	//void SyncComponent(GameObject* sync_parent);
 
-	void DrawGraphic(ResourceTexture* texture);
+	void DrawGraphic(uint texture, Color color);
 
-	void SetGraphic(Component_Graphic* set_graphic);
-	//void SetVertex(data);
+	float* GetVertices();
+	void SetTextureTile(float2 texTile);
 
 private:
-	Component_Graphic* graphic = nullptr;
-
 	float* vertices = nullptr;
 
-	float2 textureTile;
+	float2 textureTile = float2::one;
 };
 
 #endif // !COMPONENT_CANVAS_RENDER_H

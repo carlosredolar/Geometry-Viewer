@@ -2,18 +2,19 @@
 #define COMPONENT_GRAPHIC_H
 
 #include "Component.h"
+#include "Component_CanvasRenderer.h"
+#include "Color.h"
 #include "Libs/MathGeoLib/include/MathGeoLib.h"
 
 class Component_Transform;
 class ResourceTexture;
-class Component_CanvasRenderer;
 class Component_Canvas;
 class Component_Interactive;
 
 class Component_Graphic : public Component
 {
 public:
-	Component_Graphic(ComponentType type, GameObject* parent);
+	Component_Graphic(ComponentType type, GameObject* parent, Component_Canvas* canvas = nullptr, Component_CanvasRenderer renderer = nullptr);
 	~Component_Graphic();
 
 	void Save(JsonArray& saveArray) override;
@@ -22,23 +23,23 @@ public:
 	void AddCanvas();
 	void AddCanvasRender();
 	void SyncComponent(GameObject* sync_parent);
-	void DrawGraphic(ResourceTexture* texture);
+	void DrawGraphic(uint texture, Color color);
 	void DrawTranforms();
 
 	void SetNullCanvas();
 
 	Component_CanvasRenderer* GetCanvasRenderer()const;
 	bool GetParentActive();
-	//virtual int GetWidth()const;
-	//virtual int GetHeight()const;
 
 	void ResizeGenerateMesh();
 
 protected:
-	void GenerateMesh();
+	void GenerateMesh(int width, int height);
 protected:
 	Component_Canvas* canvas = nullptr;
 	Component_CanvasRenderer* canvasRenderer = nullptr;
+
+	float2 size = float2::zero;
 };
 
 #endif//COMPONENT_GRAPHIC_H

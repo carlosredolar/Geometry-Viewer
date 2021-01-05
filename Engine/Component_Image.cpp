@@ -4,6 +4,7 @@
 #include "GameObject.h"
 #include "ModuleJson.h"
 #include "ResourceTexture.h"
+#include "Component_CanvasRenderer.h"
 #include "Component_Transform.h"
 #include "GuiAssets.h"
 #include "Libs/ImGui/imgui.h"
@@ -32,31 +33,14 @@ Component_Image::~Component_Image() {}
 
 void Component_Image::Update() 
 {
-	glEnable(GL_BLEND);
-	glDisable(GL_DEPTH_TEST);
-	glDisable(GL_LIGHTING);
-	glPushMatrix();
-	glMultMatrixf((float*)& ownerGameObject->GetTransform()->GetGlobalTransform().Transposed());
-	glColor4f(color.r, color.g, color.b, color.a);
 	if (checkersImageActive)
 	{
-		glBindTexture(GL_TEXTURE_2D, checkersID);
+		DrawGraphic(checkersID, color);
 	}
 	else
 	{
-		glBindTexture(GL_TEXTURE_2D, image->GetGpuID());
+		DrawGraphic(image->GetGpuID(), color);
 	}
-	glBegin(GL_QUADS);
-	glTexCoord2f(0, 0); glVertex2f(0.0f, 0.0f);
-	glTexCoord2f(0, 1); glVertex2f(0.0f, 1.0f);
-	glTexCoord2f(1, 1); glVertex2f(1.0f, 1.0f);
-	glTexCoord2f(1, 0); glVertex2f(1.0f, 0.0f);
-	glEnd();
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glPopMatrix();
-	glEnable(GL_LIGHTING);
-	glEnable(GL_DEPTH_TEST);
-	glDisable(GL_BLEND);
 }
 
 void Component_Image::OnGUI()
@@ -81,7 +65,10 @@ void Component_Image::OnGUI()
 					Resource* possible_texture = App->resources->RequestResource(App->resources->Find(file));
 
 					if (possible_texture->GetType() == ResourceType::RESOURCE_TEXTURE)
+					{
 						image = (ResourceTexture*)possible_texture;
+						GenerateMesh(image->GetWidth(), image->GetHeight());
+					}
 				}
 				ImGui::EndDragDropTarget();
 			}
@@ -119,12 +106,21 @@ void Component_Image::OnGUI()
 					Resource * possible_texture = App->resources->RequestResource(App->resources->Find(file));
 
 					if (possible_texture->GetType() == ResourceType::RESOURCE_TEXTURE)
+					{
 						SetImage(dynamic_cast<ResourceTexture*>(possible_texture));
+					}
 				}
 
 				ImGui::EndDragDropTarget();
 			}
 		}
+		float tile[2] = { texTile.x, texTile.y };
+		if (ImGui::DragFloat2("Tile Quantity", tile, 0.1f, -10000.0f, 10000.0f))
+		{
+			texTile.Set(tile[0], tile[1]);
+			GetCanvasRenderer()->SetTextureTile(float2(tile[0], tile[1]));
+		}
+
 		float col[4] = { color.r, color.g, color.b, color.a };
 		if (ImGui::DragFloat4("Color", col, 0.1f, 0.0f, 1.0f))
 		{
@@ -190,5 +186,6 @@ void Component_Image::CheckersTexDefault()
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, CHECKERS_WIDTH, CHECKERS_HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, checkerImage);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
+	GenerateMesh(100, 100);
 	checkersImageActive = true;
 }

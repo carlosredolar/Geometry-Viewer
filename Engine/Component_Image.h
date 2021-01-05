@@ -2,7 +2,6 @@
 #define __IMAGE_H__
 #include "Component_Graphic.h"
 #include "Libs/MathGeoLib/include/MathGeoLib.h"
-#include "Color.h"
 
 class JsonArray;
 class ResourceTexture;
@@ -32,6 +31,7 @@ private:
 
 	ResourceTexture* image;
 	Color color;
+	float2 texTile = float2::one;
 };
 
 #endif //__IMAGE_H__

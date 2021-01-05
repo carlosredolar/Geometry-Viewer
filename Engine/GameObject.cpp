@@ -6,6 +6,7 @@
 #include "Component_Camera.h"
 #include "Component_Light.h"
 #include "Component_Image.h"
+#include "Component_CanvasRenderer.h"
 #include "Libs/ImGui/imgui.h"
 #include "ModuleJson.h"
 #include "Application.h"
@@ -292,6 +293,10 @@ Component* GameObject::AddComponent(ComponentType type)
 		break;
 	case IMAGE:
 		component = new Component_Image(this);
+		break;
+	case CANVASRENDERER:
+		component = new Component_CanvasRenderer(this);
+		break;
 	default:
 		break;
 	}
