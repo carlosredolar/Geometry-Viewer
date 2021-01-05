@@ -1043,6 +1043,8 @@ ILenum TextureImporter::GetFileFormat(const char* file)
 		fileFormat = IL_JPG;
 	else if (extension == ".bmp")
 		fileFormat = IL_BMP;
+	else if (extension == ".tga")
+		fileFormat = IL_TGA;
 
 	return fileFormat;
 }

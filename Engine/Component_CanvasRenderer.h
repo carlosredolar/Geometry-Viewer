@@ -22,7 +22,6 @@ class Component_CanvasRenderer :public Component
 public:
 	Component_CanvasRenderer(GameObject* parent);
 	~Component_CanvasRenderer();
-	void Update(float dt);
 
 	void OnGUI();
 	void Save(JsonArray& saveArray) override;
@@ -42,9 +41,9 @@ private:
 	uint amountVertices = 0;
 	float* vertices = nullptr;
 
-	uint indicesBuffer = 0;
-	uint amountIndices = 0;
-	uint* indices = nullptr;
+	uint texcoordsBuffer = 0;
+	uint amountTexCoords = 0;
+	float* textureCoords = nullptr;
 };
 
 #endif // !COMPONENT_CANVAS_RENDER_H

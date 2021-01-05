@@ -26,4 +26,10 @@ void Component_Canvas::Load(JsonObj& loadObject)
 
 void Component_Canvas::Resize(int width, int height)
 {
+	//TODO: Resize this transform
+
+	for (uint i = 0; i < graphic_elements.size(); i++)
+	{
+		graphic_elements[i]->ResizeGenerateMesh();
+	}
 }

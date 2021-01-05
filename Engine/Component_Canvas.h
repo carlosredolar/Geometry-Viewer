@@ -2,6 +2,8 @@
 #define __CANVAS_H__
 #include "Component.h"
 #include "Libs/MathGeoLib/include/MathGeoLib.h"
+#include <vector>
+#include "Component_Graphic.h"
 
 class JsonArray;
 
@@ -20,6 +22,7 @@ public:
 	void Resize(int width, int height);
 
 private:
+	std::vector<Component_Graphic*> graphic_elements;
 
 };
 

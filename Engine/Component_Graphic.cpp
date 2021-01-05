@@ -34,7 +34,7 @@ Component_CanvasRenderer* Component_Graphic::GetCanvasRenderer()const
 {
 	return canvasRenderer;
 }
-bool Component_Graphic::GetParentActive() {}
+bool Component_Graphic::GetParentActive() { return false; }
 
 void Component_Graphic::GenerateMesh()
 {

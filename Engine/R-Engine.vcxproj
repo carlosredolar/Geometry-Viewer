@@ -208,6 +208,7 @@
     <ClCompile Include="Component_Button.cpp" />
     <ClCompile Include="Component_Camera.cpp" />
     <ClCompile Include="Component_Canvas.cpp" />
+    <ClCompile Include="Component_CanvasRenderer.cpp" />
     <ClCompile Include="Component_Graphic.cpp" />
     <ClCompile Include="Component_Image.cpp" />
     <ClCompile Include="Component_Light.cpp" />

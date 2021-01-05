@@ -56,17 +56,17 @@ void GameObject::Update()
 {
 	if (enabled)
 	{
-		if (transform->IsTransform2D())
-		{
-			glDisable(GL_DEPTH_TEST);
-			glMatrixMode(GL_PROJECTION);
-			glPushMatrix();
-			glLoadIdentity();
-			glOrtho(0, App->gui->sceneRenderSize.x, App->gui->sceneRenderSize.y, 0, 1, -1);
-			glMatrixMode(GL_MODELVIEW);
-			glPushMatrix();
-			glLoadIdentity();
-		}
+		//if (transform->IsTransform2D())
+		//{
+		//	glDisable(GL_DEPTH_TEST);
+		//	glMatrixMode(GL_PROJECTION);
+		//	glPushMatrix();
+		//	glLoadIdentity();
+		//	glOrtho(0, App->gui->sceneRenderSize.x, App->gui->sceneRenderSize.y, 0, 1, -1);
+		//	glMatrixMode(GL_MODELVIEW);
+		//	glPushMatrix();
+		//	glLoadIdentity();
+		//}
 
 		for (size_t i = 0; i < components.size(); i++)
 		{
@@ -108,14 +108,14 @@ void GameObject::Update()
 			}
 		}
 
-		if (transform->IsTransform2D())
-		{
-			glMatrixMode(GL_PROJECTION);
-			glPopMatrix();
-			glMatrixMode(GL_MODELVIEW);
-			glPopMatrix();
-			glEnable(GL_DEPTH_TEST);
-		}
+		//if (transform->IsTransform2D())
+		//{
+		//	glMatrixMode(GL_PROJECTION);
+		//	glPopMatrix();
+		//	glMatrixMode(GL_MODELVIEW);
+		//	glPopMatrix();
+		//	glEnable(GL_DEPTH_TEST);
+		//}
 
 		//Update Children
 		for (size_t i = 0; i < children.size(); i++)

@@ -29,8 +29,8 @@ public:
 
 	Component_CanvasRenderer* GetCanvasRenderer()const;
 	bool GetParentActive();
-	virtual int GetWidth()const;
-	virtual int GetHeight()const;
+	//virtual int GetWidth()const;
+	//virtual int GetHeight()const;
 
 	void ResizeGenerateMesh();
 

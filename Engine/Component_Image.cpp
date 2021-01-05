@@ -20,13 +20,13 @@ void Component_Image::Update()
 {
 	if (checkersImageActive)
 	{
-		glBindTexture(GL_TEXTURE_2D, checkersID);
-		glBegin(GL_QUADS);
-		glTexCoord2f(0, 1); glVertex2f(0.5f, 0.5f);
-		glTexCoord2f(1, 1); glVertex2f(3.0f, 0.5f);
-		glTexCoord2f(1, 0); glVertex2f(3.0f, 1.5f);
-		glTexCoord2f(0, 0); glVertex2f(0.5f, 1.5f);
-		glEnd();
+		//glBindTexture(GL_TEXTURE_2D, checkersID);
+		//glBegin(GL_QUADS);
+		//glTexCoord2f(0, 1); glVertex2f(0.5f, 0.5f);
+		//glTexCoord2f(1, 1); glVertex2f(3.0f, 0.5f);
+		//glTexCoord2f(1, 0); glVertex2f(3.0f, 1.5f);
+		//glTexCoord2f(0, 0); glVertex2f(0.5f, 1.5f);
+		//glEnd();
 	}
 	else
 	{
@@ -35,13 +35,14 @@ void Component_Image::Update()
 		//	0, 0, ownerGameObject->GetTransform()->GetScale().x, ownerGameObject->GetTransform()->GetScale().y,
 		//	GL_COLOR_BUFFER_BIT, GL_LINEAR);
 		//glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
-		glBindTexture(GL_TEXTURE_2D, image->GetGpuID());
-		glBegin(GL_QUADS);
-		glTexCoord2f(0, 1); glVertex2f(0.05f, 0.05f);
-		glTexCoord2f(1, 1); glVertex2f(0.3f, 0.05f);
-		glTexCoord2f(1, 0); glVertex2f(0.3f, 0.15f);
-		glTexCoord2f(0, 0); glVertex2f(0.05f, 0.15f);
-		glEnd();
+		//------------------------------------
+		//glBindTexture(GL_TEXTURE_2D, image->GetGpuID());
+		//glBegin(GL_QUADS);
+		//glTexCoord2f(0, 1); glVertex2f(0.05f, 0.05f);
+		//glTexCoord2f(1, 1); glVertex2f(0.3f, 0.05f);
+		//glTexCoord2f(1, 0); glVertex2f(0.3f, 0.15f);
+		//glTexCoord2f(0, 0); glVertex2f(0.05f, 0.15f);
+		//glEnd();
 	}
 }
 
