@@ -20,7 +20,7 @@ void Component_CanvasRenderer::OnGUI()
 {
 	if (ImGui::CollapsingHeader("Canvas Renderer", ImGuiTreeNodeFlags_DefaultOpen))
 	{
-		ImGui::Checkbox(" Enabled ", &enabled);
+		ImGui::Checkbox(" Enabled", &enabled);
 	}
 }
 void Component_CanvasRenderer::Save(JsonArray& saveArray)

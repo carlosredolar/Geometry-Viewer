@@ -122,7 +122,7 @@ void Component_Image::OnGUI()
 		}
 
 		float col[4] = { color.r, color.g, color.b, color.a };
-		if (ImGui::DragFloat4("Color", col, 0.1f, 0.0f, 1.0f))
+		if(ImGui::ColorEdit4("Color", col))
 		{
 			color.Set(col[0], col[1], col[2], col[3]);
 		}
