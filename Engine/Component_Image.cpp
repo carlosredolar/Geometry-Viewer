@@ -114,6 +114,7 @@ void Component_Image::OnGUI()
 				ImGui::EndDragDropTarget();
 			}
 		}
+
 		float tile[2] = { texTile.x, texTile.y };
 		if (ImGui::DragFloat2("Tile Quantity", tile, 0.1f, -10000.0f, 10000.0f))
 		{
@@ -121,11 +122,18 @@ void Component_Image::OnGUI()
 			GetCanvasRenderer()->SetTextureTile(float2(tile[0], tile[1]));
 		}
 
-		float col[4] = { color.r, color.g, color.b, color.a };
-		if(ImGui::ColorEdit4("Color", col))
+		ImVec4 buttonColor = { color.r, color.g, color.b, color.a };
+		if (ImGui::ColorButton("Color", buttonColor, 0, ImVec2(ImGui::GetWindowContentRegionWidth()-ImGui::CalcTextSize("Color ").x,20)))
+			ImGui::OpenPopup("imageColPicker");
+
+		if (ImGui::BeginPopup("imageColPicker"))
 		{
-			color.Set(col[0], col[1], col[2], col[3]);
+			ImGui::ColorPicker4("##picker", &color, ImGuiColorEditFlags_None, NULL);
+			if (ImGui::Button("Close", ImVec2(ImGui::GetWindowContentRegionWidth(),20))) ImGui::CloseCurrentPopup();
+			ImGui::EndPopup();
 		}
+		ImGui::SameLine();
+		ImGui::Text("Color");
 	}
 }
 
