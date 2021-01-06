@@ -4,8 +4,9 @@
 #include "Component_Mesh.h"
 #include "ModuleScene.h"
 #include "GameObject.h"
+#include "Component_Camera.h";
+#include "Component_Canvas.h";
 #include "FileManager.h"
-#include "Component_Camera.h"
 #include "Time.h"
 
 #include <vector>
@@ -215,6 +216,14 @@ void ModuleGui::ScreenResized(ImVec2 windowSize)
 
 	App->camera->ScreenResized(sceneRenderSize.x, sceneRenderSize.y);
 	App->renderer3D->ScreenResized(sceneRenderSize.x, sceneRenderSize.y);
+	for (int i = 0; i < App->scene->GetAllGameObjects().size(); i++)
+	{
+		Component_Canvas* canvas = App->scene->GetAllGameObjects().at(i)->GetComponent<Component_Canvas>();
+		if(canvas != nullptr)
+		{
+			canvas->Resize(sceneRenderSize.x, sceneRenderSize.y);
+		}
+	}
 }
 
 bool ModuleGui::MouseOnScene()

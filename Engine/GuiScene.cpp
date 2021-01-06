@@ -99,7 +99,7 @@ void GuiScene::DrawInGameDataOverlay()
 	ImGui::SetNextWindowViewport(viewport->ID);
 
 	bool inGameOverlay = true;
-	if (ImGui::Begin("Example: Simple overlay", &inGameOverlay, window_flags))
+	if (ImGui::Begin("In game Overlay", &inGameOverlay, window_flags))
 	{
 		ImGui::TextColored(ImVec4(0.95f, 0.5f, 0.07f, 1.0f), "Game Time:");
 		ImGui::Text("%.1f s", Time::gameClock.timeSinceStartup());

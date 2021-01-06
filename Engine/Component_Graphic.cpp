@@ -1,11 +1,23 @@
 #include "Component_Graphic.h"
 #include "Component_Transform.h"
+#include "Component_Canvas.h"
 #include "ResourceTexture.h"
 #include "GameObject.h"
 #include "Application.h"
 
-Component_Graphic::Component_Graphic(ComponentType type, GameObject* parent, Component_Canvas* canvas, Component_CanvasRenderer renderer) : Component(type, parent)
+Component_Graphic::Component_Graphic(ComponentType type, GameObject* parent, Component_Canvas* _canvas, Component_CanvasRenderer renderer) : Component(type, parent)
 {
+	canvas = _canvas;
+	if (canvas == nullptr)
+	{
+		//Create canvas
+		Component_Transform* trans = new Component_Transform(true);
+		GameObject* can = new GameObject(trans, "Canvas");
+		canvas = (Component_Canvas*)can->AddComponent(ComponentType::CANVAS);
+		canvas->AddElement(this);
+		ownerGameObject->ChangeParent(can);
+		App->scene->AddGameObject(can);
+	}
 	if (canvasRenderer == nullptr)
 	{
 		canvasRenderer = (Component_CanvasRenderer*)ownerGameObject->AddComponent(CANVASRENDERER);
@@ -28,9 +40,12 @@ void Component_Graphic::SyncComponent(GameObject* sync_parent) {}
 void Component_Graphic::DrawGraphic(uint texture, Color color) 
 {
 	//DRAW THE CORRESPONDING GRAPHIC
-	if (canvasRenderer != nullptr)
+	if (canvas != nullptr && canvas->IsEnabled())
 	{
-		canvasRenderer->DrawGraphic(texture, color);
+		if (canvasRenderer != nullptr)
+		{
+			canvasRenderer->DrawGraphic(texture, color);
+		}
 	}
 }
 void Component_Graphic::DrawTranforms() {} //DRAW THE LIMITS OF THE RECT TRANSFORM (ONLY IN EDIT MODE)
@@ -55,9 +70,6 @@ void Component_Graphic::GenerateMesh(int width, int height)
 	canvasRenderer->GetVertices()[5] = height;
 	canvasRenderer->GetVertices()[6] = 0.0f;
 	canvasRenderer->GetVertices()[7] = height;
-}
 
-void Component_Graphic::ResizeGenerateMesh()
-{
-
+	position = ownerGameObject->GetTransform()->GetPosition();
 }

@@ -49,6 +49,10 @@ public:
 	void SetPivot(float x, float y);
 	void SetPivot(float2 newPivot);
 
+	float2 GetSize();
+	void SetSize(float x, float y);
+	void SetSize(float2 newPivot);
+
 	bool IsTransform2D();
 	
 private:
@@ -62,7 +66,9 @@ private:
 	Quat rotation;
 	float3 scale;
 	float3 eulerRotation;
+	//2D
 	float2 pivot;
+	float2 size;
 };
 
 #endif //__TRANSFORM_H__

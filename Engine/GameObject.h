@@ -21,7 +21,7 @@ class GameObject {
 public:
 	GameObject();
 	GameObject(Component_Mesh* mesh);
-	GameObject(Component_Transform* transform);
+	GameObject(Component_Transform* transform, const char* name = "Empty Game Object");
 	~GameObject();
 
 	void Update();
@@ -71,7 +71,7 @@ private:
 	bool enabled;
 	bool isVisible;
 	std::string name;
-	GameObject* parent;
+	GameObject* parent = nullptr;
 	Component_Transform* transform;
 	std::vector<Component*> components;
 	std::vector<GameObject*> children;

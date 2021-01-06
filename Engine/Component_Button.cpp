@@ -19,7 +19,7 @@ Component_Button::~Component_Button() {}
 
 void Component_Button::Update()
 {
-
+	
 }
 
 void Component_Button::OnClick()
@@ -34,6 +34,36 @@ void Component_Button::OnGUI()
 		ImGui::Checkbox(" Enabled ", &enabled);
 
 		ImGui::Spacing();
+
+		const char* options[] = { "Images", "Colors" };
+		static int item_current_index = 0;
+		const char* current_item = options[item_current_index];
+		if (ImGui::BeginCombo("Change type", current_item))
+		{
+			for (int n = 0; n < IM_ARRAYSIZE(options); n++)
+			{
+				const bool is_selected = (item_current_index == n);
+				if (ImGui::Selectable(options[n], is_selected))
+					item_current_index = n;
+				if (is_selected)
+					ImGui::SetItemDefaultFocus();
+			}
+			ImGui::EndCombo();
+		}
+
+		//Color unpressed
+		ImVec4 buttonColor = { colorUnpressed.r, colorUnpressed.g, colorUnpressed.b, colorUnpressed.a };
+		if (ImGui::ColorButton("Color Unpressed", buttonColor, 0, ImVec2(ImGui::GetWindowContentRegionWidth() - ImGui::CalcTextSize("Color Unpressed ").x, 20)))
+			ImGui::OpenPopup("unpressedColPicker");
+
+		if (ImGui::BeginPopup("unpressedColPicker"))
+		{
+			ImGui::ColorPicker4("##picker", &colorUnpressed, ImGuiColorEditFlags_None, NULL);
+			if (ImGui::Button("Close", ImVec2(ImGui::GetWindowContentRegionWidth(), 20))) ImGui::CloseCurrentPopup();
+			ImGui::EndPopup();
+		}
+		ImGui::SameLine();
+		ImGui::Text("Color Unpressed");
 
 		if (unpressed != nullptr)
 		{
@@ -73,120 +103,169 @@ void Component_Button::OnGUI()
 			}
 		}
 
-		if (pressed != nullptr)
+		if (item_current_index == 0)
 		{
-			ImGui::Text("Pressed button");
-			ImGui::Image((ImTextureID)pressed->GetGpuID(), ImVec2(20, 20), ImVec2(0, 1), ImVec2(1, 0));
-			if (ImGui::BeginDragDropTarget())
-			{
-				if (const ImGuiPayload * payload = ImGui::AcceptDragDropPayload("ASSETS"))
-				{
-					IM_ASSERT(payload->DataSize == sizeof(int));
-					int payload_n = *(const int*)payload->Data;
-					GuiAssets * assets_window = (GuiAssets*)App->gui->windows[ASSETS_WINDOW];
-					const char* file = assets_window->GetFileAt(payload_n);
-					Resource * possible_texture = App->resources->RequestResource(App->resources->Find(file));
-
-					if (possible_texture->GetType() == ResourceType::RESOURCE_TEXTURE)
-						pressed = (ResourceTexture*)possible_texture;
-				}
-				ImGui::EndDragDropTarget();
-			}
-
-			ImGui::SameLine();
-
-			if (ImGui::Button("Delete Texture"))
-			{
-				pressed = nullptr;
-				//CheckersTexDefault();
-			}
-
-			//ImGui::Spacing();
 			if (pressed != nullptr)
 			{
-				ImGui::Text("Texture Path: %s", pressed->assetsFile.c_str());
-				ImGui::Spacing();
-				ImGui::Text("Width: %d Height: %d", pressed->GetWidth(), pressed->GetHeight());
-				ImGui::Spacing();
-			}
-		}
-
-		if (hovered != nullptr)
-		{
-			ImGui::Text("Hovered button");
-			ImGui::Image((ImTextureID)hovered->GetGpuID(), ImVec2(20, 20), ImVec2(0, 1), ImVec2(1, 0));
-			if (ImGui::BeginDragDropTarget())
-			{
-				if (const ImGuiPayload * payload = ImGui::AcceptDragDropPayload("ASSETS"))
+				ImGui::Text("Pressed button");
+				ImGui::Image((ImTextureID)pressed->GetGpuID(), ImVec2(20, 20), ImVec2(0, 1), ImVec2(1, 0));
+				if (ImGui::BeginDragDropTarget())
 				{
-					IM_ASSERT(payload->DataSize == sizeof(int));
-					int payload_n = *(const int*)payload->Data;
-					GuiAssets * assets_window = (GuiAssets*)App->gui->windows[ASSETS_WINDOW];
-					const char* file = assets_window->GetFileAt(payload_n);
-					Resource * possible_texture = App->resources->RequestResource(App->resources->Find(file));
+					if (const ImGuiPayload * payload = ImGui::AcceptDragDropPayload("ASSETS"))
+					{
+						IM_ASSERT(payload->DataSize == sizeof(int));
+						int payload_n = *(const int*)payload->Data;
+						GuiAssets * assets_window = (GuiAssets*)App->gui->windows[ASSETS_WINDOW];
+						const char* file = assets_window->GetFileAt(payload_n);
+						Resource * possible_texture = App->resources->RequestResource(App->resources->Find(file));
 
-					if (possible_texture->GetType() == ResourceType::RESOURCE_TEXTURE)
-						hovered = (ResourceTexture*)possible_texture;
+						if (possible_texture->GetType() == ResourceType::RESOURCE_TEXTURE)
+							pressed = (ResourceTexture*)possible_texture;
+					}
+					ImGui::EndDragDropTarget();
 				}
-				ImGui::EndDragDropTarget();
+
+				ImGui::SameLine();
+
+				if (ImGui::Button("Delete Texture"))
+				{
+					pressed = nullptr;
+					//CheckersTexDefault();
+				}
+
+				//ImGui::Spacing();
+				if (pressed != nullptr)
+				{
+					ImGui::Text("Texture Path: %s", pressed->assetsFile.c_str());
+					ImGui::Spacing();
+					ImGui::Text("Width: %d Height: %d", pressed->GetWidth(), pressed->GetHeight());
+					ImGui::Spacing();
+				}
 			}
 
-			ImGui::SameLine();
-
-			if (ImGui::Button("Delete Texture"))
-			{
-				hovered = nullptr;
-				//CheckersTexDefault();
-			}
-
-			//ImGui::Spacing();
 			if (hovered != nullptr)
 			{
-				ImGui::Text("Texture Path: %s", hovered->assetsFile.c_str());
-				ImGui::Spacing();
-				ImGui::Text("Width: %d Height: %d", hovered->GetWidth(), hovered->GetHeight());
-				ImGui::Spacing();
-			}
-		}
-
-		if (deactivated != nullptr)
-		{
-			ImGui::Text("Deactivated button");
-			ImGui::Image((ImTextureID)deactivated->GetGpuID(), ImVec2(20, 20), ImVec2(0, 1), ImVec2(1, 0));
-			if (ImGui::BeginDragDropTarget())
-			{
-				if (const ImGuiPayload * payload = ImGui::AcceptDragDropPayload("ASSETS"))
+				ImGui::Text("Hovered button");
+				ImGui::Image((ImTextureID)hovered->GetGpuID(), ImVec2(20, 20), ImVec2(0, 1), ImVec2(1, 0));
+				if (ImGui::BeginDragDropTarget())
 				{
-					IM_ASSERT(payload->DataSize == sizeof(int));
-					int payload_n = *(const int*)payload->Data;
-					GuiAssets * assets_window = (GuiAssets*)App->gui->windows[ASSETS_WINDOW];
-					const char* file = assets_window->GetFileAt(payload_n);
-					Resource * possible_texture = App->resources->RequestResource(App->resources->Find(file));
+					if (const ImGuiPayload * payload = ImGui::AcceptDragDropPayload("ASSETS"))
+					{
+						IM_ASSERT(payload->DataSize == sizeof(int));
+						int payload_n = *(const int*)payload->Data;
+						GuiAssets * assets_window = (GuiAssets*)App->gui->windows[ASSETS_WINDOW];
+						const char* file = assets_window->GetFileAt(payload_n);
+						Resource * possible_texture = App->resources->RequestResource(App->resources->Find(file));
 
-					if (possible_texture->GetType() == ResourceType::RESOURCE_TEXTURE)
-						deactivated = (ResourceTexture*)possible_texture;
+						if (possible_texture->GetType() == ResourceType::RESOURCE_TEXTURE)
+							hovered = (ResourceTexture*)possible_texture;
+					}
+					ImGui::EndDragDropTarget();
 				}
-				ImGui::EndDragDropTarget();
+
+				ImGui::SameLine();
+
+				if (ImGui::Button("Delete Texture"))
+				{
+					hovered = nullptr;
+					//CheckersTexDefault();
+				}
+
+				//ImGui::Spacing();
+				if (hovered != nullptr)
+				{
+					ImGui::Text("Texture Path: %s", hovered->assetsFile.c_str());
+					ImGui::Spacing();
+					ImGui::Text("Width: %d Height: %d", hovered->GetWidth(), hovered->GetHeight());
+					ImGui::Spacing();
+				}
 			}
 
-			ImGui::SameLine();
-
-			if (ImGui::Button("Delete Texture"))
-			{
-				deactivated = nullptr;
-				//CheckersTexDefault();
-			}
-
-			//ImGui::Spacing();
 			if (deactivated != nullptr)
 			{
-				ImGui::Text("Texture Path: %s", deactivated->assetsFile.c_str());
-				ImGui::Spacing();
-				ImGui::Text("Width: %d Height: %d", deactivated->GetWidth(), deactivated->GetHeight());
-				ImGui::Spacing();
+				ImGui::Text("Deactivated button");
+				ImGui::Image((ImTextureID)deactivated->GetGpuID(), ImVec2(20, 20), ImVec2(0, 1), ImVec2(1, 0));
+				if (ImGui::BeginDragDropTarget())
+				{
+					if (const ImGuiPayload * payload = ImGui::AcceptDragDropPayload("ASSETS"))
+					{
+						IM_ASSERT(payload->DataSize == sizeof(int));
+						int payload_n = *(const int*)payload->Data;
+						GuiAssets * assets_window = (GuiAssets*)App->gui->windows[ASSETS_WINDOW];
+						const char* file = assets_window->GetFileAt(payload_n);
+						Resource * possible_texture = App->resources->RequestResource(App->resources->Find(file));
+
+						if (possible_texture->GetType() == ResourceType::RESOURCE_TEXTURE)
+							deactivated = (ResourceTexture*)possible_texture;
+					}
+					ImGui::EndDragDropTarget();
+				}
+
+				ImGui::SameLine();
+
+				if (ImGui::Button("Delete Texture"))
+				{
+					deactivated = nullptr;
+					//CheckersTexDefault();
+				}
+
+				//ImGui::Spacing();
+				if (deactivated != nullptr)
+				{
+					ImGui::Text("Texture Path: %s", deactivated->assetsFile.c_str());
+					ImGui::Spacing();
+					ImGui::Text("Width: %d Height: %d", deactivated->GetWidth(), deactivated->GetHeight());
+					ImGui::Spacing();
+				}
 			}
 		}
+		else
+		{
+			//Color pressed
+			ImVec4 buttonColor = { colorPressed.r, colorPressed.g, colorPressed.b, colorPressed.a };
+			if (ImGui::ColorButton("Color Pressed", buttonColor, 0, ImVec2(ImGui::GetWindowContentRegionWidth() - ImGui::CalcTextSize("Color Pressed ").x, 20)))
+				ImGui::OpenPopup("pressedColPicker");
+
+			if (ImGui::BeginPopup("pressedColPicker"))
+			{
+				ImGui::ColorPicker4("##picker", &colorPressed, ImGuiColorEditFlags_None, NULL);
+				if (ImGui::Button("Close", ImVec2(ImGui::GetWindowContentRegionWidth(), 20))) ImGui::CloseCurrentPopup();
+				ImGui::EndPopup();
+			}
+			ImGui::SameLine();
+			ImGui::Text("Color Pressed");
+
+			//Color hovered
+			ImVec4 buttonColor = { colorHovered.r, colorHovered.g, colorHovered.b, colorHovered.a };
+			if (ImGui::ColorButton("Color Hovered", buttonColor, 0, ImVec2(ImGui::GetWindowContentRegionWidth() - ImGui::CalcTextSize("Color Hovered ").x, 20)))
+				ImGui::OpenPopup("hoveredColPicker");
+
+			if (ImGui::BeginPopup("hoveredColPicker"))
+			{
+				ImGui::ColorPicker4("##picker", &colorPressed, ImGuiColorEditFlags_None, NULL);
+				if (ImGui::Button("Close", ImVec2(ImGui::GetWindowContentRegionWidth(), 20))) ImGui::CloseCurrentPopup();
+				ImGui::EndPopup();
+			}
+			ImGui::SameLine();
+			ImGui::Text("Color Hovered");
+
+			//Color deactivated
+			ImVec4 buttonColor = { colorDeactivated.r, colorDeactivated.g, colorDeactivated.b, colorDeactivated.a };
+			if (ImGui::ColorButton("Color Deactivated", buttonColor, 0, ImVec2(ImGui::GetWindowContentRegionWidth() - ImGui::CalcTextSize("Color Deactivated ").x, 20)))
+				ImGui::OpenPopup("deactivatedColPicker");
+
+			if (ImGui::BeginPopup("deactivatedColPicker"))
+			{
+				ImGui::ColorPicker4("##picker", &colorPressed, ImGuiColorEditFlags_None, NULL);
+				if (ImGui::Button("Close", ImVec2(ImGui::GetWindowContentRegionWidth(), 20))) ImGui::CloseCurrentPopup();
+				ImGui::EndPopup();
+			}
+			ImGui::SameLine();
+			ImGui::Text("Color Deactivated");
+		}
+
 	}
+
 }
 
 void Component_Button::SetUnpressed(ResourceTexture * texture)

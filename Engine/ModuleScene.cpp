@@ -44,9 +44,9 @@ bool ModuleScene::Start()
 	AddGameObject(street_environment);
 
 	Component_Transform* trans = new Component_Transform(true);
-	GameObject* uiTest = new GameObject(trans);
-	uiTest->AddComponent(IMAGE);
+	GameObject* uiTest = new GameObject(trans, "Image");
 	AddGameObject(uiTest);
+	uiTest->AddComponent(IMAGE);
 	return ret;
 }
 

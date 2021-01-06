@@ -31,15 +31,13 @@ public:
 	Component_CanvasRenderer* GetCanvasRenderer()const;
 	bool GetParentActive();
 
-	void ResizeGenerateMesh();
-
 protected:
 	void GenerateMesh(int width, int height);
 protected:
 	Component_Canvas* canvas = nullptr;
 	Component_CanvasRenderer* canvasRenderer = nullptr;
 
-	float2 size = float2::zero;
+	float3 position = float3::zero;
 };
 
 #endif//COMPONENT_GRAPHIC_H

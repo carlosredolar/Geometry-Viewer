@@ -67,7 +67,6 @@ void Component_Image::OnGUI()
 					if (possible_texture->GetType() == ResourceType::RESOURCE_TEXTURE)
 					{
 						image = (ResourceTexture*)possible_texture;
-						GenerateMesh(image->GetWidth(), image->GetHeight());
 					}
 				}
 				ImGui::EndDragDropTarget();

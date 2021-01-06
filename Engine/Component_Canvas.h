@@ -21,9 +21,13 @@ public:
 
 	void Resize(int width, int height);
 
+	void AddElement(Component_Graphic* element);
+
 private:
 	std::vector<Component_Graphic*> graphic_elements;
 
+	float2 canvasSize;
+	float2 canvasReferenceResolution;
 };
 
 #endif //__CANVAS_H__

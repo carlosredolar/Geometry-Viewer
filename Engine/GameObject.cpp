@@ -5,6 +5,7 @@
 #include "Component_Material.h"
 #include "Component_Camera.h"
 #include "Component_Light.h"
+#include "Component_Canvas.h"
 #include "Component_Image.h"
 #include "Component_CanvasRenderer.h"
 #include "Libs/ImGui/imgui.h"
@@ -28,9 +29,9 @@ GameObject::GameObject(Component_Mesh* mesh) : GameObject()
 	AddComponent((Component*)mesh);
 }
 
-GameObject::GameObject(Component_Transform* trans) : GameObject()
+GameObject::GameObject(Component_Transform* trans, const char* name) : GameObject()
 {
-	SetName("Empty Game Object");
+	SetName(name);
 	DeleteComponent(transform);
 	AddComponent((Component*)trans);
 	transform = trans;
@@ -291,6 +292,9 @@ Component* GameObject::AddComponent(ComponentType type)
 	case LIGHT:
 		component = new Component_Light(this);
 		break;
+	case CANVAS:
+		component = new Component_Canvas(this);
+		break;
 	case IMAGE:
 		component = new Component_Image(this);
 		break;
@@ -301,8 +305,15 @@ Component* GameObject::AddComponent(ComponentType type)
 		break;
 	}
 
-	component->SetGameObject(this);
-	components.push_back(component);
+	if (component != nullptr)
+	{
+		component->SetGameObject(this);
+		components.push_back(component);
+	}
+	else
+	{
+		LOG_ERROR("Component was nullptr when creating a new one.");
+	}
 
 	return component;
 }
