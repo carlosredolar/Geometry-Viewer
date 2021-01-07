@@ -53,7 +53,8 @@ void Component_Image::OnGUI()
 
 		if (image != nullptr && checkersImageActive == false)
 		{
-			ImGui::Image((ImTextureID)image->GetGpuID(), ImVec2(100, 100), ImVec2(0, 1), ImVec2(1, 0));
+			vec2 imageSize = normalize(vec2(image->GetWidth(), image->GetHeight())) * 100;
+			ImGui::Image((ImTextureID)image->GetGpuID(), ImVec2(imageSize.x, imageSize.y), ImVec2(0, 1), ImVec2(1, 0));
 			if (ImGui::BeginDragDropTarget())
 			{
 				if (const ImGuiPayload * payload = ImGui::AcceptDragDropPayload("ASSETS"))

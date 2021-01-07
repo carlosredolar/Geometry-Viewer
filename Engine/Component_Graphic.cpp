@@ -5,9 +5,11 @@
 #include "GameObject.h"
 #include "Application.h"
 
-Component_Graphic::Component_Graphic(ComponentType type, GameObject* parent, Component_Canvas* _canvas, Component_CanvasRenderer renderer) : Component(type, parent)
+Component_Graphic::Component_Graphic(ComponentType type, GameObject* parent) : Component(type, parent)
 {
-	canvas = _canvas;
+	GameObject* goCanvas = App->scene->FindGameObjectWithName("Canvas");
+	if (goCanvas != nullptr) canvas = goCanvas->GetComponent<Component_Canvas>();
+
 	if (canvas == nullptr)
 	{
 		//Create canvas
@@ -18,6 +20,9 @@ Component_Graphic::Component_Graphic(ComponentType type, GameObject* parent, Com
 		ownerGameObject->ChangeParent(can);
 		App->scene->AddGameObject(can);
 	}
+
+	canvasRenderer = ownerGameObject->GetComponent<Component_CanvasRenderer>();
+
 	if (canvasRenderer == nullptr)
 	{
 		canvasRenderer = (Component_CanvasRenderer*)ownerGameObject->AddComponent(CANVASRENDERER);

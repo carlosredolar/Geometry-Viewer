@@ -9,17 +9,19 @@
 
 Component_Button::Component_Button(GameObject* parent) : Component_Graphic(ComponentType::BUTTON, parent)
 {
+	
 	unpressed = dynamic_cast<ResourceTexture*>(App->resources->LoadResource(App->resources->Find("Assets/EngineAssets/button_default.png"), ResourceType::RESOURCE_TEXTURE));
-	pressed = nullptr;
-	hovered = nullptr;
-	deactivated = nullptr;
+	pressed = unpressed;
+	hovered = pressed;
+	deactivated = hovered;
+	GenerateMesh(unpressed->GetWidth(), unpressed->GetHeight());
 }
 
 Component_Button::~Component_Button() {}
 
 void Component_Button::Update()
 {
-	
+	DrawGraphic(unpressed->GetGpuID(), colorUnpressed);
 }
 
 void Component_Button::OnClick()
@@ -51,24 +53,11 @@ void Component_Button::OnGUI()
 			ImGui::EndCombo();
 		}
 
-		//Color unpressed
-		ImVec4 buttonColor = { colorUnpressed.r, colorUnpressed.g, colorUnpressed.b, colorUnpressed.a };
-		if (ImGui::ColorButton("Color Unpressed", buttonColor, 0, ImVec2(ImGui::GetWindowContentRegionWidth() - ImGui::CalcTextSize("Color Unpressed ").x, 20)))
-			ImGui::OpenPopup("unpressedColPicker");
-
-		if (ImGui::BeginPopup("unpressedColPicker"))
-		{
-			ImGui::ColorPicker4("##picker", &colorUnpressed, ImGuiColorEditFlags_None, NULL);
-			if (ImGui::Button("Close", ImVec2(ImGui::GetWindowContentRegionWidth(), 20))) ImGui::CloseCurrentPopup();
-			ImGui::EndPopup();
-		}
-		ImGui::SameLine();
-		ImGui::Text("Color Unpressed");
-
 		if (unpressed != nullptr)
 		{
 			ImGui::Text("Unpressed button");
-			ImGui::Image((ImTextureID)unpressed->GetGpuID(), ImVec2(20, 20), ImVec2(0, 1), ImVec2(1, 0));
+			vec2 imageSize = normalize(vec2(unpressed->GetWidth(), unpressed->GetHeight()))*100;
+			ImGui::Image((ImTextureID)unpressed->GetGpuID(), ImVec2(imageSize.x, imageSize.y), ImVec2(0, 1), ImVec2(1, 0));
 			if (ImGui::BeginDragDropTarget())
 			{
 				if (const ImGuiPayload * payload = ImGui::AcceptDragDropPayload("ASSETS"))
@@ -103,12 +92,28 @@ void Component_Button::OnGUI()
 			}
 		}
 
+		//Color unpressed
+		ImVec4 buttonColor = { colorUnpressed.r, colorUnpressed.g, colorUnpressed.b, colorUnpressed.a };
+		if (ImGui::ColorButton("Color Unpressed", buttonColor, 0, ImVec2(ImGui::GetWindowContentRegionWidth() - ImGui::CalcTextSize("Color Unpressed ").x, 20)))
+			ImGui::OpenPopup("unpressedColPicker");
+
+		if (ImGui::BeginPopup("unpressedColPicker"))
+		{
+			ImGui::ColorPicker4("##picker", &colorUnpressed, ImGuiColorEditFlags_None, NULL);
+			if (ImGui::Button("Close", ImVec2(ImGui::GetWindowContentRegionWidth(), 20))) ImGui::CloseCurrentPopup();
+			ImGui::EndPopup();
+		}
+		ImGui::SameLine();
+		
+
 		if (item_current_index == 0)
 		{
+			ImGui::Text("Color ");
 			if (pressed != nullptr)
 			{
 				ImGui::Text("Pressed button");
-				ImGui::Image((ImTextureID)pressed->GetGpuID(), ImVec2(20, 20), ImVec2(0, 1), ImVec2(1, 0));
+				vec2 imageSize = normalize(vec2(unpressed->GetWidth(), unpressed->GetHeight())) * 100;
+				ImGui::Image((ImTextureID)pressed->GetGpuID(), ImVec2(imageSize.x, imageSize.y), ImVec2(0, 1), ImVec2(1, 0));
 				if (ImGui::BeginDragDropTarget())
 				{
 					if (const ImGuiPayload * payload = ImGui::AcceptDragDropPayload("ASSETS"))
@@ -146,7 +151,8 @@ void Component_Button::OnGUI()
 			if (hovered != nullptr)
 			{
 				ImGui::Text("Hovered button");
-				ImGui::Image((ImTextureID)hovered->GetGpuID(), ImVec2(20, 20), ImVec2(0, 1), ImVec2(1, 0));
+				vec2 imageSize = normalize(vec2(unpressed->GetWidth(), unpressed->GetHeight())) * 100;
+				ImGui::Image((ImTextureID)hovered->GetGpuID(), ImVec2(imageSize.x, imageSize.y), ImVec2(0, 1), ImVec2(1, 0));
 				if (ImGui::BeginDragDropTarget())
 				{
 					if (const ImGuiPayload * payload = ImGui::AcceptDragDropPayload("ASSETS"))
@@ -180,11 +186,11 @@ void Component_Button::OnGUI()
 					ImGui::Spacing();
 				}
 			}
-
 			if (deactivated != nullptr)
 			{
 				ImGui::Text("Deactivated button");
-				ImGui::Image((ImTextureID)deactivated->GetGpuID(), ImVec2(20, 20), ImVec2(0, 1), ImVec2(1, 0));
+				vec2 imageSize = normalize(vec2(unpressed->GetWidth(), unpressed->GetHeight())) * 100;
+				ImGui::Image((ImTextureID)deactivated->GetGpuID(), ImVec2(imageSize.x, imageSize.y), ImVec2(0, 1), ImVec2(1, 0));
 				if (ImGui::BeginDragDropTarget())
 				{
 					if (const ImGuiPayload * payload = ImGui::AcceptDragDropPayload("ASSETS"))
@@ -221,6 +227,7 @@ void Component_Button::OnGUI()
 		}
 		else
 		{
+			ImGui::Text("Color Unpressed");
 			//Color pressed
 			ImVec4 buttonColor1 = { colorPressed.r, colorPressed.g, colorPressed.b, colorPressed.a };
 			if (ImGui::ColorButton("Color Pressed", buttonColor1, 0, ImVec2(ImGui::GetWindowContentRegionWidth() - ImGui::CalcTextSize("Color Pressed ").x, 20)))

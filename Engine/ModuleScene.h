@@ -27,6 +27,8 @@ public:
 	void GetChildrenGameObjects(GameObject* gameObject, std::vector<GameObject*>& gameObjects);
 	void EditTransform();
 
+	GameObject* FindGameObjectWithName(const char* gameObjectName);
+
 	GameObject* GetRoot() { return root; }
 	bool ClearScene();
 

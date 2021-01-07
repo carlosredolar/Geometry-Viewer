@@ -14,7 +14,7 @@ class Component_Interactive;
 class Component_Graphic : public Component
 {
 public:
-	Component_Graphic(ComponentType type, GameObject* parent, Component_Canvas* canvas = nullptr, Component_CanvasRenderer renderer = nullptr);
+	Component_Graphic(ComponentType type, GameObject* parent);
 	~Component_Graphic();
 
 	void Save(JsonArray& saveArray) override;

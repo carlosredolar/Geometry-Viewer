@@ -6,6 +6,7 @@
 #include "GameObject.h"
 #include "Component_Camera.h";
 #include "Component_Canvas.h";
+#include "Component_Transform.h";
 #include "FileManager.h"
 #include "Time.h"
 
@@ -332,6 +333,33 @@ bool ModuleGui::CreateMenuBar() {
 					App->scene->AddGameObject(App->resources->RequestGameObject("Assets/Models/Primitives/cylinder.fbx"));
 				}
 				else if (ImGui::MenuItem("Sphere"))
+				{
+					App->scene->AddGameObject(App->resources->RequestGameObject("Assets/Models/Primitives/sphere.fbx"));
+				}
+				ImGui::EndMenu();
+			}
+			if (ImGui::BeginMenu("UI"))
+			{
+				if (ImGui::MenuItem("Canvas"))
+				{
+					Component_Transform* trans = new Component_Transform(true);
+					GameObject* can = new GameObject(trans, "Canvas");
+					can->AddComponent(ComponentType::CANVAS);
+					App->scene->AddGameObject(can);
+				}
+				else if (ImGui::MenuItem("Image"))
+				{
+					Component_Transform* trans = new Component_Transform(true);
+					GameObject* uiImage = new GameObject(trans, "Image");
+					uiImage->AddComponent(IMAGE);
+				}
+				else if (ImGui::MenuItem("Button"))
+				{
+					Component_Transform* trans = new Component_Transform(true);
+					GameObject* uiButton = new GameObject(trans, "Button");
+					uiButton->AddComponent(BUTTON);
+				}
+				else if (ImGui::MenuItem("Checkbox"))
 				{
 					App->scene->AddGameObject(App->resources->RequestGameObject("Assets/Models/Primitives/sphere.fbx"));
 				}

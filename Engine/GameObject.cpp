@@ -36,6 +36,11 @@ GameObject::GameObject(Component_Transform* trans, const char* name) : GameObjec
 	DeleteComponent(transform);
 	AddComponent((Component*)trans);
 	transform = trans;
+	if (strcmp(name, "Canvas") != 0) parent = App->scene->FindGameObjectWithName("Canvas");
+	
+	if (parent == nullptr) parent = App->scene->GetRoot();
+
+	parent->AddChild(this);
 }
 
 GameObject::~GameObject()

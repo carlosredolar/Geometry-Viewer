@@ -43,10 +43,6 @@ bool ModuleScene::Start()
 	GameObject* street_environment = App->resources->RequestGameObject("Assets/Models/Street environment_V01.FBX");
 	AddGameObject(street_environment);
 
-	Component_Transform* trans = new Component_Transform(true);
-	GameObject* uiTest = new GameObject(trans, "Image");
-	AddGameObject(uiTest);
-	uiTest->AddComponent(BUTTON);
 	return ret;
 }
 
@@ -136,10 +132,23 @@ void ModuleScene::GetChildrenGameObjects(GameObject* gameObject, std::vector<Gam
 {
 	gameObjectsToGet.push_back(gameObject);
 
-	for (size_t i = 0; i < gameObject->GetChildrenAmount(); i++)
+	for (uint i = 0; i < gameObject->GetChildrenAmount(); i++)
 	{
 		GetChildrenGameObjects(gameObject->GetChildAt(i), gameObjectsToGet);
 	}
+}
+
+GameObject* ModuleScene::FindGameObjectWithName(const char* gameObjectName)
+{
+	std::vector<GameObject*> gameObjects = GetAllGameObjects();
+	for (uint i = 0; i < gameObjects.size(); i++)
+	{
+		if (strcmp(gameObjects.at(i)->GetName(), gameObjectName) == 0)
+		{
+			return gameObjects.at(i);
+		}
+	}
+	return nullptr;
 }
 
 void ModuleScene::EditTransform()

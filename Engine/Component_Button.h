@@ -29,14 +29,14 @@ private:
 	bool active = true;
 	bool changeImage = true;
 
-	ResourceTexture* unpressed;
-	ResourceTexture* pressed;
-	ResourceTexture* hovered;
-	ResourceTexture* deactivated;
-	Color colorUnpressed;
-	Color colorPressed;
-	Color colorHovered;
-	Color colorDeactivated;
+	ResourceTexture* unpressed = nullptr;
+	ResourceTexture* pressed = nullptr;
+	ResourceTexture* hovered = nullptr;
+	ResourceTexture* deactivated = nullptr;
+	Color colorUnpressed = White;
+	Color colorPressed = White;
+	Color colorHovered = White;
+	Color colorDeactivated = White;
 };
 
 #endif //__BUTTON_H__
