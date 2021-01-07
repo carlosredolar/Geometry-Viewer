@@ -7,6 +7,7 @@
 #include "Component_Light.h"
 #include "Component_Canvas.h"
 #include "Component_Image.h"
+#include "Component_Button.h"
 #include "Component_CanvasRenderer.h"
 #include "Libs/ImGui/imgui.h"
 #include "ModuleJson.h"
@@ -297,6 +298,9 @@ Component* GameObject::AddComponent(ComponentType type)
 		break;
 	case IMAGE:
 		component = new Component_Image(this);
+		break;
+	case BUTTON:
+		component = new Component_Button(this);
 		break;
 	case CANVASRENDERER:
 		component = new Component_CanvasRenderer(this);

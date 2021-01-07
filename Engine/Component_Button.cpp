@@ -7,9 +7,9 @@
 #include "GuiAssets.h"
 #include "Libs/ImGui/imgui.h"
 
-Component_Button::Component_Button() : Component(ComponentType::BUTTON)
+Component_Button::Component_Button(GameObject* parent) : Component_Graphic(ComponentType::BUTTON, parent)
 {
-	unpressed = nullptr;
+	unpressed = dynamic_cast<ResourceTexture*>(App->resources->LoadResource(App->resources->Find("Assets/EngineAssets/button_default.png"), ResourceType::RESOURCE_TEXTURE));
 	pressed = nullptr;
 	hovered = nullptr;
 	deactivated = nullptr;
@@ -29,7 +29,7 @@ void Component_Button::OnClick()
 
 void Component_Button::OnGUI()
 {
-	if (ImGui::CollapsingHeader("Image", ImGuiTreeNodeFlags_DefaultOpen))
+	if (ImGui::CollapsingHeader("Button", ImGuiTreeNodeFlags_DefaultOpen))
 	{
 		ImGui::Checkbox(" Enabled ", &enabled);
 
@@ -222,8 +222,8 @@ void Component_Button::OnGUI()
 		else
 		{
 			//Color pressed
-			ImVec4 buttonColor = { colorPressed.r, colorPressed.g, colorPressed.b, colorPressed.a };
-			if (ImGui::ColorButton("Color Pressed", buttonColor, 0, ImVec2(ImGui::GetWindowContentRegionWidth() - ImGui::CalcTextSize("Color Pressed ").x, 20)))
+			ImVec4 buttonColor1 = { colorPressed.r, colorPressed.g, colorPressed.b, colorPressed.a };
+			if (ImGui::ColorButton("Color Pressed", buttonColor1, 0, ImVec2(ImGui::GetWindowContentRegionWidth() - ImGui::CalcTextSize("Color Pressed ").x, 20)))
 				ImGui::OpenPopup("pressedColPicker");
 
 			if (ImGui::BeginPopup("pressedColPicker"))
@@ -236,8 +236,8 @@ void Component_Button::OnGUI()
 			ImGui::Text("Color Pressed");
 
 			//Color hovered
-			ImVec4 buttonColor = { colorHovered.r, colorHovered.g, colorHovered.b, colorHovered.a };
-			if (ImGui::ColorButton("Color Hovered", buttonColor, 0, ImVec2(ImGui::GetWindowContentRegionWidth() - ImGui::CalcTextSize("Color Hovered ").x, 20)))
+			ImVec4 buttonColor2 = { colorHovered.r, colorHovered.g, colorHovered.b, colorHovered.a };
+			if (ImGui::ColorButton("Color Hovered", buttonColor2, 0, ImVec2(ImGui::GetWindowContentRegionWidth() - ImGui::CalcTextSize("Color Hovered ").x, 20)))
 				ImGui::OpenPopup("hoveredColPicker");
 
 			if (ImGui::BeginPopup("hoveredColPicker"))
@@ -250,8 +250,8 @@ void Component_Button::OnGUI()
 			ImGui::Text("Color Hovered");
 
 			//Color deactivated
-			ImVec4 buttonColor = { colorDeactivated.r, colorDeactivated.g, colorDeactivated.b, colorDeactivated.a };
-			if (ImGui::ColorButton("Color Deactivated", buttonColor, 0, ImVec2(ImGui::GetWindowContentRegionWidth() - ImGui::CalcTextSize("Color Deactivated ").x, 20)))
+			ImVec4 buttonColor3 = { colorDeactivated.r, colorDeactivated.g, colorDeactivated.b, colorDeactivated.a };
+			if (ImGui::ColorButton("Color Deactivated", buttonColor3, 0, ImVec2(ImGui::GetWindowContentRegionWidth() - ImGui::CalcTextSize("Color Deactivated ").x, 20)))
 				ImGui::OpenPopup("deactivatedColPicker");
 
 			if (ImGui::BeginPopup("deactivatedColPicker"))

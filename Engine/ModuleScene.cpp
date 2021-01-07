@@ -46,7 +46,7 @@ bool ModuleScene::Start()
 	Component_Transform* trans = new Component_Transform(true);
 	GameObject* uiTest = new GameObject(trans, "Image");
 	AddGameObject(uiTest);
-	uiTest->AddComponent(IMAGE);
+	uiTest->AddComponent(BUTTON);
 	return ret;
 }
 

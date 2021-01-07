@@ -1,16 +1,16 @@
 #ifndef __BUTTON_H__
 #define __BUTTON_H__
-#include "Component.h"
+#include "Component_Graphic.h"
 #include "Libs/MathGeoLib/include/MathGeoLib.h"
 #include "Color.h"
 
 class JsonArray;
 class ResourceTexture;
 
-class Component_Button : public Component {
+class Component_Button : public Component_Graphic {
 
 public:
-	Component_Button();
+	Component_Button(GameObject* parent);
 	~Component_Button();
 
 	void Update() override;
