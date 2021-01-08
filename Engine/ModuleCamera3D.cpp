@@ -292,29 +292,40 @@ GameObject* ModuleCamera3D::SelectGO()
 
 			LineSegment localRay = ray;
 			localRay.Transform(sceneGO[i]->GetTransform()->GetGlobalTransform().Inverted());
+			if (!sceneGO[i]->GetTransform()->IsTransform2D())
+			{
+				ResourceMesh* mesh = nullptr; mesh = (ResourceMesh*)sceneGO[i]->GetComponent<Component_Mesh>()->GetResource(ResourceType::RESOURCE_MESH);
 
-			ResourceMesh* mesh = nullptr; mesh = (ResourceMesh*)sceneGO[i]->GetComponent<Component_Mesh>()->GetResource(ResourceType::RESOURCE_MESH);
-
-			if (mesh != nullptr) {
-				for (int j = 0; j < mesh->amountIndices; j += 3)
-				{
-					float3 v1(mesh->vertices[mesh->indices[j] * 3], mesh->vertices[mesh->indices[j] * 3 + 1], mesh->vertices[mesh->indices[j] * 3 + 2]);
-					float3 v2(mesh->vertices[mesh->indices[j + 1] * 3], mesh->vertices[mesh->indices[j + 1] * 3 + 1], mesh->vertices[mesh->indices[j + 1] * 3 + 2]);
-					float3 v3(mesh->vertices[mesh->indices[j + 2] * 3], mesh->vertices[mesh->indices[j + 2] * 3 + 1], mesh->vertices[mesh->indices[j + 2] * 3 + 2]);
-					const Triangle triangle(v1, v2, v3);
-
-					float dist;
-					float3 intersectionPoint;
-					if (localRay.Intersects(triangle, &dist, &intersectionPoint))
+				if (mesh != nullptr) {
+					for (int j = 0; j < mesh->amountIndices; j += 3)
 					{
-						if (entranceDist < nearestIntersectDist)
+						float3 v1(mesh->vertices[mesh->indices[j] * 3], mesh->vertices[mesh->indices[j] * 3 + 1], mesh->vertices[mesh->indices[j] * 3 + 2]);
+						float3 v2(mesh->vertices[mesh->indices[j + 1] * 3], mesh->vertices[mesh->indices[j + 1] * 3 + 1], mesh->vertices[mesh->indices[j + 1] * 3 + 2]);
+						float3 v3(mesh->vertices[mesh->indices[j + 2] * 3], mesh->vertices[mesh->indices[j + 2] * 3 + 1], mesh->vertices[mesh->indices[j + 2] * 3 + 2]);
+						const Triangle triangle(v1, v2, v3);
+
+						float dist;
+						float3 intersectionPoint;
+						if (localRay.Intersects(triangle, &dist, &intersectionPoint))
 						{
-							nearestIntersectDist = entranceDist;
-							nearestGOIndex = i;
+							if (entranceDist < nearestIntersectDist)
+							{
+								nearestIntersectDist = entranceDist;
+								nearestGOIndex = i;
+							}
 						}
 					}
 				}
-			}					
+			}
+			else
+			{
+				if (entranceDist < nearestIntersectDist)
+				{
+					nearestIntersectDist = entranceDist;
+					nearestGOIndex = i;
+				}
+			}
+								
 		}
 	}
 

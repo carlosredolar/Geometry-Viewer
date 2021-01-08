@@ -44,6 +44,15 @@ void Component_Graphic::AddCanvasRender() {} // ALWAYS ADDED WHEN THIS COMPONENT
 void Component_Graphic::SyncComponent(GameObject* sync_parent) {}
 void Component_Graphic::DrawGraphic(uint texture, Color color) 
 {
+	if (App->scene->showBB)
+	{
+		float3 cornerPoints[8];
+		aabb.GetCornerPoints(cornerPoints);
+
+		ImVec4 color = ImGui::GetStyleColorVec4(ImGuiCol_Button);
+
+		App->renderer3D->DrawAABB(cornerPoints, color);
+	}
 	//DRAW THE CORRESPONDING GRAPHIC
 	if (canvas != nullptr && canvas->IsEnabled())
 	{
@@ -77,4 +86,27 @@ void Component_Graphic::GenerateMesh(int width, int height)
 	canvasRenderer->GetVertices()[7] = height;
 
 	position = ownerGameObject->GetTransform()->GetPosition();
+	GenerateAABB();
+}
+
+void Component_Graphic::GenerateAABB()
+{
+	float* verts = new float[12];
+	int j = 0;
+	for (int i = 0; i < 9; i+=3)
+	{
+		verts[i] = canvasRenderer->GetVertices()[j];
+		verts[i+1] = canvasRenderer->GetVertices()[j+1];
+		verts[i + 2] = position.z;
+		j += 2;
+	}
+	aabb.SetNegativeInfinity();
+	aabb.Enclose((float3*)verts, 3);
+
+	ownerGameObject->SetAABB(aabb);
+}
+
+AABB Component_Graphic::GetAABB()
+{
+	return aabb;
 }

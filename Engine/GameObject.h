@@ -59,6 +59,7 @@ public:
 	void SetParent(GameObject* parentGameObject);
 	void ChangeParent(GameObject* newParent);
 
+	void SetAABB(AABB);
 	AABB GetAABB();
 
 public: 

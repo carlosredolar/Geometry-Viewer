@@ -31,6 +31,9 @@ public:
 	Component_CanvasRenderer* GetCanvasRenderer()const;
 	bool GetParentActive();
 
+	void GenerateAABB();
+	AABB GetAABB();
+
 protected:
 	void GenerateMesh(int width, int height);
 protected:
@@ -38,6 +41,8 @@ protected:
 	Component_CanvasRenderer* canvasRenderer = nullptr;
 
 	float3 position = float3::zero;
+
+	AABB aabb;
 };
 
 #endif//COMPONENT_GRAPHIC_H

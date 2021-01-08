@@ -85,4 +85,17 @@ void GuiHierarchy::PreorderHierarchy(GameObject* gameObject, int& id)
 		}
 		ImGui::TreePop();
 	}
+	else
+	{
+		CountID(gameObject, id);
+	}
+}
+
+void GuiHierarchy::CountID(GameObject* gameObject, int& id)
+{
+	id++;
+	for (size_t i = 0; i < gameObject->GetChildrenAmount(); i++)
+	{
+		CountID(gameObject->GetChildAt(i), id);
+	}
 }
