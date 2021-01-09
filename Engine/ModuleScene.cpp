@@ -8,6 +8,7 @@
 #include "Component_Transform.h"
 #include "Component_Image.h"
 #include "Component_Camera.h"
+#include "Component_Graphic.h"
 
 ModuleScene::ModuleScene(bool start_enabled) : Module(start_enabled), showGrid(true), selectedGameObject(nullptr), root(nullptr) 
 {
@@ -157,12 +158,15 @@ void ModuleScene::EditTransform()
 	{
 		float4x4 viewMatrix = App->camera->GetViewMatrixM().Transposed();
 		float4x4 projectionMatrix = App->camera->GetProjectionMatrixM().Transposed();
-		float4x4 objectTransform = selectedGameObject->GetTransform()->GetGlobalTransform().Transposed();
+		float4x4 objectTransform = selectedGameObject->GetTransform()->GetGlobalTransform();
+
+		float tempTransform[16];
+
+		objectTransform = objectTransform.Transposed();
 
 		ImGuizmo::SetDrawlist();
 		ImGuizmo::SetRect(App->gui->sceneWindowOrigin.x, App->gui->sceneWindowOrigin.y, App->gui->sceneRenderSize.x, App->gui->sceneRenderSize.y);
 
-		float tempTransform[16];
 		memcpy(tempTransform, objectTransform.ptr(), 16 * sizeof(float));
 
 		ImGuizmo::Manipulate(viewMatrix.ptr(), projectionMatrix.ptr(), CurrentGizmoOperation, CurrentGizmoMode, tempTransform);
@@ -173,6 +177,13 @@ void ModuleScene::EditTransform()
 			newTransform.Set(tempTransform);
 			objectTransform = newTransform.Transposed();
 			selectedGameObject->GetTransform()->SetGlobalTransform(objectTransform);
+			movingObject = true;
+		}
+
+		if (movingObject && (App->input->GetMouseButton(1) == KEY_UP) && (selectedGameObject->GetComponent<Component_Graphic>() != nullptr))
+		{
+			selectedGameObject->SetAABB(selectedGameObject->GetComponent<Component_Graphic>()->GetAABB());
+			movingObject = false;
 		}
 	}
 }

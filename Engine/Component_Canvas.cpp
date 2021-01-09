@@ -10,7 +10,7 @@ Component_Canvas::Component_Canvas(GameObject* parent) : Component(CANVAS, paren
 {
 	canvasReferenceResolution = float2(1920, 1080);
 	canvasSize = float2(App->window->width, App->window->height);
-	ownerGameObject->GetTransform()->SetSize(canvasSize);
+	//ownerGameObject->GetTransform()->SetSize(canvasSize);
 }
 
 Component_Canvas::~Component_Canvas()

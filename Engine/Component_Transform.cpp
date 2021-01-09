@@ -1,4 +1,5 @@
 #include "Component_Transform.h"
+#include "Component_Graphic.h"
 #include "Globals.h"
 #include "GameObject.h"
 #include "ModuleJson.h"
@@ -15,11 +16,7 @@ Component_Transform::Component_Transform(bool isTransform2D) : Component(Compone
 	globalTransform = localTransform;
 	parentGlobalTransform = float4x4::identity;
 
-	if (is2D)
-	{
-		pivot = float2(.5f, .5f);
-		size = float2::one;
-	}
+	if (is2D) pivot = float2(.5f, .5f);
 }
 
 Component_Transform::Component_Transform(float3 positionTransform, Quat rotationTransform, float3 scaleTransform, bool isTransform2D) : Component(ComponentType::TRANSFORM)
@@ -291,21 +288,4 @@ void Component_Transform::SetProportionalScale(float multiplier)
 	scale.x = scale.y = scale.z = multiplier;
 
 	UpdateGlobalTransform();
-}
-
-
-float2 Component_Transform::GetSize()
-{
-	return size;
-}
-
-void Component_Transform::SetSize(float2 _size)
-{
-	size = _size;
-}
-
-void Component_Transform::SetSize(float x, float y)
-{
-	size.x = x;
-	size.y = y;
 }

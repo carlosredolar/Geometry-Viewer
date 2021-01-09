@@ -44,14 +44,19 @@ void Component_Graphic::AddCanvasRender() {} // ALWAYS ADDED WHEN THIS COMPONENT
 void Component_Graphic::SyncComponent(GameObject* sync_parent) {}
 void Component_Graphic::DrawGraphic(uint texture, Color color) 
 {
+	obb = aabb;
+	obb.Transform(ownerGameObject->GetTransform()->GetGlobalTransform());
+	drawAABB.SetNegativeInfinity();
+	drawAABB.Enclose(obb);
+
 	if (App->scene->showBB)
 	{
 		float3 cornerPoints[8];
-		aabb.GetCornerPoints(cornerPoints);
+		drawAABB.GetCornerPoints(cornerPoints);
 
-		ImVec4 color = ImGui::GetStyleColorVec4(ImGuiCol_Button);
+		ImVec4 colorBB = ImGui::GetStyleColorVec4(ImGuiCol_Button);
 
-		App->renderer3D->DrawAABB(cornerPoints, color);
+		App->renderer3D->DrawAABB(cornerPoints, colorBB);
 	}
 	//DRAW THE CORRESPONDING GRAPHIC
 	if (canvas != nullptr && canvas->IsEnabled())
@@ -76,16 +81,21 @@ void Component_Graphic::GenerateMesh(int width, int height)
 {
 	//Generate the quad that will hold the texture of the component
 	//Save it in canvasrenderer component
-	canvasRenderer->GetVertices()[0] = 0.0f;
-	canvasRenderer->GetVertices()[1] = 0.0f;
-	canvasRenderer->GetVertices()[2] = width;
-	canvasRenderer->GetVertices()[3] = 0.0f;
-	canvasRenderer->GetVertices()[4] = width;
-	canvasRenderer->GetVertices()[5] = height;
-	canvasRenderer->GetVertices()[6] = 0.0f;
-	canvasRenderer->GetVertices()[7] = height;
+	textureSize.Set(width, height);
+	Component_Transform* transform = ownerGameObject->GetTransform();
+	float2 pivotOffset = transform->GetPivot().Mul(textureSize);
 
-	position = ownerGameObject->GetTransform()->GetPosition();
+	canvasRenderer->GetVertices()[0] = 0.0f - pivotOffset.x;
+	canvasRenderer->GetVertices()[1] = 0.0f - pivotOffset.y;
+	canvasRenderer->GetVertices()[2] = width - pivotOffset.x;
+	canvasRenderer->GetVertices()[3] = 0.0f - pivotOffset.y;
+	canvasRenderer->GetVertices()[4] = width - pivotOffset.x;
+	canvasRenderer->GetVertices()[5] = height - pivotOffset.y;
+	canvasRenderer->GetVertices()[6] = 0.0f - pivotOffset.x;
+	canvasRenderer->GetVertices()[7] = height - pivotOffset.y;
+
+	position = transform->GetPosition();
+
 	GenerateAABB();
 }
 
@@ -108,5 +118,5 @@ void Component_Graphic::GenerateAABB()
 
 AABB Component_Graphic::GetAABB()
 {
-	return aabb;
+	return drawAABB;
 }

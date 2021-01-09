@@ -41,8 +41,11 @@ protected:
 	Component_CanvasRenderer* canvasRenderer = nullptr;
 
 	float3 position = float3::zero;
+	float2 textureSize = float2::one;
 
 	AABB aabb;
+	OBB obb;
+	AABB drawAABB;
 };
 
 #endif//COMPONENT_GRAPHIC_H

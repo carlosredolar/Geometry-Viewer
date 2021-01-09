@@ -44,6 +44,8 @@ public:
 private:
 	GameObject* root;
 
+	bool movingObject = false;
+
 	ImGuizmo::OPERATION CurrentGizmoOperation;
 	ImGuizmo::MODE CurrentGizmoMode;
 };

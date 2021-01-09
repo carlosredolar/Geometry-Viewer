@@ -281,6 +281,9 @@ GameObject* ModuleCamera3D::SelectGO()
 	
 	for (int i = 0; i < sceneGO.size(); i++)
 	{
+		//if (strcmp(sceneGO[i]->GetName(), "Image") == 0)
+		//	LOG("Mouse picking ui test");
+
 		hit = ray.Intersects(sceneGO[i]->GetAABB());
 		
 		if (hit)
