@@ -51,8 +51,15 @@ void Component_Button::Update()
 
 bool Component_Button::MouseOver()
 {
-	//Check if mouse is over button
-	return true;
+	if (App->in_game)
+	{
+		//Check if mouse is over button
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 void Component_Button::OnClick()

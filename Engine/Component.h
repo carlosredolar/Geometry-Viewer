@@ -20,6 +20,7 @@ enum ComponentType {
 	CANVAS,
 	CANVASRENDERER,
 	BUTTON,
+	CHECKBOX,
 	IMAGE
 };
 
