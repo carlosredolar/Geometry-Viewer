@@ -34,6 +34,8 @@ public:
 	void GenerateAABB();
 	AABB GetAABB();
 
+	void RegenerateMesh(Component_Transform* transform = nullptr);
+
 protected:
 	void GenerateMesh(int width, int height);
 protected:

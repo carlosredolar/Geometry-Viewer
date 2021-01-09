@@ -361,7 +361,9 @@ bool ModuleGui::CreateMenuBar() {
 				}
 				else if (ImGui::MenuItem("Checkbox"))
 				{
-					App->scene->AddGameObject(App->resources->RequestGameObject("Assets/Models/Primitives/sphere.fbx"));
+					Component_Transform* trans = new Component_Transform(true);
+					GameObject* uiCheckbox = new GameObject(trans, "Checkbox");
+					uiCheckbox->AddComponent(CHECKBOX);
 				}
 				ImGui::EndMenu();
 			}

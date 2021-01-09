@@ -77,6 +77,25 @@ Component_CanvasRenderer* Component_Graphic::GetCanvasRenderer()const
 }
 bool Component_Graphic::GetParentActive() { return false; }
 
+void Component_Graphic::RegenerateMesh(Component_Transform* transform)
+{
+	if (transform == nullptr) transform = ownerGameObject->GetTransform();
+	float2 pivotOffset = transform->GetPivot().Mul(textureSize);
+
+	canvasRenderer->GetVertices()[0] = 0.0f - pivotOffset.x;
+	canvasRenderer->GetVertices()[1] = 0.0f - pivotOffset.y;
+	canvasRenderer->GetVertices()[2] = textureSize.x - pivotOffset.x;
+	canvasRenderer->GetVertices()[3] = 0.0f - pivotOffset.y;
+	canvasRenderer->GetVertices()[4] = textureSize.x - pivotOffset.x;
+	canvasRenderer->GetVertices()[5] = textureSize.y - pivotOffset.y;
+	canvasRenderer->GetVertices()[6] = 0.0f - pivotOffset.x;
+	canvasRenderer->GetVertices()[7] = textureSize.y - pivotOffset.y;
+
+	position = transform->GetPosition();
+
+	GenerateAABB();
+}
+
 void Component_Graphic::GenerateMesh(int width, int height)
 {
 	//Generate the quad that will hold the texture of the component

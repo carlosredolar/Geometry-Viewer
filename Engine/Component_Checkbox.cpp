@@ -9,8 +9,8 @@
 
 Component_Checkbox::Component_Checkbox(GameObject* parent) : Component_Graphic(ComponentType::CHECKBOX, parent)
 {
-	trueImage = dynamic_cast<ResourceTexture*>(App->resources->LoadResource(App->resources->Find("Assets/EngineAssets/checkbox.png"), ResourceType::RESOURCE_TEXTURE));
-	falseImage = trueImage;
+	trueImage = dynamic_cast<ResourceTexture*>(App->resources->LoadResource(App->resources->Find("Assets/EngineAssets/checkbox_true.png"), ResourceType::RESOURCE_TEXTURE));
+	falseImage = dynamic_cast<ResourceTexture*>(App->resources->LoadResource(App->resources->Find("Assets/EngineAssets/checkbox_false.png"), ResourceType::RESOURCE_TEXTURE));
 	GenerateMesh(trueImage->GetWidth(), trueImage->GetHeight());
 }
 
@@ -53,6 +53,11 @@ bool Component_Checkbox::MouseOver()
 void Component_Checkbox::OnClick()
 {
 	state = !state;
+}
+
+void Component_Checkbox::SetState(bool st)
+{
+	state = st;
 }
 
 void Component_Checkbox::OnGUI()
