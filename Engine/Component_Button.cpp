@@ -9,7 +9,6 @@
 
 Component_Button::Component_Button(GameObject* parent) : Component_Graphic(ComponentType::BUTTON, parent)
 {
-	
 	unpressed = dynamic_cast<ResourceTexture*>(App->resources->LoadResource(App->resources->Find("Assets/EngineAssets/button_default.png"), ResourceType::RESOURCE_TEXTURE));
 	pressed = unpressed;
 	hovered = pressed;
@@ -21,12 +20,45 @@ Component_Button::~Component_Button() {}
 
 void Component_Button::Update()
 {
-	DrawGraphic(unpressed->GetGpuID(), colorUnpressed);
+	if (active) 
+	{
+		if(clicked)
+		{
+			DrawGraphic(pressed->GetGpuID(), colorPressed);
+			if (timer.ReadSec() >= secsOnClick)
+			{
+				timer.Stop();
+				clicked = false;
+			}
+		}
+		else
+		{
+			if (MouseOver())
+			{
+
+				DrawGraphic(hovered->GetGpuID(), colorHovered);
+				if(App->input->GetKey(SDL_SCANCODE_G) == KEY_DOWN)
+					OnClick();
+			}
+			else
+			{
+				DrawGraphic(unpressed->GetGpuID(), colorUnpressed);
+			}
+		}
+	}
+	else DrawGraphic(deactivated->GetGpuID(), colorDeactivated);
+}
+
+bool Component_Button::MouseOver()
+{
+	//Check if mouse is over button
+	return true;
 }
 
 void Component_Button::OnClick()
 {
-
+	clicked = true;
+	timer.Start();
 }
 
 void Component_Button::OnGUI()
@@ -36,6 +68,8 @@ void Component_Button::OnGUI()
 		ImGui::Checkbox(" Enabled ", &enabled);
 
 		ImGui::Spacing();
+
+		ImGui::Checkbox("Interactable", &active);
 
 		const char* options[] = { "Images", "Colors" };
 		static int item_current_index = 0;
@@ -249,7 +283,7 @@ void Component_Button::OnGUI()
 
 			if (ImGui::BeginPopup("hoveredColPicker"))
 			{
-				ImGui::ColorPicker4("##picker", &colorPressed, ImGuiColorEditFlags_None, NULL);
+				ImGui::ColorPicker4("##picker", &colorHovered, ImGuiColorEditFlags_None, NULL);
 				if (ImGui::Button("Close", ImVec2(ImGui::GetWindowContentRegionWidth(), 20))) ImGui::CloseCurrentPopup();
 				ImGui::EndPopup();
 			}
@@ -263,7 +297,7 @@ void Component_Button::OnGUI()
 
 			if (ImGui::BeginPopup("deactivatedColPicker"))
 			{
-				ImGui::ColorPicker4("##picker", &colorPressed, ImGuiColorEditFlags_None, NULL);
+				ImGui::ColorPicker4("##picker", &colorDeactivated, ImGuiColorEditFlags_None, NULL);
 				if (ImGui::Button("Close", ImVec2(ImGui::GetWindowContentRegionWidth(), 20))) ImGui::CloseCurrentPopup();
 				ImGui::EndPopup();
 			}

@@ -180,9 +180,10 @@ void ModuleScene::EditTransform()
 			movingObject = true;
 		}
 
-		if (movingObject && (App->input->GetMouseButton(1) == KEY_UP) && (selectedGameObject->GetComponent<Component_Graphic>() != nullptr))
+		if (movingObject && (App->input->GetMouseButton(1) == KEY_UP))
 		{
-			selectedGameObject->SetAABB(selectedGameObject->GetComponent<Component_Graphic>()->GetAABB());
+			if (selectedGameObject->GetComponent<Component_Graphic>() != nullptr)
+				selectedGameObject->SetAABB(selectedGameObject->GetComponent<Component_Graphic>()->GetAABB());
 			movingObject = false;
 		}
 	}

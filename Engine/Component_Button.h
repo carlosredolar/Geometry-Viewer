@@ -3,6 +3,7 @@
 #include "Component_Graphic.h"
 #include "Libs/MathGeoLib/include/MathGeoLib.h"
 #include "Color.h"
+#include "Timer.h"
 
 class JsonArray;
 class ResourceTexture;
@@ -24,10 +25,14 @@ public:
 	void SetHovered(ResourceTexture* texture);
 	void SetDeactivated(ResourceTexture* texture);
 
+	bool MouseOver();
 	void OnClick();
 private:
 	bool active = true;
-	bool changeImage = true;
+	bool clicked = false;
+
+	Timer timer;
+	float secsOnClick = 0.2f;
 
 	ResourceTexture* unpressed = nullptr;
 	ResourceTexture* pressed = nullptr;

@@ -255,11 +255,13 @@ bool Component_Camera::CheckBBOnCamera(AABB& aabb)
 			}
 		}
 		
-		if(pointCount == 0)
+		if (pointCount == 0)
+		{
+			delete plane;
 			return false;
-
+		}
 		totalPointsIn += pointIn;
 	}
-
+	delete plane;
 	return true;
 }

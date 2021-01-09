@@ -13,7 +13,7 @@ Component_CanvasRenderer::Component_CanvasRenderer(GameObject* parent) : Compone
 
 Component_CanvasRenderer::~Component_CanvasRenderer()
 {
-
+	delete vertices;
 }
 
 void Component_CanvasRenderer::OnGUI()
