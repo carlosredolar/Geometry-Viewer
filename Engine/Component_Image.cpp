@@ -6,6 +6,7 @@
 #include "ResourceTexture.h"
 #include "Component_CanvasRenderer.h"
 #include "Component_Transform.h"
+#include "Component_Canvas.h"
 #include "GuiAssets.h"
 #include "Libs/ImGui/imgui.h"
 #include "Libs/Glew/include/glew.h"
@@ -195,6 +196,8 @@ void Component_Image::Load(JsonObj& loadObject)
 	GenerateMesh(loadObject.GetFloat("Width"), loadObject.GetFloat("Height"));
 
 	checkersImageActive = loadObject.GetBool("Checkers");
+
+	canvas->AddElement(this);
 }
 
 void Component_Image::CheckersTexDefault()

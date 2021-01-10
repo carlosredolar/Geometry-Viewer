@@ -45,6 +45,8 @@ void Component_Graphic::DrawGraphic(uint texture, Color color)
 	drawAABB.SetNegativeInfinity();
 	drawAABB.Enclose(obb);
 
+	ownerGameObject->SetAABB(drawAABB);
+
 	if (App->scene->showBB)
 	{
 		float3 cornerPoints[8];

@@ -75,6 +75,11 @@ update_status ModuleCamera3D::Update(float dt)
 	{
 		camera->SetCameraPosition(App->renderer3D->GetMainCamera()->ownerGameObject->GetTransform()->GetPosition());
 		camera->Look(App->renderer3D->GetMainCamera()->GetFrustum().CenterPoint());
+
+		if (App->gui->MouseOnScene() && App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN)
+		{
+			if (App->in_game) SelectGO()->Clicked();
+		}
 	}
 	else
 	{

@@ -26,6 +26,7 @@ public:
 
 	void Update();
 	bool IsVisible();
+	bool IsEnabled();
 	void OnGUI();
 
 	void Save(JsonArray& saveArray);
@@ -61,6 +62,9 @@ public:
 
 	void SetAABB(AABB);
 	AABB GetAABB();
+
+	void Enable(bool en);
+	void Clicked();
 
 public: 
 	uint UUID = 0;

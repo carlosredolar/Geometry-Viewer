@@ -2,6 +2,8 @@
 #include "GameObject.h"
 #include "Component_Transform.h"
 #include "Component_Camera.h"
+#include "Component_Graphic.h"
+#include "Component_CanvasRenderer.h"
 #include "ModuleJson.h"
 #include "Libs/Glew/include/glew.h"
 #include "Libs/ImGui/imgui.h"
@@ -19,8 +21,27 @@ Component_Canvas::~Component_Canvas()
 {
 }
 
+void Component_Canvas::StartFade()
+{
+	fade = true;
+}
+
 void Component_Canvas::Update() 
 {
+	if (fade)
+	{
+		for (uint i = 0; i < graphic_elements.size(); i++)
+		{
+			graphic_elements[i]->GetCanvasRenderer()->SetAlpha(alpha);
+		}
+		alpha -= 0.01f;
+		if (alpha <= 0)
+		{
+			fade = false;
+			ownerGameObject->Enable(false);
+		}
+	}
+
 	if (App->in_game)
 	{
 		float3 camRotation = App->renderer3D->GetMainCamera()->ownerGameObject->GetTransform()->GetEulerRotation();
@@ -103,11 +124,6 @@ void Component_Canvas::Resize(int width, int height)
 {
 	//TODO: Resize this transform
 	canvasSize = float2(width, height);
-
-	for (uint i = 0; i < graphic_elements.size(); i++)
-	{
-		//Move objects reference anchor
-	}
 }
 
 void Component_Canvas::AddElement(Component_Graphic* element)

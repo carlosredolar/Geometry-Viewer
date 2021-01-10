@@ -62,11 +62,22 @@ bool ModuleScene::CleanUp()
 // Update: inputs and update gameobjects
 update_status ModuleScene::Update(float dt)
 {
-	//Grid
-	if (showGrid && !App->in_game)
+	if (App->in_game)
 	{
-		PrimitiveGrid grid(24);
-		grid.Render();
+		if (App->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
+		{
+			GameObject* can = FindGameObjectWithName("Canvas 1");
+			can->Enable(!can->IsEnabled());
+		}
+	}
+	else
+	{
+		//Grid
+		if (showGrid)
+		{
+			PrimitiveGrid grid(24);
+			grid.Render();
+		}
 	}
 
 	//Inputs

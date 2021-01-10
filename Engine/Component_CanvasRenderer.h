@@ -30,10 +30,14 @@ public:
 	float* GetVertices();
 	void SetTextureTile(float2 texTile);
 
+	void SetAlpha(float a);
+
 private:
 	float* vertices = nullptr;
 
 	float2 textureTile = float2::one;
+
+	float alphaCanvas = 1;
 };
 
 #endif // !COMPONENT_CANVAS_RENDER_H

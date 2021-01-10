@@ -1,4 +1,5 @@
 #include "Component_Button.h"
+#include "Component_Canvas.h"
 #include "Application.h"
 #include "Globals.h"
 #include "GameObject.h"
@@ -35,7 +36,6 @@ void Component_Button::Update()
 		{
 			if (MouseOver())
 			{
-
 				DrawGraphic(hovered->GetGpuID(), colorHovered);
 				if(App->input->GetKey(SDL_SCANCODE_G) == KEY_DOWN)
 					OnClick();
@@ -53,7 +53,6 @@ bool Component_Button::MouseOver()
 {
 	if (App->in_game)
 	{
-		//Check if mouse is over button
 		return true;
 	}
 	else
@@ -66,6 +65,8 @@ void Component_Button::OnClick()
 {
 	clicked = true;
 	timer.Start();
+
+	canvas->StartFade();
 }
 
 void Component_Button::OnGUI()
@@ -388,4 +389,5 @@ void Component_Button::Load(JsonObj & loadObject)
 	colorHovered = loadObject.GetColor("Color Hovered");
 	colorDeactivated = loadObject.GetColor("Color Deactivated");
 
+	canvas->AddElement(this);
 }

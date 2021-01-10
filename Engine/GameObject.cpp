@@ -34,7 +34,10 @@ GameObject::GameObject(Component_Mesh* mesh) : GameObject()
 
 GameObject::GameObject(Component_Transform* trans, const char* name) : GameObject()
 {
-	SetName(name);
+	string longName = name;
+	if ((strcmp(name, "Canvas") == 0) && App->scene->FindGameObjectWithName("Canvas") != nullptr) longName += " 1";
+	SetName(longName.c_str());
+	
 	DeleteComponent(transform);
 	AddComponent((Component*)trans);
 	transform = trans;
@@ -119,6 +122,20 @@ bool GameObject::IsVisible()
 	return isVisible;
 }
 
+bool GameObject::IsEnabled()
+{
+	return enabled;
+}
+
+void GameObject::Clicked()
+{
+	if (transform->IsTransform2D())
+	{
+		Component_Button* button = GetComponent<Component_Button>();
+		if (button != nullptr) button->OnClick();
+	}
+}
+
 void GameObject::OnGUI()
 {
 	ImGui::Checkbox("Enabled", &enabled);
@@ -157,6 +174,8 @@ void GameObject::Save(JsonArray& saveArray)
 
 	saveObject.AddInt("UUID", UUID);
 
+	saveObject.AddBool("Enabled", enabled);
+
 	if(parent != nullptr)
 		saveObject.AddInt("Parent UUID",parent->UUID);
 	else 
@@ -184,6 +203,8 @@ uint GameObject::Load(JsonObj* object)
 	UUID = object->GetInt("UUID");
 	name = object->GetString("Name", "No Name");
 	uint parentUUID = object->GetInt("Parent UUID");
+
+	enabled = object->GetBool("Enabled");
 
 	JsonArray componentsArray = object->GetArray("Components");
 
@@ -356,6 +377,11 @@ void GameObject::AddChild(GameObject* child)
 			child->SetParent(this);
 		}
 	}
+}
+
+void GameObject::Enable(bool en)
+{
+	enabled = en;
 }
 
 int GameObject::GetChildrenAmount()

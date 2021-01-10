@@ -43,7 +43,7 @@ void Component_CanvasRenderer::DrawGraphic(uint texture, Color color, bool inGam
 		glPushMatrix();
 		glMultMatrixf((float*)& ownerGameObject->GetTransform()->GetGlobalTransform().Transposed());
 
-		glColor4f(color.r, color.g, color.b, color.a);
+		glColor4f(color.r, color.g, color.b, color.a * alphaCanvas);
 
 		glBindTexture(GL_TEXTURE_2D, texture);
 
@@ -71,4 +71,9 @@ float* Component_CanvasRenderer::GetVertices()
 void Component_CanvasRenderer::SetTextureTile(float2 texTile)
 {
 	textureTile = texTile;
+}
+
+void Component_CanvasRenderer::SetAlpha(float a)
+{
+	alphaCanvas = a;
 }

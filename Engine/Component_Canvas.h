@@ -23,11 +23,17 @@ public:
 
 	void AddElement(Component_Graphic* element);
 
+	void StartFade();
+
 private:
 	std::vector<Component_Graphic*> graphic_elements;
 
+	bool fade = false;
+
 	bool getScale = false;
 	float3 canvasScale;
+
+	float alpha = 1;
 
 	float2 canvasSize;
 	float2 canvasReferenceResolution;
