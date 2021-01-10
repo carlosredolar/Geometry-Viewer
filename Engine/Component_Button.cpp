@@ -341,14 +341,51 @@ void Component_Button::Save(JsonArray & saveArray)
 	JsonObj saveObject;
 
 	saveObject.AddInt("Type", type);
-
-	saveObject.AddInt("Image UID", unpressed->GetUID());
+	saveObject.AddBool("Active", active);
+	saveObject.AddBool("Clicked", clicked);
+	if (unpressed != nullptr) saveObject.AddInt("Unpressed Image UID", unpressed->GetUID());
+	if (pressed != nullptr) saveObject.AddInt("Pressed Image UID", pressed->GetUID());
+	if (hovered != nullptr) saveObject.AddInt("Hovered Image UID", hovered->GetUID());
+	if (deactivated != nullptr) saveObject.AddInt("Deactivated Image UID", deactivated->GetUID());
+	saveObject.AddColor("Color Unpressed", colorUnpressed);
+	saveObject.AddColor("Color Pressed", colorPressed);
+	saveObject.AddColor("Color Hovered", colorHovered);
+	saveObject.AddColor("Color Deactivated", colorDeactivated);
 
 	saveArray.AddObject(saveObject);
 }
 
 void Component_Button::Load(JsonObj & loadObject)
 {
-	int imageUID = loadObject.GetInt("Image UID");
-	unpressed = (ResourceTexture*)App->resources->RequestResource(imageUID);
+	active = loadObject.GetBool("Active");
+	clicked = loadObject.GetBool("Clicked");
+	int unpressedUID = loadObject.GetInt("Unpressed Image UID");
+	if (unpressedUID != -1)
+	{
+		unpressed = (ResourceTexture*)App->resources->RequestResource(unpressedUID);
+		GenerateMesh(unpressed->GetWidth(), unpressed->GetHeight());
+	}
+	int pressedUID = loadObject.GetInt("Pressed Image UID");
+	if (pressedUID != -1)
+	{
+		pressed = (ResourceTexture*)App->resources->RequestResource(pressedUID);
+		GenerateMesh(pressed->GetWidth(), pressed->GetHeight());
+	}
+	int hoveredUID = loadObject.GetInt("Hovered Image UID");
+	if (hoveredUID != -1)
+	{
+		hovered = (ResourceTexture*)App->resources->RequestResource(hoveredUID);
+		GenerateMesh(hovered->GetWidth(), hovered->GetHeight());
+	}
+	int deactivatedUID = loadObject.GetInt("Deactivated Image UID");
+	if (deactivatedUID != -1)
+	{
+		deactivated = (ResourceTexture*)App->resources->RequestResource(deactivatedUID);
+		GenerateMesh(deactivated->GetWidth(), deactivated->GetHeight());
+	}
+	colorUnpressed = loadObject.GetColor("Color Unpressed");
+	colorPressed = loadObject.GetColor("Color Pressed");
+	colorHovered = loadObject.GetColor("Color Hovered");
+	colorDeactivated = loadObject.GetColor("Color Deactivated");
+
 }

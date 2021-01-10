@@ -181,14 +181,30 @@ void Component_Checkbox::Save(JsonArray & saveArray)
 	JsonObj saveObject;
 
 	saveObject.AddInt("Type", type);
-
-	saveObject.AddInt("Image UID", falseImage->GetUID());
+	saveObject.AddBool("Active", active);
+	saveObject.AddBool("State", state);
+	if (falseImage != nullptr) saveObject.AddInt("False Image UID", falseImage->GetUID());
+	if (trueImage != nullptr) saveObject.AddInt("True Image UID", trueImage->GetUID());
+	saveObject.AddColor("Color", color);
 
 	saveArray.AddObject(saveObject);
 }
 
-void Component_Checkbox::Load(JsonObj & loadObject)
+void Component_Checkbox::Load(JsonObj& loadObject)
 {
-	int imageUID = loadObject.GetInt("Image UID");
-	falseImage = (ResourceTexture*)App->resources->RequestResource(imageUID);
+	active = loadObject.GetBool("Active");
+	state = loadObject.GetBool("State");
+	int trueImageUID = loadObject.GetInt("True Image UID");
+	if (trueImageUID != -1)
+	{
+		trueImage = (ResourceTexture*)App->resources->RequestResource(trueImageUID);
+		GenerateMesh(trueImage->GetWidth(), trueImage->GetHeight());
+	}
+	int falseImageUID = loadObject.GetInt("False Image UID");
+	if (falseImageUID != -1)
+	{
+		falseImage = (ResourceTexture*)App->resources->RequestResource(falseImageUID);
+		GenerateMesh(falseImage->GetWidth(), falseImage->GetHeight());
+	}
+	color = loadObject.GetColor("Color");
 }
