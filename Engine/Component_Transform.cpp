@@ -73,6 +73,8 @@ void Component_Transform::OnGUI()
 				SetPivot(piv[0], piv[1]);
 				UpdateGlobalTransform();
 				ownerGameObject->UpdateChildrenTransforms();
+				Component_Graphic* compgrph = ownerGameObject->GetComponent<Component_Graphic>();
+				if(compgrph != nullptr) ownerGameObject->GetComponent<Component_Graphic>()->RegenerateMesh(this);
 			};
 		}
 

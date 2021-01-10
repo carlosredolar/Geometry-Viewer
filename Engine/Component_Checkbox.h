@@ -23,6 +23,8 @@ public:
 	void SetFalseImage(ResourceTexture* texture);
 	void SetTrueImage(ResourceTexture* texture);
 
+	void SetState(bool st);
+
 	bool MouseOver();
 	void OnClick();
 private:

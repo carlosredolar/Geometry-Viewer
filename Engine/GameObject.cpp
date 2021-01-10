@@ -8,6 +8,7 @@
 #include "Component_Canvas.h"
 #include "Component_Image.h"
 #include "Component_Button.h"
+#include "Component_Checkbox.h"
 #include "Component_CanvasRenderer.h"
 #include "Libs/ImGui/imgui.h"
 #include "ModuleJson.h"
@@ -285,6 +286,9 @@ Component* GameObject::AddComponent(ComponentType type)
 		break;
 	case BUTTON:
 		component = new Component_Button(this);
+		break;
+	case CHECKBOX:
+		component = new Component_Checkbox(this);
 		break;
 	case CANVASRENDERER:
 		component = new Component_CanvasRenderer(this);
