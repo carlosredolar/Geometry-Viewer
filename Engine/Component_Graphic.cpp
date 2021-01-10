@@ -63,7 +63,7 @@ void Component_Graphic::DrawGraphic(uint texture, Color color)
 	{
 		if (canvasRenderer != nullptr)
 		{
-			canvasRenderer->DrawGraphic(texture, color);
+			canvasRenderer->DrawGraphic(texture, color, App->in_game);
 		}
 	}
 }

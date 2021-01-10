@@ -161,7 +161,10 @@ void Component_Image::Save(JsonArray& saveArray)
 
 	saveObject.AddInt("Type", type);
 
-	saveObject.AddInt("Image UID", image->GetUID());
+	if (image != nullptr)
+	{
+		saveObject.AddInt("Image UID", image->GetUID());
+	}
 
 	saveArray.AddObject(saveObject);
 }
@@ -169,7 +172,15 @@ void Component_Image::Save(JsonArray& saveArray)
 void Component_Image::Load(JsonObj& loadObject)
 {
 	int imageUID = loadObject.GetInt("Image UID");
-	image = (ResourceTexture*)App->resources->RequestResource(imageUID);
+	if (imageUID != -1)
+	{
+		image = (ResourceTexture*)App->resources->RequestResource(imageUID);
+		GenerateMesh(image->GetWidth(), image->GetHeight());
+	}
+	else 
+	{
+		CheckersTexDefault();
+	}
 }
 
 void Component_Image::CheckersTexDefault()

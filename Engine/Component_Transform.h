@@ -35,6 +35,7 @@ public:
 	void SetPosition(float3 newPosition);
 
 	Quat GetRotation();
+	float3 GetEulerRotation();
 	void SetRotation(float x, float y, float z);
 	void SetRotation(Quat newRotation);
 	void SetRotation(float i, float j, float k, float w);

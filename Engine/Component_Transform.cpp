@@ -203,6 +203,11 @@ Quat Component_Transform::GetRotation()
 	return rotation;
 }
 
+float3 Component_Transform::GetEulerRotation()
+{
+	return eulerRotation;
+}
+
 void Component_Transform::SetPosition(float3 newPosition)
 {
 	position = newPosition;

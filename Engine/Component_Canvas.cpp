@@ -1,6 +1,7 @@
 #include "Component_Canvas.h"
 #include "GameObject.h"
 #include "Component_Transform.h"
+#include "Component_Camera.h"
 #include "Libs/Glew/include/glew.h"
 #include "Libs/ImGui/imgui.h"
 #include "Application.h"
@@ -19,6 +20,25 @@ Component_Canvas::~Component_Canvas()
 
 void Component_Canvas::Update() 
 {
+	if (App->in_game)
+	{
+		float3 camRotation = App->renderer3D->GetMainCamera()->ownerGameObject->GetTransform()->GetEulerRotation();
+		ownerGameObject->GetTransform()->SetRotation(camRotation.x, camRotation.y + 180, camRotation.z);
+
+		float3 cornerPoints[8];
+		App->renderer3D->GetMainCamera()->GetFrustum().GetCornerPoints(cornerPoints);
+
+		if (!getScale)
+		{
+			canvasScale = ownerGameObject->GetTransform()->GetScale();
+			getScale = true;
+		}
+		ownerGameObject->GetTransform()->SetScale(canvasScale.Mul(cornerPoints[1].Distance(cornerPoints[5]) / canvasSize.x));
+
+		ownerGameObject->GetTransform()->SetPosition(cornerPoints[1].x, cornerPoints[1].y, cornerPoints[1].z);
+	}
+	else getScale = false;
+
 	glDisable(GL_LIGHTING);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 

@@ -26,6 +26,9 @@ public:
 private:
 	std::vector<Component_Graphic*> graphic_elements;
 
+	bool getScale = false;
+	float3 canvasScale;
+
 	float2 canvasSize;
 	float2 canvasReferenceResolution;
 };

@@ -32,12 +32,12 @@ void Component_CanvasRenderer::Load(JsonObj& loadObject)
 
 }
 
-void Component_CanvasRenderer::DrawGraphic(uint texture, Color color)
+void Component_CanvasRenderer::DrawGraphic(uint texture, Color color, bool inGame)
 {
 	if (enabled && vertices != nullptr)
 	{
 		glEnable(GL_BLEND);
-		glDisable(GL_DEPTH_TEST);
+		if (inGame) glDisable(GL_DEPTH_TEST);
 		glDisable(GL_LIGHTING);
 
 		glPushMatrix();
@@ -59,7 +59,7 @@ void Component_CanvasRenderer::DrawGraphic(uint texture, Color color)
 		glPopMatrix();
 
 		glEnable(GL_LIGHTING);
-		glEnable(GL_DEPTH_TEST);
+		if (inGame) glEnable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);
 	}
 }

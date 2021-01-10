@@ -29,7 +29,7 @@ private:
 
 	uint checkersID;
 
-	ResourceTexture* image;
+	ResourceTexture* image = nullptr;
 	Color color;
 	float2 texTile = float2::one;
 };

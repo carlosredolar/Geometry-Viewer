@@ -25,7 +25,7 @@ public:
 
 	//void SyncComponent(GameObject* sync_parent);
 
-	void DrawGraphic(uint texture, Color color);
+	void DrawGraphic(uint texture, Color color, bool inGame = false);
 
 	float* GetVertices();
 	void SetTextureTile(float2 texTile);

@@ -382,7 +382,7 @@ void GameObject::ChangeParent(GameObject* newParent)
 {
 	if (newParent != nullptr && parent != newParent) 
 	{
-		parent->RemoveChild(this);
+		if(parent != nullptr) parent->RemoveChild(this);
 		parent = newParent;
 		newParent->AddChild(this);
 		transform->ChangeParentTransform(newParent->GetTransform()->GetGlobalTransform());

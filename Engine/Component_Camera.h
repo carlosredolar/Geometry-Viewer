@@ -48,7 +48,6 @@ public:
 
 public:
 	FOV fov;
-	float3 gameCamera;
 
 private:
 	Frustum frustum;
