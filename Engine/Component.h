@@ -21,7 +21,9 @@ enum ComponentType {
 	CANVASRENDERER,
 	BUTTON,
 	CHECKBOX,
-	IMAGE
+	IMAGE,
+	FONT,
+	INPUTBOX
 };
 
 class Component {
