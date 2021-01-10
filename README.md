@@ -37,6 +37,15 @@ Github profiles:
 You can move the camera in the scene only if the scene window is selected.
 
 
+## Controls In Game
+
+**ENTER** - Start the game (main menu fades out)
+
+**F1** - Open options menu
+
+**V** - Enable / Disable VSYNC
+
+
 ## Engine Functionality
 
 FBX models can be imported dragging and dropping them onto the engine from the assets window or from any other folder. Textures (png and jpg) can be imported dragging and dropping them onto the texture image on inspector and applied to the object selected.
@@ -44,6 +53,8 @@ FBX models can be imported dragging and dropping them onto the engine from the a
 *There is an issue when an asset has been already imported and is avaliable on assets window but you try to import it from your computer floder, just import it from the asset window of the program.
 
 *Sometimes when you try to import many assets in a short period of time the program crashes, but just sometimes.
+
+When you play the game UI components will be seen ahead the scene.
 
 ## Inspector
 
@@ -115,6 +126,8 @@ In this window we can see all the configuration options:
 * **Empty Object:** you can create an empty object on hierarchy
 
 * **Primitives:** you can choose those primitives and load them on the scene as GameObjects
+
+* **UI:** you can choose those UI tools and load them on the scene as childs of a Canvas
 
 ### About
 
