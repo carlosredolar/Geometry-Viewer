@@ -37,7 +37,7 @@ void Component_Button::Update()
 			if (MouseOver())
 			{
 				DrawGraphic(hovered->GetGpuID(), colorHovered);
-				if(App->input->GetKey(SDL_SCANCODE_G) == KEY_DOWN)
+				if(App->input->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN)
 					OnClick();
 			}
 			else

@@ -45,6 +45,8 @@ bool ModuleScene::Start()
 	GameObject* street_environment = App->resources->RequestGameObject("Assets/Models/Street environment_V01.FBX");
 	AddGameObject(street_environment);
 
+	App->Load("Library/Scenes/tmp2.scener");
+
 	return ret;
 }
 

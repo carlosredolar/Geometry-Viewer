@@ -22,7 +22,7 @@ void Component_Checkbox::Update()
 	{
 		if (MouseOver())
 		{
-			if (App->input->GetKey(SDL_SCANCODE_G) == KEY_DOWN)
+			if (App->input->GetKey(SDL_SCANCODE_V) == KEY_DOWN)
 				OnClick();
 		}
 
@@ -53,6 +53,7 @@ bool Component_Checkbox::MouseOver()
 void Component_Checkbox::OnClick()
 {
 	state = !state;
+	App->renderer3D->SetVSync(!App->renderer3D->vsync);
 }
 
 void Component_Checkbox::SetState(bool st)
