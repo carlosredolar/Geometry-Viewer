@@ -68,6 +68,7 @@ void Component_Image::OnGUI()
 					if (possible_texture->GetType() == ResourceType::RESOURCE_TEXTURE)
 					{
 						image = (ResourceTexture*)possible_texture;
+						checkersImageActive = false;
 					}
 				}
 				ImGui::EndDragDropTarget();
@@ -161,6 +162,12 @@ void Component_Image::Save(JsonArray& saveArray)
 
 	saveObject.AddInt("Type", type);
 
+	saveObject.AddBool("Checkers", checkersImageActive);
+	saveObject.AddFloat("Width", textureSize.x);
+	saveObject.AddFloat("Height", textureSize.y);
+	saveObject.AddFloat("TileX", texTile.x);
+	saveObject.AddFloat("TileY", texTile.y);
+	saveObject.AddColor("Color", color);
 	if (image != nullptr)
 	{
 		saveObject.AddInt("Image UID", image->GetUID());
@@ -175,12 +182,19 @@ void Component_Image::Load(JsonObj& loadObject)
 	if (imageUID != -1)
 	{
 		image = (ResourceTexture*)App->resources->RequestResource(imageUID);
-		GenerateMesh(image->GetWidth(), image->GetHeight());
 	}
 	else 
 	{
 		CheckersTexDefault();
 	}
+	color = loadObject.GetColor("Color");
+	texTile.x = loadObject.GetFloat("TileX");
+	texTile.y = loadObject.GetFloat("TileY");
+	GetCanvasRenderer()->SetTextureTile(texTile);
+
+	GenerateMesh(loadObject.GetFloat("Width"), loadObject.GetFloat("Height"));
+
+	checkersImageActive = loadObject.GetBool("Checkers");
 }
 
 void Component_Image::CheckersTexDefault()

@@ -97,17 +97,25 @@ void Component_Transform::Save(JsonArray& saveArray)
 {
 	JsonObj saveObject;
 	saveObject.AddInt("Type", type);
+	saveObject.AddBool("Is 2D", is2D);
 	saveObject.AddFloat3("Position", position);
 	saveObject.AddQuaternion("Rotation", rotation);
 	saveObject.AddFloat3("Scale", scale);
+	saveObject.AddFloat("Pivot x", pivot.x);
+	saveObject.AddFloat("Pivot y", pivot.y);
 	saveArray.AddObject(saveObject);
 }
 
 void Component_Transform::Load(JsonObj& loadObject)
 {
+	is2D = loadObject.GetBool("Is 2D");
+
 	position = loadObject.GetFloat3("Position");
 	rotation = loadObject.GetQuaternion("Rotation");
 	scale = loadObject.GetFloat3("Scale");
+
+	pivot.x = loadObject.GetFloat("Pivot x");
+	pivot.y = loadObject.GetFloat("Pivot y");
 
 	UpdateEulerRotation();
 	UpdateGlobalTransform();

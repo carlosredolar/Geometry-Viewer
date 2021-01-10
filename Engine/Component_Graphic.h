@@ -17,9 +17,6 @@ public:
 	Component_Graphic(ComponentType type, GameObject* parent);
 	~Component_Graphic();
 
-	void Save(JsonArray& saveArray) override;
-	void Load(JsonObj& loadObject) override;
-
 	void AddCanvas();
 	void AddCanvasRender();
 	void SyncComponent(GameObject* sync_parent);

@@ -35,10 +35,6 @@ Component_Graphic::~Component_Graphic()
 	canvasRenderer = nullptr;
 }
 
-void Component_Graphic::Save(JsonArray& saveArray) {}
-
-void Component_Graphic::Load(JsonObj& loadObject) {}
-
 void Component_Graphic::AddCanvas() {} // ONLY IF THERE IS NO CANVAS IN THE SCENE
 void Component_Graphic::AddCanvasRender() {} // ALWAYS ADDED WHEN THIS COMPONENT IS CREATED
 void Component_Graphic::SyncComponent(GameObject* sync_parent) {}

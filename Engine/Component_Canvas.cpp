@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "Component_Transform.h"
 #include "Component_Camera.h"
+#include "ModuleJson.h"
 #include "Libs/Glew/include/glew.h"
 #include "Libs/ImGui/imgui.h"
 #include "Application.h"
@@ -76,10 +77,21 @@ void Component_Canvas::OnGUI()
 
 void Component_Canvas::Save(JsonArray& saveArray) 
 {
+	JsonObj saveObject;
+	saveObject.AddInt("Type", type);
+	saveObject.AddFloat("Canvas Size x", canvasSize.x);
+	saveObject.AddFloat("Canvas Size y", canvasSize.y);
+	saveObject.AddFloat("Ref Res x", canvasReferenceResolution.x);
+	saveObject.AddFloat("Ref Res y", canvasReferenceResolution.y);
+	saveArray.AddObject(saveObject);
 }
 
 void Component_Canvas::Load(JsonObj& loadObject) 
 {
+	canvasSize.x = loadObject.GetFloat("Canvas Size x");
+	canvasSize.y = loadObject.GetFloat("Canvas Size y");
+	canvasReferenceResolution.x = loadObject.GetFloat("Ref Res x");
+	canvasReferenceResolution.y = loadObject.GetFloat("Ref Res y");
 }
 
 void Component_Canvas::Resize(int width, int height)
