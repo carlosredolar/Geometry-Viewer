@@ -1,0 +1,1738 @@
+{
+    "Game Objects": [
+        {
+            "UUID": 626178623,
+            "Enabled": true,
+            "Parent UUID": 0,
+            "Name": "Scene",
+            "Components": [
+                {
+                    "Type": 2,
+                    "Is 2D": false,
+                    "Position": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "Rotation": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "Scale": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "Pivot x": -431602080,
+                    "Pivot y": -431602080
+                }
+            ]
+        },
+        {
+            "UUID": 655210580,
+            "Enabled": true,
+            "Parent UUID": 626178623,
+            "Name": "Camera",
+            "Components": [
+                {
+                    "Type": 2,
+                    "Is 2D": false,
+                    "Position": [
+                        0,
+                        20,
+                        -100
+                    ],
+                    "Rotation": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "Scale": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "Pivot x": -431602080,
+                    "Pivot y": -431602080
+                },
+                {
+                    "name": "",
+                    "Type": 3,
+                    "Main Camera": true,
+                    "position": [
+                        0,
+                        20,
+                        -100
+                    ],
+                    "up": [
+                        0,
+                        1,
+                        0
+                    ],
+                    "front": [
+                        0,
+                        0,
+                        1
+                    ],
+                    "horizontalFOV": 0.018277045339345932,
+                    "verticalFOV": 0.010961169376969337,
+                    "nearPlane": 0.5,
+                    "farPlane": 500,
+                    "aspectRatio": 1.7777777910232544
+                }
+            ]
+        },
+        {
+            "UUID": 2114378656,
+            "Enabled": true,
+            "Parent UUID": 626178623,
+            "Name": "street environment_v01",
+            "Components": [
+                {
+                    "Type": 2,
+                    "Is 2D": false,
+                    "Position": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "Rotation": [
+                        0,
+                        0,
+                        0,
+                        0.99999994039535522
+                    ],
+                    "Scale": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "Pivot x": -431602080,
+                    "Pivot y": -431602080
+                }
+            ]
+        },
+        {
+            "UUID": 2137423207,
+            "Enabled": true,
+            "Parent UUID": 2114378656,
+            "Name": "Sky001",
+            "Components": [
+                {
+                    "Type": 2,
+                    "Is 2D": false,
+                    "Position": [
+                        18.153732299804688,
+                        0,
+                        58.960910797119141
+                    ],
+                    "Rotation": [
+                        -0.99999988079071045,
+                        0,
+                        0,
+                        0
+                    ],
+                    "Scale": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "Pivot x": -431602080,
+                    "Pivot y": -431602080
+                }
+            ]
+        },
+        {
+            "UUID": 7414431,
+            "Enabled": true,
+            "Parent UUID": 2114378656,
+            "Name": "Dummy001",
+            "Components": [
+                {
+                    "Type": 2,
+                    "Is 2D": false,
+                    "Position": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "Rotation": [
+                        -0.70710670948028564,
+                        0,
+                        0,
+                        0.70710670948028564
+                    ],
+                    "Scale": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "Pivot x": -431602080,
+                    "Pivot y": -431602080
+                }
+            ]
+        },
+        {
+            "UUID": 17996823,
+            "Enabled": true,
+            "Parent UUID": 7414431,
+            "Name": "City_building_004",
+            "Components": [
+                {
+                    "Type": 2,
+                    "Is 2D": false,
+                    "Position": [
+                        -41.47589111328125,
+                        21.01409912109375,
+                        0
+                    ],
+                    "Rotation": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "Scale": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "Pivot x": -431602080,
+                    "Pivot y": -431602080
+                },
+                {
+                    "Type": 0,
+                    "MeshID": 1628671224
+                },
+                {
+                    "Type": 1,
+                    "Material UID": 691548511,
+                    "Texture UID": 1595274810
+                }
+            ]
+        },
+        {
+            "UUID": 31642539,
+            "Enabled": true,
+            "Parent UUID": 7414431,
+            "Name": "City_building_001",
+            "Components": [
+                {
+                    "Type": 2,
+                    "Is 2D": false,
+                    "Position": [
+                        17.707164764404297,
+                        20.053276062011719,
+                        2.1210729528320371e-07
+                    ],
+                    "Rotation": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "Scale": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "Pivot x": -431602080,
+                    "Pivot y": -431602080
+                },
+                {
+                    "Type": 0,
+                    "MeshID": 637242197
+                },
+                {
+                    "Type": 1,
+                    "Material UID": 1185026178,
+                    "Texture UID": 1209300005
+                }
+            ]
+        },
+        {
+            "UUID": 45427497,
+            "Enabled": true,
+            "Parent UUID": 7414431,
+            "Name": "City_building_007",
+            "Components": [
+                {
+                    "Type": 2,
+                    "Is 2D": false,
+                    "Position": [
+                        16.010492324829102,
+                        37.4932861328125,
+                        -1.5106878663573298e-06
+                    ],
+                    "Rotation": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "Scale": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "Pivot x": -431602080,
+                    "Pivot y": -431602080
+                },
+                {
+                    "Type": 0,
+                    "MeshID": 89090077
+                },
+                {
+                    "Type": 1,
+                    "Material UID": 29784075,
+                    "Texture UID": 1005428867
+                }
+            ]
+        },
+        {
+            "UUID": 51345282,
+            "Enabled": true,
+            "Parent UUID": 7414431,
+            "Name": "City_building_008",
+            "Components": [
+                {
+                    "Type": 2,
+                    "Is 2D": false,
+                    "Position": [
+                        40.979995727539063,
+                        18.270824432373047,
+                        -2.0522466002148576e-06
+                    ],
+                    "Rotation": [
+                        0,
+                        0,
+                        0.70710676908493042,
+                        0.70710676908493042
+                    ],
+                    "Scale": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "Pivot x": -431602080,
+                    "Pivot y": -431602080
+                },
+                {
+                    "Type": 0,
+                    "MeshID": 1756506772
+                },
+                {
+                    "Type": 1,
+                    "Material UID": 1691766162,
+                    "Texture UID": 314545357
+                }
+            ]
+        },
+        {
+            "UUID": 85877298,
+            "Enabled": true,
+            "Parent UUID": 7414431,
+            "Name": "Line002",
+            "Components": [
+                {
+                    "Type": 2,
+                    "Is 2D": false,
+                    "Position": [
+                        -2.1597719192504883,
+                        1.8538382053375244,
+                        0
+                    ],
+                    "Rotation": [
+                        0,
+                        0,
+                        -0.70710676908493042,
+                        0.70710676908493042
+                    ],
+                    "Scale": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "Pivot x": -431602080,
+                    "Pivot y": -431602080
+                },
+                {
+                    "Type": 0,
+                    "MeshID": 1006258366
+                },
+                {
+                    "Type": 1,
+                    "Material UID": 817126846
+                }
+            ]
+        },
+        {
+            "UUID": 90402663,
+            "Enabled": true,
+            "Parent UUID": 7414431,
+            "Name": "Plane001",
+            "Components": [
+                {
+                    "Type": 2,
+                    "Is 2D": false,
+                    "Position": [
+                        -0.02860260009765625,
+                        0.026032090187072754,
+                        0
+                    ],
+                    "Rotation": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "Scale": [
+                        0.99663525819778442,
+                        0.97061645984649658,
+                        0.99663525819778442
+                    ],
+                    "Pivot x": -431602080,
+                    "Pivot y": -431602080
+                },
+                {
+                    "Type": 0,
+                    "MeshID": 27548165
+                },
+                {
+                    "Type": 1,
+                    "Material UID": 1227031392
+                }
+            ]
+        },
+        {
+            "UUID": 95484996,
+            "Enabled": true,
+            "Parent UUID": 7414431,
+            "Name": "City_building_010",
+            "Components": [
+                {
+                    "Type": 2,
+                    "Is 2D": false,
+                    "Position": [
+                        25.154010772705078,
+                        -39.153720855712891,
+                        8.5538641769744572e-07
+                    ],
+                    "Rotation": [
+                        0,
+                        0,
+                        0.70710676908493042,
+                        0.70710676908493042
+                    ],
+                    "Scale": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "Pivot x": -431602080,
+                    "Pivot y": -431602080
+                },
+                {
+                    "Type": 0,
+                    "MeshID": 1556459652
+                },
+                {
+                    "Type": 1,
+                    "Material UID": 379904881,
+                    "Texture UID": 867506463
+                }
+            ]
+        },
+        {
+            "UUID": 116928264,
+            "Enabled": true,
+            "Parent UUID": 7414431,
+            "Name": "City_building_011",
+            "Components": [
+                {
+                    "Type": 2,
+                    "Is 2D": false,
+                    "Position": [
+                        30.134540557861328,
+                        37.4932861328125,
+                        -1.5106878663573298e-06
+                    ],
+                    "Rotation": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "Scale": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "Pivot x": -431602080,
+                    "Pivot y": -431602080
+                },
+                {
+                    "Type": 0,
+                    "MeshID": 89090077
+                },
+                {
+                    "Type": 1,
+                    "Material UID": 29784075,
+                    "Texture UID": 1005428867
+                }
+            ]
+        },
+        {
+            "UUID": 122567565,
+            "Enabled": true,
+            "Parent UUID": 7414431,
+            "Name": "City_building_013",
+            "Components": [
+                {
+                    "Type": 2,
+                    "Is 2D": false,
+                    "Position": [
+                        -42.288055419921875,
+                        33.201576232910156,
+                        5.0146070407208754e-07
+                    ],
+                    "Rotation": [
+                        0,
+                        0,
+                        0.70710676908493042,
+                        0.70710676908493042
+                    ],
+                    "Scale": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "Pivot x": -431602080,
+                    "Pivot y": -431602080
+                },
+                {
+                    "Type": 0,
+                    "MeshID": 1528630984
+                },
+                {
+                    "Type": 1,
+                    "Material UID": 1191648211,
+                    "Texture UID": 1499557992
+                }
+            ]
+        },
+        {
+            "UUID": 128137245,
+            "Enabled": true,
+            "Parent UUID": 7414431,
+            "Name": "City_building_014",
+            "Components": [
+                {
+                    "Type": 2,
+                    "Is 2D": false,
+                    "Position": [
+                        -19.439706802368164,
+                        32.061729431152344,
+                        0
+                    ],
+                    "Rotation": [
+                        0,
+                        0,
+                        1,
+                        -4.3711388286737929e-08
+                    ],
+                    "Scale": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "Pivot x": -431602080,
+                    "Pivot y": -431602080
+                },
+                {
+                    "Type": 0,
+                    "MeshID": 691569361
+                },
+                {
+                    "Type": 1,
+                    "Material UID": 691548511,
+                    "Texture UID": 1595274810
+                }
+            ]
+        },
+        {
+            "UUID": 134124651,
+            "Enabled": true,
+            "Parent UUID": 7414431,
+            "Name": "City_building_016",
+            "Components": [
+                {
+                    "Type": 2,
+                    "Is 2D": false,
+                    "Position": [
+                        34.270423889160156,
+                        -41.972747802734375,
+                        8.5538641769744572e-07
+                    ],
+                    "Rotation": [
+                        0,
+                        0,
+                        1,
+                        -4.3711388286737929e-08
+                    ],
+                    "Scale": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "Pivot x": -431602080,
+                    "Pivot y": -431602080
+                },
+                {
+                    "Type": 0,
+                    "MeshID": 1556459652
+                },
+                {
+                    "Type": 1,
+                    "Material UID": 379904881,
+                    "Texture UID": 867506463
+                }
+            ]
+        },
+        {
+            "UUID": 161207220,
+            "Enabled": true,
+            "Parent UUID": 7414431,
+            "Name": "City_building_017",
+            "Components": [
+                {
+                    "Type": 2,
+                    "Is 2D": false,
+                    "Position": [
+                        44.260082244873047,
+                        -39.153720855712891,
+                        8.5538641769744572e-07
+                    ],
+                    "Rotation": [
+                        0,
+                        0,
+                        0.70710676908493042,
+                        0.70710676908493042
+                    ],
+                    "Scale": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "Pivot x": -431602080,
+                    "Pivot y": -431602080
+                },
+                {
+                    "Type": 0,
+                    "MeshID": 1556459652
+                },
+                {
+                    "Type": 1,
+                    "Material UID": 379904881,
+                    "Texture UID": 867506463
+                }
+            ]
+        },
+        {
+            "UUID": 166916142,
+            "Enabled": true,
+            "Parent UUID": 7414431,
+            "Name": "City_building_022",
+            "Components": [
+                {
+                    "Type": 2,
+                    "Is 2D": false,
+                    "Position": [
+                        -20.831323623657227,
+                        -27.426488876342773,
+                        0
+                    ],
+                    "Rotation": [
+                        0,
+                        0,
+                        1,
+                        1.9470718370939721e-07
+                    ],
+                    "Scale": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "Pivot x": -431602080,
+                    "Pivot y": -431602080
+                },
+                {
+                    "Type": 0,
+                    "MeshID": 578687733
+                },
+                {
+                    "Type": 1,
+                    "Material UID": 761587751,
+                    "Texture UID": 796722454
+                }
+            ]
+        },
+        {
+            "UUID": 172694685,
+            "Enabled": true,
+            "Parent UUID": 7414431,
+            "Name": "City_building_023",
+            "Components": [
+                {
+                    "Type": 2,
+                    "Is 2D": false,
+                    "Position": [
+                        42.130641937255859,
+                        37.4932861328125,
+                        -1.5106878663573298e-06
+                    ],
+                    "Rotation": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "Scale": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "Pivot x": -431602080,
+                    "Pivot y": -431602080
+                },
+                {
+                    "Type": 0,
+                    "MeshID": 89090077
+                },
+                {
+                    "Type": 1,
+                    "Material UID": 29784075,
+                    "Texture UID": 1005428867
+                }
+            ]
+        },
+        {
+            "UUID": 178264365,
+            "Enabled": true,
+            "Parent UUID": 7414431,
+            "Name": "City_building_024",
+            "Components": [
+                {
+                    "Type": 2,
+                    "Is 2D": false,
+                    "Position": [
+                        -20.572771072387695,
+                        43.060829162597656,
+                        -0.069194458425045013
+                    ],
+                    "Rotation": [
+                        0,
+                        0,
+                        1,
+                        4.3711388286737929e-08
+                    ],
+                    "Scale": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "Pivot x": -431602080,
+                    "Pivot y": -431602080
+                },
+                {
+                    "Type": 0,
+                    "MeshID": 1756506772
+                },
+                {
+                    "Type": 1,
+                    "Material UID": 1691766162,
+                    "Texture UID": 314545357
+                }
+            ]
+        },
+        {
+            "UUID": 183903666,
+            "Enabled": true,
+            "Parent UUID": 7414431,
+            "Name": "City_building_026",
+            "Components": [
+                {
+                    "Type": 2,
+                    "Is 2D": false,
+                    "Position": [
+                        31.51188850402832,
+                        -16.446016311645508,
+                        0
+                    ],
+                    "Rotation": [
+                        0,
+                        0,
+                        1,
+                        4.3711388286737929e-08
+                    ],
+                    "Scale": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "Pivot x": -431602080,
+                    "Pivot y": -431602080
+                },
+                {
+                    "Type": 0,
+                    "MeshID": 1272295769
+                },
+                {
+                    "Type": 1,
+                    "Material UID": 761587751,
+                    "Texture UID": 796722454
+                }
+            ]
+        },
+        {
+            "UUID": 189682209,
+            "Enabled": true,
+            "Parent UUID": 7414431,
+            "Name": "City_building_028",
+            "Components": [
+                {
+                    "Type": 2,
+                    "Is 2D": false,
+                    "Position": [
+                        13.38798999786377,
+                        -33.755039215087891,
+                        -9.3834518111179932e-07
+                    ],
+                    "Rotation": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "Scale": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "Pivot x": -431602080,
+                    "Pivot y": -431602080
+                },
+                {
+                    "Type": 0,
+                    "MeshID": 401765210
+                },
+                {
+                    "Type": 1,
+                    "Material UID": 2055472068,
+                    "Texture UID": 1862319512
+                }
+            ]
+        },
+        {
+            "UUID": 224980056,
+            "Enabled": true,
+            "Parent UUID": 7414431,
+            "Name": "Object010",
+            "Components": [
+                {
+                    "Type": 2,
+                    "Is 2D": false,
+                    "Position": [
+                        -2.5033531188964844,
+                        15.800846099853516,
+                        0
+                    ],
+                    "Rotation": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "Scale": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "Pivot x": -431602080,
+                    "Pivot y": -431602080
+                },
+                {
+                    "Type": 0,
+                    "MeshID": 1416687638
+                },
+                {
+                    "Type": 1,
+                    "Material UID": 1399812614
+                }
+            ]
+        },
+        {
+            "UUID": 229923147,
+            "Enabled": true,
+            "Parent UUID": 7414431,
+            "Name": "City_building_030",
+            "Components": [
+                {
+                    "Type": 2,
+                    "Is 2D": false,
+                    "Position": [
+                        -42.807239532470703,
+                        -41.835563659667969,
+                        -9.3834518111179932e-07
+                    ],
+                    "Rotation": [
+                        0,
+                        0,
+                        -0.70710676908493042,
+                        0.70710676908493042
+                    ],
+                    "Scale": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "Pivot x": -431602080,
+                    "Pivot y": -431602080
+                },
+                {
+                    "Type": 0,
+                    "MeshID": 401765210
+                },
+                {
+                    "Type": 1,
+                    "Material UID": 2055472068,
+                    "Texture UID": 1862319512
+                }
+            ]
+        },
+        {
+            "UUID": 235562448,
+            "Enabled": true,
+            "Parent UUID": 7414431,
+            "Name": "City_building_031",
+            "Components": [
+                {
+                    "Type": 2,
+                    "Is 2D": false,
+                    "Position": [
+                        -34.679481506347656,
+                        -41.835563659667969,
+                        -9.3834518111179932e-07
+                    ],
+                    "Rotation": [
+                        0,
+                        0,
+                        -0.70710676908493042,
+                        0.70710676908493042
+                    ],
+                    "Scale": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "Pivot x": -431602080,
+                    "Pivot y": -431602080
+                },
+                {
+                    "Type": 0,
+                    "MeshID": 401765210
+                },
+                {
+                    "Type": 1,
+                    "Material UID": 2055472068,
+                    "Texture UID": 1862319512
+                }
+            ]
+        },
+        {
+            "UUID": 241132128,
+            "Enabled": true,
+            "Parent UUID": 7414431,
+            "Name": "City_building_032",
+            "Components": [
+                {
+                    "Type": 2,
+                    "Is 2D": false,
+                    "Position": [
+                        -29.478403091430664,
+                        21.01409912109375,
+                        0
+                    ],
+                    "Rotation": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "Scale": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "Pivot x": -431602080,
+                    "Pivot y": -431602080
+                },
+                {
+                    "Type": 0,
+                    "MeshID": 1628671224
+                },
+                {
+                    "Type": 1,
+                    "Material UID": 691548511,
+                    "Texture UID": 1595274810
+                }
+            ]
+        },
+        {
+            "UUID": 246701808,
+            "Enabled": true,
+            "Parent UUID": 7414431,
+            "Name": "City_building_033",
+            "Components": [
+                {
+                    "Type": 2,
+                    "Is 2D": false,
+                    "Position": [
+                        -32.361495971679688,
+                        42.37042236328125,
+                        5.0146070407208754e-07
+                    ],
+                    "Rotation": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "Scale": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "Pivot x": -431602080,
+                    "Pivot y": -431602080
+                },
+                {
+                    "Type": 0,
+                    "MeshID": 805830899
+                },
+                {
+                    "Type": 1,
+                    "Material UID": 1191648211,
+                    "Texture UID": 1499557992
+                }
+            ]
+        },
+        {
+            "UUID": 252341109,
+            "Enabled": true,
+            "Parent UUID": 7414431,
+            "Name": "City_building_034",
+            "Components": [
+                {
+                    "Type": 2,
+                    "Is 2D": false,
+                    "Position": [
+                        16.049516677856445,
+                        -16.696884155273438,
+                        0
+                    ],
+                    "Rotation": [
+                        0,
+                        0,
+                        -0.7071068286895752,
+                        0.70710670948028564
+                    ],
+                    "Scale": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "Pivot x": -431602080,
+                    "Pivot y": -431602080
+                },
+                {
+                    "Type": 0,
+                    "MeshID": 752242461
+                },
+                {
+                    "Type": 1,
+                    "Material UID": 761587751,
+                    "Texture UID": 796722454
+                }
+            ]
+        },
+        {
+            "UUID": 257910789,
+            "Enabled": true,
+            "Parent UUID": 7414431,
+            "Name": "City_building_035",
+            "Components": [
+                {
+                    "Type": 2,
+                    "Is 2D": false,
+                    "Position": [
+                        13.38798999786377,
+                        -40.802516937255859,
+                        -9.3834518111179932e-07
+                    ],
+                    "Rotation": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "Scale": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "Pivot x": -431602080,
+                    "Pivot y": -431602080
+                },
+                {
+                    "Type": 0,
+                    "MeshID": 401765210
+                },
+                {
+                    "Type": 1,
+                    "Material UID": 2055472068,
+                    "Texture UID": 1862319512
+                }
+            ]
+        },
+        {
+            "UUID": 263410848,
+            "Enabled": true,
+            "Parent UUID": 7414431,
+            "Name": "City_building_036",
+            "Components": [
+                {
+                    "Type": 2,
+                    "Is 2D": false,
+                    "Position": [
+                        -31.216331481933594,
+                        33.201576232910156,
+                        5.0146070407208754e-07
+                    ],
+                    "Rotation": [
+                        0,
+                        0,
+                        -0.70710676908493042,
+                        0.70710676908493042
+                    ],
+                    "Scale": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "Pivot x": -431602080,
+                    "Pivot y": -431602080
+                },
+                {
+                    "Type": 0,
+                    "MeshID": 1528630984
+                },
+                {
+                    "Type": 1,
+                    "Material UID": 1191648211,
+                    "Texture UID": 1499557992
+                }
+            ]
+        },
+        {
+            "UUID": 269189391,
+            "Enabled": true,
+            "Parent UUID": 7414431,
+            "Name": "City_building_037",
+            "Components": [
+                {
+                    "Type": 2,
+                    "Is 2D": false,
+                    "Position": [
+                        -20.317693710327148,
+                        -16.163608551025391,
+                        0
+                    ],
+                    "Rotation": [
+                        0,
+                        0,
+                        1,
+                        1.9470718370939721e-07
+                    ],
+                    "Scale": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "Pivot x": -431602080,
+                    "Pivot y": -431602080
+                },
+                {
+                    "Type": 0,
+                    "MeshID": 1377436956
+                },
+                {
+                    "Type": 1,
+                    "Material UID": 761587751,
+                    "Texture UID": 796722454
+                }
+            ]
+        },
+        {
+            "UUID": 317367123,
+            "Enabled": true,
+            "Parent UUID": 7414431,
+            "Name": "City_building_038",
+            "Components": [
+                {
+                    "Type": 2,
+                    "Is 2D": false,
+                    "Position": [
+                        -41.649002075195313,
+                        -16.495393753051758,
+                        0
+                    ],
+                    "Rotation": [
+                        0,
+                        0,
+                        -0.7071068286895752,
+                        0.70710670948028564
+                    ],
+                    "Scale": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "Pivot x": -431602080,
+                    "Pivot y": -431602080
+                },
+                {
+                    "Type": 0,
+                    "MeshID": 371596382
+                },
+                {
+                    "Type": 1,
+                    "Material UID": 761587751,
+                    "Texture UID": 796722454
+                }
+            ]
+        },
+        {
+            "UUID": 323006424,
+            "Enabled": true,
+            "Parent UUID": 7414431,
+            "Name": "City_building_039",
+            "Components": [
+                {
+                    "Type": 2,
+                    "Is 2D": false,
+                    "Position": [
+                        -42.807239532470703,
+                        -30.643888473510742,
+                        -9.3834518111179932e-07
+                    ],
+                    "Rotation": [
+                        0,
+                        0,
+                        -0.70710676908493042,
+                        0.70710676908493042
+                    ],
+                    "Scale": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "Pivot x": -431602080,
+                    "Pivot y": -431602080
+                },
+                {
+                    "Type": 0,
+                    "MeshID": 401765210
+                },
+                {
+                    "Type": 1,
+                    "Material UID": 2055472068,
+                    "Texture UID": 1862319512
+                }
+            ]
+        },
+        {
+            "UUID": 328576104,
+            "Enabled": true,
+            "Parent UUID": 7414431,
+            "Name": "City_building_040",
+            "Components": [
+                {
+                    "Type": 2,
+                    "Is 2D": false,
+                    "Position": [
+                        -34.679481506347656,
+                        -30.643888473510742,
+                        -9.3834518111179932e-07
+                    ],
+                    "Rotation": [
+                        0,
+                        0,
+                        -0.70710676908493042,
+                        0.70710676908493042
+                    ],
+                    "Scale": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "Pivot x": -431602080,
+                    "Pivot y": -431602080
+                },
+                {
+                    "Type": 0,
+                    "MeshID": 401765210
+                },
+                {
+                    "Type": 1,
+                    "Material UID": 2055472068,
+                    "Texture UID": 1862319512
+                }
+            ]
+        },
+        {
+            "UUID": 334145784,
+            "Enabled": true,
+            "Parent UUID": 7414431,
+            "Name": "City_building_041",
+            "Components": [
+                {
+                    "Type": 2,
+                    "Is 2D": false,
+                    "Position": [
+                        30.695278167724609,
+                        21.612646102905273,
+                        2.1210729528320371e-07
+                    ],
+                    "Rotation": [
+                        0,
+                        0,
+                        0.70710676908493042,
+                        0.70710676908493042
+                    ],
+                    "Scale": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "Pivot x": -431602080,
+                    "Pivot y": -431602080
+                },
+                {
+                    "Type": 0,
+                    "MeshID": 637242197
+                },
+                {
+                    "Type": 1,
+                    "Material UID": 1185026178,
+                    "Texture UID": 1209300005
+                }
+            ]
+        },
+        {
+            "UUID": 349880130,
+            "Enabled": true,
+            "Parent UUID": 2114378656,
+            "Name": "Camera001",
+            "Components": [
+                {
+                    "Type": 2,
+                    "Is 2D": false,
+                    "Position": [
+                        -78.312431335449219,
+                        45.251216888427734,
+                        -97.031112670898438
+                    ],
+                    "Rotation": [
+                        0.049339771270751953,
+                        -0.1393311619758606,
+                        0.93228727579116821,
+                        -0.33014035224914551
+                    ],
+                    "Scale": [
+                        1,
+                        0.99999994039535522,
+                        0.99999994039535522
+                    ],
+                    "Pivot x": -431602080,
+                    "Pivot y": -431602080
+                }
+            ]
+        },
+        {
+            "UUID": 364987887,
+            "Enabled": true,
+            "Parent UUID": 2114378656,
+            "Name": "Camera001.Target",
+            "Components": [
+                {
+                    "Type": 2,
+                    "Is 2D": false,
+                    "Position": [
+                        -28.132621765136719,
+                        20.873329162597656,
+                        -35.064212799072266
+                    ],
+                    "Rotation": [
+                        0.049339771270751953,
+                        -0.1393311619758606,
+                        0.93228727579116821,
+                        -0.33014041185379028
+                    ],
+                    "Scale": [
+                        1,
+                        0.99999994039535522,
+                        1
+                    ],
+                    "Pivot x": -431602080,
+                    "Pivot y": -431602080
+                }
+            ]
+        },
+        {
+            "UUID": 382462758,
+            "Enabled": true,
+            "Parent UUID": 2114378656,
+            "Name": "Spot001",
+            "Components": [
+                {
+                    "Type": 2,
+                    "Is 2D": false,
+                    "Position": [
+                        -66.721267700195313,
+                        141.93412780761719,
+                        6.2041376622801181e-06
+                    ],
+                    "Rotation": [
+                        -0.69003510475158691,
+                        -0.15443935990333557,
+                        -0.69003498554229736,
+                        0.15443941950798035
+                    ],
+                    "Scale": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "Pivot x": -431602080,
+                    "Pivot y": -431602080
+                }
+            ]
+        },
+        {
+            "UUID": 397500894,
+            "Enabled": true,
+            "Parent UUID": 2114378656,
+            "Name": "Spot001.Target",
+            "Components": [
+                {
+                    "Type": 2,
+                    "Is 2D": false,
+                    "Position": [
+                        28.890945434570313,
+                        -60.963882446289063,
+                        -2.6648158382158726e-06
+                    ],
+                    "Rotation": [
+                        5.9604644775390625e-08,
+                        0,
+                        0,
+                        0.99999988079071045
+                    ],
+                    "Scale": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "Pivot x": -431602080,
+                    "Pivot y": -431602080
+                }
+            ]
+        },
+        {
+            "UUID": 368068045,
+            "Enabled": true,
+            "Parent UUID": 626178623,
+            "Name": "Canvas",
+            "Components": [
+                {
+                    "Type": 2,
+                    "Is 2D": true,
+                    "Position": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "Rotation": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "Scale": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "Pivot x": 0.5,
+                    "Pivot y": 0.5
+                },
+                {
+                    "Type": 5,
+                    "Canvas Size x": 1600,
+                    "Canvas Size y": 900,
+                    "Ref Res x": 1920,
+                    "Ref Res y": 1080
+                }
+            ]
+        },
+        {
+            "UUID": 188863591,
+            "Enabled": true,
+            "Parent UUID": 368068045,
+            "Name": "Image",
+            "Components": [
+                {
+                    "Type": 2,
+                    "Is 2D": true,
+                    "Position": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "Rotation": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "Scale": [
+                        16,
+                        9,
+                        1
+                    ],
+                    "Pivot x": 0,
+                    "Pivot y": 0
+                },
+                {
+                    "Type": 9,
+                    "Checkers": true,
+                    "Width": 100,
+                    "Height": 100,
+                    "TileX": 1,
+                    "TileY": 1,
+                    "Color": [
+                        9.9999999747524271e-07,
+                        9.9998999303352321e-07,
+                        9.9998999303352321e-07
+                    ]
+                }
+            ]
+        },
+        {
+            "UUID": 1675158907,
+            "Enabled": true,
+            "Parent UUID": 368068045,
+            "Name": "Button",
+            "Components": [
+                {
+                    "Type": 2,
+                    "Is 2D": true,
+                    "Position": [
+                        776.54461669921875,
+                        301.67294311523438,
+                        1.7000000476837158
+                    ],
+                    "Rotation": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "Scale": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "Pivot x": 0.5,
+                    "Pivot y": 0.5
+                },
+                {
+                    "Type": 7,
+                    "Active": true,
+                    "Clicked": false,
+                    "Unpressed Image UID": 1244581262,
+                    "Pressed Image UID": 1244581262,
+                    "Hovered Image UID": 1244581262,
+                    "Deactivated Image UID": 1244581262,
+                    "Color Unpressed": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "Color Pressed": [
+                        1,
+                        0,
+                        0
+                    ],
+                    "Color Hovered": [
+                        0.82608693838119507,
+                        0.42202267050743103,
+                        0.42202267050743103
+                    ],
+                    "Color Deactivated": [
+                        0.43529412150382996,
+                        0.43529412150382996,
+                        0.43529412150382996
+                    ]
+                }
+            ]
+        },
+        {
+            "UUID": 2085160548,
+            "Enabled": false,
+            "Parent UUID": 626178623,
+            "Name": "Canvas 1",
+            "Components": [
+                {
+                    "Type": 2,
+                    "Is 2D": true,
+                    "Position": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "Rotation": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "Scale": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "Pivot x": 0.5,
+                    "Pivot y": 0.5
+                },
+                {
+                    "Type": 5,
+                    "Canvas Size x": 1600,
+                    "Canvas Size y": 900,
+                    "Ref Res x": 1920,
+                    "Ref Res y": 1080
+                }
+            ]
+        },
+        {
+            "UUID": 893398303,
+            "Enabled": true,
+            "Parent UUID": 2085160548,
+            "Name": "Checkbox",
+            "Components": [
+                {
+                    "Type": 2,
+                    "Is 2D": true,
+                    "Position": [
+                        700.677001953125,
+                        462.88290405273438,
+                        16.299999237060547
+                    ],
+                    "Rotation": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "Scale": [
+                        0.40000000596046448,
+                        0.40000000596046448,
+                        1
+                    ],
+                    "Pivot x": 0.5,
+                    "Pivot y": 0.5
+                },
+                {
+                    "Type": 8,
+                    "Active": true,
+                    "State": false,
+                    "False Image UID": 1309843909,
+                    "True Image UID": 1533462391,
+                    "Color": [
+                        1,
+                        1,
+                        1
+                    ]
+                }
+            ]
+        },
+        {
+            "UUID": 535080035,
+            "Enabled": true,
+            "Parent UUID": 2085160548,
+            "Name": "Image",
+            "Components": [
+                {
+                    "Type": 2,
+                    "Is 2D": true,
+                    "Position": [
+                        799.622802734375,
+                        456.90078735351563,
+                        0
+                    ],
+                    "Rotation": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "Scale": [
+                        3.4900000095367432,
+                        2.3399999141693115,
+                        1
+                    ],
+                    "Pivot x": 0.5,
+                    "Pivot y": 0.5
+                },
+                {
+                    "Type": 9,
+                    "Checkers": false,
+                    "Width": 100,
+                    "Height": 100,
+                    "TileX": 1,
+                    "TileY": 1,
+                    "Color": [
+                        0.16304349899291992,
+                        0.1630418598651886,
+                        0.1630418598651886
+                    ],
+                    "Image UID": 1244581262
+                }
+            ]
+        }
+    ],
+    "Camera Position": [
+        15.272784233093262,
+        82.572471618652344,
+        291.32754516601563
+    ],
+    "Camera Reference": [
+        0,
+        0,
+        0
+    ]
+} 

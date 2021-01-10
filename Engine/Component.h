@@ -16,7 +16,14 @@ enum ComponentType {
 	MATERIAL, 
 	TRANSFORM,
 	CAMERA,
-	LIGHT
+	LIGHT,
+	CANVAS,
+	CANVASRENDERER,
+	BUTTON,
+	CHECKBOX,
+	IMAGE,
+	FONT,
+	INPUTBOX
 };
 
 class Component {

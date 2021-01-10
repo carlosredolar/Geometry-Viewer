@@ -10,4 +10,5 @@ public:
 
 	void Draw() override;
 	void PreorderHierarchy(GameObject* gameObject, int& id);
+	void CountID(GameObject* gameObject, int& id);
 };

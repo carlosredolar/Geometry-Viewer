@@ -5,11 +5,18 @@
 #include "Component_Material.h"
 #include "Component_Camera.h"
 #include "Component_Light.h"
+#include "Component_Canvas.h"
+#include "Component_Image.h"
+#include "Component_Button.h"
+#include "Component_Checkbox.h"
+#include "Component_Font.h"
+#include "Component_CanvasRenderer.h"
 #include "Libs/ImGui/imgui.h"
 #include "ModuleJson.h"
 #include "Application.h"
-
+#include "ModuleGui.h"
 #include "Libs/MathGeoLib/include/MathGeoLib.h"
+#include "Libs/Glew/include/glew.h"
 
 #include <vector>
 
@@ -23,6 +30,22 @@ GameObject::GameObject(Component_Mesh* mesh) : GameObject()
 {
 	SetName(mesh->name);
 	AddComponent((Component*)mesh);
+}
+
+GameObject::GameObject(Component_Transform* trans, const char* name) : GameObject()
+{
+	string longName = name;
+	if ((strcmp(name, "Canvas") == 0) && App->scene->FindGameObjectWithName("Canvas") != nullptr) longName += " 1";
+	SetName(longName.c_str());
+	
+	DeleteComponent(transform);
+	AddComponent((Component*)trans);
+	transform = trans;
+	if (strcmp(name, "Canvas") != 0) parent = App->scene->FindGameObjectWithName("Canvas");
+	
+	if (parent == nullptr) parent = App->scene->GetRoot();
+
+	parent->AddChild(this);
 }
 
 GameObject::~GameObject()
@@ -49,9 +72,9 @@ void GameObject::Update()
 		for (size_t i = 0; i < components.size(); i++)
 		{
 			//Update Components
-			if (components[i]->IsEnabled()) 
+			if (components[i]->IsEnabled())
 			{
-				if (components[i]->GetType() == ComponentType::MESH) 
+				if (components[i]->GetType() == ComponentType::MESH)
 				{
 					Component_Mesh* mesh = (Component_Mesh*)components[i];
 
@@ -60,7 +83,7 @@ void GameObject::Update()
 
 					aabb.SetNegativeInfinity();
 					aabb.Enclose(obb);
-										
+
 					if (App->scene->showBB)
 					{
 						float3 cornerPoints[8];
@@ -70,14 +93,14 @@ void GameObject::Update()
 
 						App->renderer3D->DrawAABB(cornerPoints, color);
 					}
-					
+
 					if (App->camera->GetCamera()->CheckBBOnCamera(aabb))
 					{
 						if (App->renderer3D->GetMainCamera()->CheckBBOnCamera(aabb) || !App->renderer3D->cameraCulling)
 						{
 							mesh->Update();
 						}
-					}	
+					}
 				}
 				else
 				{
@@ -97,6 +120,20 @@ void GameObject::Update()
 bool GameObject::IsVisible()
 {
 	return isVisible;
+}
+
+bool GameObject::IsEnabled()
+{
+	return enabled;
+}
+
+void GameObject::Clicked()
+{
+	if (transform->IsTransform2D())
+	{
+		Component_Button* button = GetComponent<Component_Button>();
+		if (button != nullptr) button->OnClick();
+	}
 }
 
 void GameObject::OnGUI()
@@ -137,6 +174,8 @@ void GameObject::Save(JsonArray& saveArray)
 
 	saveObject.AddInt("UUID", UUID);
 
+	saveObject.AddBool("Enabled", enabled);
+
 	if(parent != nullptr)
 		saveObject.AddInt("Parent UUID",parent->UUID);
 	else 
@@ -164,6 +203,8 @@ uint GameObject::Load(JsonObj* object)
 	UUID = object->GetInt("UUID");
 	name = object->GetString("Name", "No Name");
 	uint parentUUID = object->GetInt("Parent UUID");
+
+	enabled = object->GetBool("Enabled");
 
 	JsonArray componentsArray = object->GetArray("Components");
 
@@ -259,12 +300,37 @@ Component* GameObject::AddComponent(ComponentType type)
 	case LIGHT:
 		component = new Component_Light(this);
 		break;
+	case CANVAS:
+		component = new Component_Canvas(this);
+		break;
+	case IMAGE:
+		component = new Component_Image(this);
+		break;
+	case BUTTON:
+		component = new Component_Button(this);
+		break;
+	case CHECKBOX:
+		component = new Component_Checkbox(this);
+		break;
+	case FONT:
+		component = new Component_Font(this);
+		break;
+	case CANVASRENDERER:
+		component = new Component_CanvasRenderer(this);
+		break;
 	default:
 		break;
 	}
 
-	component->SetGameObject(this);
-	components.push_back(component);
+	if (component != nullptr)
+	{
+		component->SetGameObject(this);
+		components.push_back(component);
+	}
+	else
+	{
+		LOG_ERROR("Component was nullptr when creating a new one.");
+	}
 
 	return component;
 }
@@ -313,6 +379,11 @@ void GameObject::AddChild(GameObject* child)
 	}
 }
 
+void GameObject::Enable(bool en)
+{
+	enabled = en;
+}
+
 int GameObject::GetChildrenAmount()
 {
 	return children.size();
@@ -335,9 +406,9 @@ void GameObject::SetParent(GameObject* parentGameObject)
 
 void GameObject::ChangeParent(GameObject* newParent)
 {
-	if (newParent != nullptr) 
+	if (newParent != nullptr && parent != newParent) 
 	{
-		parent->RemoveChild(this);
+		if(parent != nullptr) parent->RemoveChild(this);
 		parent = newParent;
 		newParent->AddChild(this);
 		transform->ChangeParentTransform(newParent->GetTransform()->GetGlobalTransform());
@@ -381,6 +452,11 @@ void GameObject::UpdateChildrenTransforms()
 			children[i]->UpdateChildrenTransforms();
 		}
 	}
+}
+
+void GameObject::SetAABB(AABB obb)
+{
+	aabb = obb;
 }
 
 AABB GameObject::GetAABB()

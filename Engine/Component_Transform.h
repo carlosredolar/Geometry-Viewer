@@ -35,6 +35,7 @@ public:
 	void SetPosition(float3 newPosition);
 
 	Quat GetRotation();
+	float3 GetEulerRotation();
 	void SetRotation(float x, float y, float z);
 	void SetRotation(Quat newRotation);
 	void SetRotation(float i, float j, float k, float w);
@@ -48,8 +49,9 @@ public:
 	float2 GetPivot();
 	void SetPivot(float x, float y);
 	void SetPivot(float2 newPivot);
-	
 
+	bool IsTransform2D();
+	
 private:
 	bool is2D = false;
 
@@ -61,6 +63,7 @@ private:
 	Quat rotation;
 	float3 scale;
 	float3 eulerRotation;
+	//2D
 	float2 pivot;
 };
 

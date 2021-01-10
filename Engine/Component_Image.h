@@ -1,16 +1,15 @@
 #ifndef __IMAGE_H__
 #define __IMAGE_H__
-#include "Component.h"
+#include "Component_Graphic.h"
 #include "Libs/MathGeoLib/include/MathGeoLib.h"
-#include "Color.h"
 
 class JsonArray;
 class ResourceTexture;
 
-class Component_Image : public Component {
+class Component_Image : public Component_Graphic {
 
 public:
-	Component_Image();
+	Component_Image(GameObject* parent);
 	~Component_Image();
 
 	void Update() override;
@@ -21,11 +20,18 @@ public:
 
 	void SetResourceUID(uint UID) override;
 
+	void CheckersTexDefault();
+
 	ResourceTexture* GetImage();
 	void SetImage(ResourceTexture* texture);
 private:
-	ResourceTexture* image;
+	bool checkersImageActive;
+
+	uint checkersID;
+
+	ResourceTexture* image = nullptr;
 	Color color;
+	float2 texTile = float2::one;
 };
 
 #endif //__IMAGE_H__
