@@ -365,6 +365,12 @@ bool ModuleGui::CreateMenuBar() {
 					GameObject* uiCheckbox = new GameObject(trans, "Checkbox");
 					uiCheckbox->AddComponent(CHECKBOX);
 				}
+				else if (ImGui::MenuItem("Text"))
+				{
+					Component_Transform* trans = new Component_Transform(true);
+					GameObject* uiCheckbox = new GameObject(trans, "Text");
+					uiCheckbox->AddComponent(FONT);
+				}
 				ImGui::EndMenu();
 			}
 			ImGui::EndMenu();

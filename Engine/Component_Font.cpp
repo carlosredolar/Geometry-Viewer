@@ -11,13 +11,14 @@
 #include "Libs/ImGui/imgui.h"
 #include "Libs/Glew/include/glew.h"
 
-//#include "ModuleSceneIntro.h"
+//#include "ModuleScene.h"
 //#include <iostream>
 
 
 Component_Font::Component_Font(GameObject* parent) : Component_Graphic(ComponentType::FONT, parent)
 {
 	InitFonts();
+	text = "Hello World";
 }
 
 Component_Font::~Component_Font()
@@ -31,10 +32,10 @@ void Component_Font::Update()
 
 void Component_Font::InitFonts()
 {
-	fonts["Arial"] = std::shared_ptr<GLFont>(new GLFont("Assets/Fonts/arial.ttf"));
-	fonts["Calibri"] = std::shared_ptr<GLFont>(new GLFont("Assets/Fonts/Calibri Regular.ttf"));
-	fonts["Roboto"] = std::shared_ptr<GLFont>(new GLFont("Assets/Fonts/Roboto-Regular.ttf"));
-	fonts["EastSeaDokdo"] = std::shared_ptr<GLFont>(new GLFont("Assets/Fonts/EastSeaDokdo-Regular.ttf"));
+	fonts["Arial"] = std::shared_ptr<GLFont>(new GLFont("Assets/EngineAssets/Fonts/arial.ttf"));
+	fonts["Calibri"] = std::shared_ptr<GLFont>(new GLFont("Assets/EngineAssets/Fonts/Calibri Regular.ttf"));
+	fonts["Roboto"] = std::shared_ptr<GLFont>(new GLFont("Assets/EngineAssets/Fonts/Roboto-Regular.ttf"));
+	fonts["EastSeaDokdo"] = std::shared_ptr<GLFont>(new GLFont("Assets/EngineAssets/Fonts/EastSeaDokdo-Regular.ttf"));
 
 
 	label = std::unique_ptr<FTLabel>(new FTLabel(
