@@ -31,11 +31,12 @@ void Component_Font::Update()
 
 void Component_Font::InitFonts()
 {
-	fonts["Arial"] = std::shared_ptr<GLFont>(new GLFont("Assets/Fonts/arial.ttf"));
-	fonts["Calibri"] = std::shared_ptr<GLFont>(new GLFont("Assets/Fonts/Calibri Regular.ttf"));
-	fonts["Roboto"] = std::shared_ptr<GLFont>(new GLFont("Assets/Fonts/Roboto-Regular.ttf"));
-	fonts["EastSeaDokdo"] = std::shared_ptr<GLFont>(new GLFont("Assets/Fonts/EastSeaDokdo-Regular.ttf"));
+	fonts["Arial"] = std::shared_ptr<GLFont>(new GLFont("Assets/EngineAssets/Fonts/arial.ttf"));
+	fonts["Calibri"] = std::shared_ptr<GLFont>(new GLFont("Assets/EngineAssets/Fonts/Calibri Regular.ttf"));
+	fonts["Roboto"] = std::shared_ptr<GLFont>(new GLFont("Assets/EngineAssets/Fonts/Roboto-Regular.ttf"));
+	fonts["EastSeaDokdo"] = std::shared_ptr<GLFont>(new GLFont("Assets/EngineAssets/Fonts/EastSeaDokdo-Regular.ttf"));
 
+	text = "HOLA MUNDO";
 
 	label = std::unique_ptr<FTLabel>(new FTLabel(
 		fonts["Arial"],
