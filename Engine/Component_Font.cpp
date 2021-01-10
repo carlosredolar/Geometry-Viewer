@@ -37,6 +37,7 @@ void Component_Font::InitFonts()
 	fonts["Roboto"] = std::shared_ptr<GLFont>(new GLFont("Assets/EngineAssets/Fonts/Roboto-Regular.ttf"));
 	fonts["EastSeaDokdo"] = std::shared_ptr<GLFont>(new GLFont("Assets/EngineAssets/Fonts/EastSeaDokdo-Regular.ttf"));
 
+	text = "HOLA MUNDO";
 
 	label = std::unique_ptr<FTLabel>(new FTLabel(
 		fonts["Arial"],
