@@ -18,7 +18,6 @@
 Component_Font::Component_Font(GameObject* parent) : Component_Graphic(ComponentType::FONT, parent)
 {
 	InitFonts();
-	text = "Hello World";
 }
 
 Component_Font::~Component_Font()
@@ -44,25 +43,24 @@ void Component_Font::InitFonts()
 		text.c_str(),
 		0,
 		0,
-		App->window->width,
-		App->window->height
+		App->gui->sceneRenderSize.x,
+		App->gui->sceneRenderSize.y
 	));
-	label->setColor(0.89, 0.26, 0.3, 0.9);
+	label->setColor(0.89f, 0.26f, 0.3f, 0.9f);
 	label->setPixelSize(64);
 	label->setAlignment(FTLabel::FontFlags::RightAligned);
 	label->appendFontFlags(FTLabel::FontFlags::Indented);
-
 }
 
 void Component_Font::Render()
 {
-	label.get()->setFont(fonts[typeFont]);
-	if (fontSize == "") fontSize = "0";
-	label.get()->setPixelSize(std::stoi(fontSize));
-	label.get()->setText((char*)text.c_str());
-	label.get()->setAlignment(aligment);
-	label.get()->setPosition(0, 0);
-	label.get()->setColor(color.x, color.y, color.z, color.w);
+	//label.get()->setFont(fonts[typeFont]);
+	//if (fontSize == "") fontSize = "0";
+	//label.get()->setPixelSize(std::stoi(fontSize));
+	//label.get()->setText((char*)text.c_str());
+	//label.get()->setAlignment(aligment);
+	//label.get()->setPosition(0, 0);
+	//label.get()->setColor(color.x, color.y, color.z, color.w);
 
 	label.get()->render();
 }
