@@ -63,7 +63,7 @@ bool ModuleScene::CleanUp()
 update_status ModuleScene::Update(float dt)
 {
 	//Grid
-	if (showGrid)
+	if (showGrid && !App->in_game)
 	{
 		PrimitiveGrid grid(24);
 		grid.Render();

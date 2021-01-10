@@ -33,10 +33,15 @@ void Component_Canvas::Update()
 		{
 			canvasScale = ownerGameObject->GetTransform()->GetScale();
 			getScale = true;
+			ownerGameObject->GetTransform()->SetScale(canvasScale.Mul(cornerPoints[1].Distance(cornerPoints[5]) / canvasSize.x));
+			ownerGameObject->GetTransform()->SetPosition(cornerPoints[1].x, cornerPoints[1].y, cornerPoints[1].z);
+			ownerGameObject->UpdateChildrenTransforms();
 		}
-		ownerGameObject->GetTransform()->SetScale(canvasScale.Mul(cornerPoints[1].Distance(cornerPoints[5]) / canvasSize.x));
-
-		ownerGameObject->GetTransform()->SetPosition(cornerPoints[1].x, cornerPoints[1].y, cornerPoints[1].z);
+		else 
+		{
+			ownerGameObject->GetTransform()->SetScale(canvasScale.Mul(cornerPoints[1].Distance(cornerPoints[5]) / canvasSize.x));
+			ownerGameObject->GetTransform()->SetPosition(cornerPoints[1].x, cornerPoints[1].y, cornerPoints[1].z);
+		}
 	}
 	else getScale = false;
 

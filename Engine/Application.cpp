@@ -208,6 +208,7 @@ void Application::StartGame()
 	in_game = true;
 	Time::gameClock.Start();
 	Save("Library/Scenes/tmp.scener");
+	ImGuizmo::Enable(false);
 }
 
 void Application::StopGame()
@@ -215,6 +216,7 @@ void Application::StopGame()
 	in_game = false;
 	Time::gameClock.Stop();
 	Load("Library/Scenes/tmp.scener");
+	ImGuizmo::Enable(true);
 }
 
 void Application::AddModule(Module* mod)

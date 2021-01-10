@@ -1,7 +1,7 @@
 {
     "Game Objects": [
         {
-            "UUID": 1225316954,
+            "UUID": 582608910,
             "Parent UUID": 0,
             "Name": "Scene",
             "Components": [
@@ -30,8 +30,8 @@
             ]
         },
         {
-            "UUID": 1260405938,
-            "Parent UUID": 1225316954,
+            "UUID": 605653461,
+            "Parent UUID": 582608910,
             "Name": "Camera",
             "Components": [
                 {
@@ -85,7 +85,7 @@
         },
         {
             "UUID": 1341051232,
-            "Parent UUID": 1225316954,
+            "Parent UUID": 582608910,
             "Name": "street environment_v01",
             "Components": [
                 {
@@ -1424,8 +1424,8 @@
             ]
         },
         {
-            "UUID": 914947625,
-            "Parent UUID": 1225316954,
+            "UUID": 529835196,
+            "Parent UUID": 582608910,
             "Name": "Canvas",
             "Components": [
                 {
@@ -1447,8 +1447,8 @@
                         1,
                         1
                     ],
-                    "Pivot x": 0.5,
-                    "Pivot y": 0.5
+                    "Pivot x": 0,
+                    "Pivot y": 0
                 },
                 {
                     "Type": 5,
@@ -1460,8 +1460,8 @@
             ]
         },
         {
-            "UUID": 720008825,
-            "Parent UUID": 914947625,
+            "UUID": 350352258,
+            "Parent UUID": 529835196,
             "Name": "Image",
             "Components": [
                 {
@@ -1479,6 +1479,48 @@
                         1
                     ],
                     "Scale": [
+                        16,
+                        9,
+                        1
+                    ],
+                    "Pivot x": 0,
+                    "Pivot y": 0
+                },
+                {
+                    "Type": 9,
+                    "Checkers": true,
+                    "Width": 100,
+                    "Height": 100,
+                    "TileX": 1,
+                    "TileY": 1,
+                    "Color": [
+                        9.9999999747524271e-07,
+                        9.9998999303352321e-07,
+                        9.9998999303352321e-07
+                    ]
+                }
+            ]
+        },
+        {
+            "UUID": 554387002,
+            "Parent UUID": 529835196,
+            "Name": "Button",
+            "Components": [
+                {
+                    "Type": 2,
+                    "Is 2D": true,
+                    "Position": [
+                        781.280517578125,
+                        297.38272094726563,
+                        13.671825408935547
+                    ],
+                    "Rotation": [
+                        0,
+                        0,
+                        0,
+                        1
+                    ],
+                    "Scale": [
                         1,
                         1,
                         1
@@ -1487,29 +1529,20 @@
                     "Pivot y": 0.5
                 },
                 {
-                    "Type": 9,
-                    "Checkers": true,
-                    "Width": 100,
-                    "Height": 100,
-                    "TileX": 7,
-                    "TileY": 4,
-                    "Color": [
-                        0.5163043737411499,
-                        0.036478031426668167,
-                        0.036478031426668167
-                    ]
+                    "Type": 7,
+                    "Image UID": 1874679909
                 }
             ]
         }
     ],
     "Camera Position": [
-        25.892677307128906,
-        54.917274475097656,
-        164.42938232421875
+        753.55584716796875,
+        316.5545654296875,
+        1888.8497314453125
     ],
     "Camera Reference": [
-        0,
-        0,
-        0
+        758.5413818359375,
+        335.620361328125,
+        5.4053139686584473
     ]
 } 
