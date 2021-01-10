@@ -21,10 +21,12 @@ class GameObject {
 public:
 	GameObject();
 	GameObject(Component_Mesh* mesh);
+	GameObject(Component_Transform* transform, const char* name = "Empty Game Object");
 	~GameObject();
 
 	void Update();
 	bool IsVisible();
+	bool IsEnabled();
 	void OnGUI();
 
 	void Save(JsonArray& saveArray);
@@ -58,7 +60,11 @@ public:
 	void SetParent(GameObject* parentGameObject);
 	void ChangeParent(GameObject* newParent);
 
+	void SetAABB(AABB);
 	AABB GetAABB();
+
+	void Enable(bool en);
+	void Clicked();
 
 public: 
 	uint UUID = 0;
@@ -70,7 +76,7 @@ private:
 	bool enabled;
 	bool isVisible;
 	std::string name;
-	GameObject* parent;
+	GameObject* parent = nullptr;
 	Component_Transform* transform;
 	std::vector<Component*> components;
 	std::vector<GameObject*> children;

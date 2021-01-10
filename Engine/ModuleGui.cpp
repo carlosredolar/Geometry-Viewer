@@ -4,8 +4,10 @@
 #include "Component_Mesh.h"
 #include "ModuleScene.h"
 #include "GameObject.h"
+#include "Component_Camera.h";
+#include "Component_Canvas.h";
+#include "Component_Transform.h";
 #include "FileManager.h"
-#include "Component_Camera.h"
 #include "Time.h"
 
 #include <vector>
@@ -215,6 +217,14 @@ void ModuleGui::ScreenResized(ImVec2 windowSize)
 
 	App->camera->ScreenResized(sceneRenderSize.x, sceneRenderSize.y);
 	App->renderer3D->ScreenResized(sceneRenderSize.x, sceneRenderSize.y);
+	for (int i = 0; i < App->scene->GetAllGameObjects().size(); i++)
+	{
+		Component_Canvas* canvas = App->scene->GetAllGameObjects().at(i)->GetComponent<Component_Canvas>();
+		if(canvas != nullptr)
+		{
+			canvas->Resize(sceneRenderSize.x, sceneRenderSize.y);
+		}
+	}
 }
 
 bool ModuleGui::MouseOnScene()
@@ -325,6 +335,41 @@ bool ModuleGui::CreateMenuBar() {
 				else if (ImGui::MenuItem("Sphere"))
 				{
 					App->scene->AddGameObject(App->resources->RequestGameObject("Assets/Models/Primitives/sphere.fbx"));
+				}
+				ImGui::EndMenu();
+			}
+			if (ImGui::BeginMenu("UI"))
+			{
+				if (ImGui::MenuItem("Canvas"))
+				{
+					Component_Transform* trans = new Component_Transform(true);
+					GameObject* can = new GameObject(trans, "Canvas");
+					can->AddComponent(ComponentType::CANVAS);
+					App->scene->AddGameObject(can);
+				}
+				else if (ImGui::MenuItem("Image"))
+				{
+					Component_Transform* trans = new Component_Transform(true);
+					GameObject* uiImage = new GameObject(trans, "Image");
+					uiImage->AddComponent(IMAGE);
+				}
+				else if (ImGui::MenuItem("Button"))
+				{
+					Component_Transform* trans = new Component_Transform(true);
+					GameObject* uiButton = new GameObject(trans, "Button");
+					uiButton->AddComponent(BUTTON);
+				}
+				else if (ImGui::MenuItem("Checkbox"))
+				{
+					Component_Transform* trans = new Component_Transform(true);
+					GameObject* uiCheckbox = new GameObject(trans, "Checkbox");
+					uiCheckbox->AddComponent(CHECKBOX);
+				}
+				else if (ImGui::MenuItem("Text"))
+				{
+					Component_Transform* trans = new Component_Transform(true);
+					GameObject* uiCheckbox = new GameObject(trans, "Text");
+					uiCheckbox->AddComponent(FONT);
 				}
 				ImGui::EndMenu();
 			}

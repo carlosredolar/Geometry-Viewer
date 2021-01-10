@@ -15,7 +15,7 @@ ModuleCamera3D::ModuleCamera3D(bool start_enabled) : Module(start_enabled)
 {
 	name = "camera";
 
-	position = float3(40.0f, 15.0f, 45.0f);
+	position = float3(40.0f, 50.0f, 100.0f);
 	reference = float3(0.0f, 0.0f, 0.0f);
 
 	X = float3(1.0f, 0.0f, 0.0f);
@@ -71,83 +71,98 @@ void ModuleCamera3D::ScreenResized(int width, int height)
 
 update_status ModuleCamera3D::Update(float dt)
 {
-	if (!App->gui->IsSceneFocused())
-		return UPDATE_CONTINUE;
-
-	float3 newPosition = float3::zero;
-	int speedMultiplier = 5;
-
-	if (App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT)
-		speedMultiplier *= 2;
-
-	if ((App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) || (App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)) 
-		newPosition += camera->GetFrustum().front * movementSpeed * speedMultiplier * dt;
-	if ((App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) || (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)) 
-		newPosition -= camera->GetFrustum().front * movementSpeed * speedMultiplier * dt;
-	if ((App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) || (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)) 
-		newPosition += camera->GetFrustum().WorldRight() * movementSpeed * speedMultiplier * dt;
-	if ((App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) || (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT))
-		newPosition -= camera->GetFrustum().WorldRight() * movementSpeed * speedMultiplier * dt;
-	if (App->input->GetKey(SDL_SCANCODE_Z) == KEY_REPEAT) 
-		newPosition.y += movementSpeed * speedMultiplier * dt;
-	if (App->input->GetKey(SDL_SCANCODE_X) == KEY_REPEAT) 
-		newPosition.y -= movementSpeed * speedMultiplier * dt;
-
-	if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN) 
+	if (App->in_game)
 	{
-		if (App->scene->selectedGameObject != nullptr)
+		camera->SetCameraPosition(App->renderer3D->GetMainCamera()->ownerGameObject->GetTransform()->GetPosition());
+		camera->Look(App->renderer3D->GetMainCamera()->GetFrustum().CenterPoint());
+
+		if (App->gui->MouseOnScene() && App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN)
 		{
-			reference = App->scene->selectedGameObject->GetTransform()->GetPosition();
-			LookAt(reference);
+			if (App->in_game) SelectGO()->Clicked();
 		}
 	}
+	else
+	{
+		if (!App->gui->IsSceneFocused())
+			return UPDATE_CONTINUE;
 
-	if (App->gui->MouseOnScene()) {
-	//Zoom 
-		float distanceToReference = Distance(position, reference);
-		if (distanceToReference > 0.05f)
+		float3 newPosition = float3::zero;
+		int speedMultiplier = 5;
+
+		if (App->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT)
+			speedMultiplier *= 2;
+
+		if ((App->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) || (App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT))
+			newPosition += camera->GetFrustum().front * movementSpeed * speedMultiplier * dt;
+		if ((App->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) || (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT))
+			newPosition -= camera->GetFrustum().front * movementSpeed * speedMultiplier * dt;
+		if ((App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) || (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT))
+			newPosition += camera->GetFrustum().WorldRight() * movementSpeed * speedMultiplier * dt;
+		if ((App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) || (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT))
+			newPosition -= camera->GetFrustum().WorldRight() * movementSpeed * speedMultiplier * dt;
+		if (App->input->GetKey(SDL_SCANCODE_Z) == KEY_REPEAT)
+			newPosition.y += movementSpeed * speedMultiplier * dt;
+		if (App->input->GetKey(SDL_SCANCODE_X) == KEY_REPEAT)
+			newPosition.y -= movementSpeed * speedMultiplier * dt;
+
+		if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN)
 		{
-			if (App->input->GetMouseZ() > 0)
+			if (App->scene->selectedGameObject != nullptr)
 			{
-				position += camera->GetFrustum().front * zoomSpeed * distanceToReference * dt;
+				reference = App->scene->selectedGameObject->GetTransform()->GetPosition();
 				LookAt(reference);
+			}
+		}
+
+		if (App->gui->MouseOnScene()) {
+			//Zoom 
+			float distanceToReference = Distance(position, reference);
+			if (distanceToReference > 0.05f)
+			{
+				if (App->input->GetMouseZ() > 0)
+				{
+					position += camera->GetFrustum().front * zoomSpeed * distanceToReference * dt;
+					LookAt(reference);
+				}
+				else if (App->input->GetMouseZ() < 0)
+				{
+					position -= camera->GetFrustum().front * zoomSpeed * distanceToReference * dt;
+					LookAt(reference);
+				}
 			}
 			else if (App->input->GetMouseZ() < 0)
 			{
 				position -= camera->GetFrustum().front * zoomSpeed * distanceToReference * dt;
 				LookAt(reference);
 			}
-		}
-		else if (App->input->GetMouseZ() < 0)
-		{
-			position -= camera->GetFrustum().front * zoomSpeed * distanceToReference * dt;
-			LookAt(reference);
+
+			//Pan
+			if ((App->input->GetMouseButton(SDL_BUTTON_MIDDLE) == KEY_REPEAT))
+			{
+				newPosition -= camera->GetFrustum().WorldRight() * App->input->GetMouseXMotion() * panningSpeed * distanceToReference * dt;
+				newPosition += camera->GetFrustum().up * App->input->GetMouseYMotion() * panningSpeed * distanceToReference * dt;
+			}
+
+			if ((App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT) && (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT))
+			{
+				Orbit(dt);
+			}
+
+			if (!(App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT) && (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN) && !(ImGuizmo::IsOver()))
+			{
+				App->scene->selectedGameObject = SelectGO();
+			}
 		}
 
-		//Pan
-		if ((App->input->GetMouseButton(SDL_BUTTON_MIDDLE) == KEY_REPEAT))
-		{
-			newPosition -= camera->GetFrustum().WorldRight() * App->input->GetMouseXMotion() * panningSpeed * distanceToReference * dt;
-			newPosition += camera->GetFrustum().up * App->input->GetMouseYMotion() * panningSpeed * distanceToReference * dt;
-		}
+		RenderRay();
 
-		if ((App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT) && (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_REPEAT))
-		{
-			Orbit(dt);
-		}
-
-		if (!(App->input->GetKey(SDL_SCANCODE_LALT) == KEY_REPEAT) && (App->input->GetMouseButton(SDL_BUTTON_LEFT) == KEY_DOWN) && !(ImGuizmo::IsOver()))
-		{
-			App->scene->selectedGameObject = SelectGO();
-		}
+		position += newPosition;
+		camera->SetCameraPosition(position);
+		reference += newPosition;
+		camera->SetCameraReference(reference);
+		camera->Look(reference);
 	}
-		
-	RenderRay();
 
-	position += newPosition;
-	camera->SetCameraPosition(position);
-	reference += newPosition;
-	camera->SetCameraReference(reference);
 
 	return UPDATE_CONTINUE;
 }
@@ -212,6 +227,21 @@ float4x4 ModuleCamera3D::GetProjectionMatrixM()
 float3 ModuleCamera3D::GetPosition()
 {
 	return position;
+}
+
+float3 ModuleCamera3D::GetReferencePos()
+{
+	return reference;
+}
+
+void ModuleCamera3D::SetPosition(float3 pos)
+{
+	pos = position;
+}
+
+void ModuleCamera3D::SetReferencePos(float3 ref)
+{
+	ref = reference;
 }
 
 FOV ModuleCamera3D::GetFixedFOV()
@@ -281,6 +311,9 @@ GameObject* ModuleCamera3D::SelectGO()
 	
 	for (int i = 0; i < sceneGO.size(); i++)
 	{
+		//if (strcmp(sceneGO[i]->GetName(), "Image") == 0)
+		//	LOG("Mouse picking ui test");
+
 		hit = ray.Intersects(sceneGO[i]->GetAABB());
 		
 		if (hit)
@@ -292,29 +325,40 @@ GameObject* ModuleCamera3D::SelectGO()
 
 			LineSegment localRay = ray;
 			localRay.Transform(sceneGO[i]->GetTransform()->GetGlobalTransform().Inverted());
+			if (!sceneGO[i]->GetTransform()->IsTransform2D())
+			{
+				ResourceMesh* mesh = nullptr; mesh = (ResourceMesh*)sceneGO[i]->GetComponent<Component_Mesh>()->GetResource(ResourceType::RESOURCE_MESH);
 
-			ResourceMesh* mesh = nullptr; mesh = (ResourceMesh*)sceneGO[i]->GetComponent<Component_Mesh>()->GetResource(ResourceType::RESOURCE_MESH);
-
-			if (mesh != nullptr) {
-				for (int j = 0; j < mesh->amountIndices; j += 3)
-				{
-					float3 v1(mesh->vertices[mesh->indices[j] * 3], mesh->vertices[mesh->indices[j] * 3 + 1], mesh->vertices[mesh->indices[j] * 3 + 2]);
-					float3 v2(mesh->vertices[mesh->indices[j + 1] * 3], mesh->vertices[mesh->indices[j + 1] * 3 + 1], mesh->vertices[mesh->indices[j + 1] * 3 + 2]);
-					float3 v3(mesh->vertices[mesh->indices[j + 2] * 3], mesh->vertices[mesh->indices[j + 2] * 3 + 1], mesh->vertices[mesh->indices[j + 2] * 3 + 2]);
-					const Triangle triangle(v1, v2, v3);
-
-					float dist;
-					float3 intersectionPoint;
-					if (localRay.Intersects(triangle, &dist, &intersectionPoint))
+				if (mesh != nullptr) {
+					for (int j = 0; j < mesh->amountIndices; j += 3)
 					{
-						if (entranceDist < nearestIntersectDist)
+						float3 v1(mesh->vertices[mesh->indices[j] * 3], mesh->vertices[mesh->indices[j] * 3 + 1], mesh->vertices[mesh->indices[j] * 3 + 2]);
+						float3 v2(mesh->vertices[mesh->indices[j + 1] * 3], mesh->vertices[mesh->indices[j + 1] * 3 + 1], mesh->vertices[mesh->indices[j + 1] * 3 + 2]);
+						float3 v3(mesh->vertices[mesh->indices[j + 2] * 3], mesh->vertices[mesh->indices[j + 2] * 3 + 1], mesh->vertices[mesh->indices[j + 2] * 3 + 2]);
+						const Triangle triangle(v1, v2, v3);
+
+						float dist;
+						float3 intersectionPoint;
+						if (localRay.Intersects(triangle, &dist, &intersectionPoint))
 						{
-							nearestIntersectDist = entranceDist;
-							nearestGOIndex = i;
+							if (entranceDist < nearestIntersectDist)
+							{
+								nearestIntersectDist = entranceDist;
+								nearestGOIndex = i;
+							}
 						}
 					}
 				}
-			}					
+			}
+			else
+			{
+				if (entranceDist < nearestIntersectDist)
+				{
+					nearestIntersectDist = entranceDist;
+					nearestGOIndex = i;
+				}
+			}
+								
 		}
 	}
 

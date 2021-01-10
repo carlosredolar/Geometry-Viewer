@@ -1,4 +1,5 @@
 #include "Component_Transform.h"
+#include "Component_Graphic.h"
 #include "Globals.h"
 #include "GameObject.h"
 #include "ModuleJson.h"
@@ -67,11 +68,13 @@ void Component_Transform::OnGUI()
 		if (is2D)
 		{
 			float piv[2] = { pivot.x, pivot.y };
-			if (ImGui::DragFloat3("Pivot", piv, 0.01f, 0.0f, 1.0f))
+			if (ImGui::DragFloat2("Pivot", piv, 0.01f, 0.0f, 1.0f))
 			{
 				SetPivot(piv[0], piv[1]);
 				UpdateGlobalTransform();
 				ownerGameObject->UpdateChildrenTransforms();
+				Component_Graphic* compgrph = ownerGameObject->GetComponent<Component_Graphic>();
+				if(compgrph != nullptr) ownerGameObject->GetComponent<Component_Graphic>()->RegenerateMesh(this);
 			};
 		}
 
@@ -82,23 +85,37 @@ void Component_Transform::OnGUI()
 
 		ImGui::Spacing();
 	}
+
+}
+
+bool Component_Transform::IsTransform2D()
+{
+	return is2D;
 }
 
 void Component_Transform::Save(JsonArray& saveArray)
 {
 	JsonObj saveObject;
 	saveObject.AddInt("Type", type);
+	saveObject.AddBool("Is 2D", is2D);
 	saveObject.AddFloat3("Position", position);
 	saveObject.AddQuaternion("Rotation", rotation);
 	saveObject.AddFloat3("Scale", scale);
+	saveObject.AddFloat("Pivot x", pivot.x);
+	saveObject.AddFloat("Pivot y", pivot.y);
 	saveArray.AddObject(saveObject);
 }
 
 void Component_Transform::Load(JsonObj& loadObject)
 {
+	is2D = loadObject.GetBool("Is 2D");
+
 	position = loadObject.GetFloat3("Position");
 	rotation = loadObject.GetQuaternion("Rotation");
 	scale = loadObject.GetFloat3("Scale");
+
+	pivot.x = loadObject.GetFloat("Pivot x");
+	pivot.y = loadObject.GetFloat("Pivot y");
 
 	UpdateEulerRotation();
 	UpdateGlobalTransform();
@@ -192,6 +209,11 @@ void Component_Transform::SetPosition(float x, float y, float z)
 Quat Component_Transform::GetRotation()
 {
 	return rotation;
+}
+
+float3 Component_Transform::GetEulerRotation()
+{
+	return eulerRotation;
 }
 
 void Component_Transform::SetPosition(float3 newPosition)

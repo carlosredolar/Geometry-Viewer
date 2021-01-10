@@ -30,9 +30,12 @@ public:
 	float* GetProjectionMatrix();
 	float4x4 GetProjectionMatrixM();
 	float3 GetPosition();
+	float3 GetReferencePos();
 	GameObject* SelectGO();
 
 	FOV GetFixedFOV();
+	void SetPosition(float3 pos);
+	void SetReferencePos(float3 ref);
 	void SetFixedFOV(FOV fixedFOV);
 	float GetVerticalFieldOfView();
 	float GetHorizontalFieldOfView();

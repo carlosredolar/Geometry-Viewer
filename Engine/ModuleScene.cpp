@@ -6,7 +6,10 @@
 #include "FileManager.h"
 #include "GameObject.h"
 #include "Component_Transform.h"
+#include "Component_Image.h"
 #include "Component_Camera.h"
+#include "Component_Graphic.h"
+#include "ModuleCamera3D.h"
 
 ModuleScene::ModuleScene(bool start_enabled) : Module(start_enabled), showGrid(true), selectedGameObject(nullptr), root(nullptr) 
 {
@@ -32,16 +35,18 @@ bool ModuleScene::Start()
 	
 	//Create camera
 	GameObject* camera = new GameObject();
-	camera->AddComponent(ComponentType::CAMERA);
+	Component_Camera* cam = (Component_Camera*)camera->AddComponent(ComponentType::CAMERA);
 	camera->SetName("Camera");
-	camera->GetTransform()->SetPosition(float3(0.0f, 0.0f, -5.0f));
+	camera->GetTransform()->SetPosition(cam->GetFrustum().pos);
 	AddGameObject(camera);
-	App->renderer3D->SetMainCamera(camera->GetComponent<Component_Camera>());
+	App->renderer3D->SetMainCamera(cam);
 
 	//Create initial gameObject
 	GameObject* street_environment = App->resources->RequestGameObject("Assets/Models/Street environment_V01.FBX");
 	AddGameObject(street_environment);
-	
+
+	App->Load("Library/Scenes/tmp2.scener");
+
 	return ret;
 }
 
@@ -59,11 +64,22 @@ bool ModuleScene::CleanUp()
 // Update: inputs and update gameobjects
 update_status ModuleScene::Update(float dt)
 {
-	//Grid
-	if (showGrid)
+	if (App->in_game)
 	{
-		PrimitiveGrid grid(24);
-		grid.Render();
+		if (App->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
+		{
+			GameObject* can = FindGameObjectWithName("Canvas 1");
+			can->Enable(!can->IsEnabled());
+		}
+	}
+	else
+	{
+		//Grid
+		if (showGrid)
+		{
+			PrimitiveGrid grid(24);
+			grid.Render();
+		}
 	}
 
 	//Inputs
@@ -131,10 +147,23 @@ void ModuleScene::GetChildrenGameObjects(GameObject* gameObject, std::vector<Gam
 {
 	gameObjectsToGet.push_back(gameObject);
 
-	for (size_t i = 0; i < gameObject->GetChildrenAmount(); i++)
+	for (uint i = 0; i < gameObject->GetChildrenAmount(); i++)
 	{
 		GetChildrenGameObjects(gameObject->GetChildAt(i), gameObjectsToGet);
 	}
+}
+
+GameObject* ModuleScene::FindGameObjectWithName(const char* gameObjectName)
+{
+	std::vector<GameObject*> gameObjects = GetAllGameObjects();
+	for (uint i = 0; i < gameObjects.size(); i++)
+	{
+		if (strcmp(gameObjects.at(i)->GetName(), gameObjectName) == 0)
+		{
+			return gameObjects.at(i);
+		}
+	}
+	return nullptr;
 }
 
 void ModuleScene::EditTransform()
@@ -143,12 +172,15 @@ void ModuleScene::EditTransform()
 	{
 		float4x4 viewMatrix = App->camera->GetViewMatrixM().Transposed();
 		float4x4 projectionMatrix = App->camera->GetProjectionMatrixM().Transposed();
-		float4x4 objectTransform = selectedGameObject->GetTransform()->GetGlobalTransform().Transposed();
+		float4x4 objectTransform = selectedGameObject->GetTransform()->GetGlobalTransform();
+
+		float tempTransform[16];
+
+		objectTransform = objectTransform.Transposed();
 
 		ImGuizmo::SetDrawlist();
 		ImGuizmo::SetRect(App->gui->sceneWindowOrigin.x, App->gui->sceneWindowOrigin.y, App->gui->sceneRenderSize.x, App->gui->sceneRenderSize.y);
 
-		float tempTransform[16];
 		memcpy(tempTransform, objectTransform.ptr(), 16 * sizeof(float));
 
 		ImGuizmo::Manipulate(viewMatrix.ptr(), projectionMatrix.ptr(), CurrentGizmoOperation, CurrentGizmoMode, tempTransform);
@@ -159,6 +191,14 @@ void ModuleScene::EditTransform()
 			newTransform.Set(tempTransform);
 			objectTransform = newTransform.Transposed();
 			selectedGameObject->GetTransform()->SetGlobalTransform(objectTransform);
+			movingObject = true;
+		}
+
+		if (movingObject && (App->input->GetMouseButton(1) == KEY_UP))
+		{
+			if (selectedGameObject->GetComponent<Component_Graphic>() != nullptr)
+				selectedGameObject->SetAABB(selectedGameObject->GetComponent<Component_Graphic>()->GetAABB());
+			movingObject = false;
 		}
 	}
 }
@@ -181,6 +221,8 @@ bool ModuleScene::Save(const char* file_path)
 	JsonArray gameObjects = saveFile.AddArray("Game Objects");
 
 	root->Save(gameObjects);
+	saveFile.AddFloat3("Camera Position", App->camera->GetPosition());
+	saveFile.AddFloat3("Camera Reference", App->camera->GetReferencePos());
 
 	char* buffer = NULL;
 	uint size = saveFile.Save(&buffer);
@@ -211,6 +253,10 @@ bool ModuleScene::Load(const char* scene_file)
 	
 	JsonObj base_object(buffer);
 	JsonArray gameObjects(base_object.GetArray("Game Objects"));
+
+	App->camera->SetPosition(base_object.GetFloat3("Camera Position"));
+	App->camera->SetReferencePos(base_object.GetFloat3("Camera Reference"));
+	App->gui->sceneWindowFocused = true;
 
 	std::vector<GameObject*> createdObjects;
 
