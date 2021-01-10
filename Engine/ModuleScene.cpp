@@ -9,6 +9,7 @@
 #include "Component_Image.h"
 #include "Component_Camera.h"
 #include "Component_Graphic.h"
+#include "ModuleCamera3D.h"
 
 ModuleScene::ModuleScene(bool start_enabled) : Module(start_enabled), showGrid(true), selectedGameObject(nullptr), root(nullptr) 
 {
@@ -34,11 +35,11 @@ bool ModuleScene::Start()
 	
 	//Create camera
 	GameObject* camera = new GameObject();
-	camera->AddComponent(ComponentType::CAMERA);
+	Component_Camera* cam = (Component_Camera*)camera->AddComponent(ComponentType::CAMERA);
 	camera->SetName("Camera");
-	camera->GetTransform()->SetPosition(float3(0.0f, 0.0f, -5.0f));
+	camera->GetTransform()->SetPosition(cam->GetFrustum().pos);
 	AddGameObject(camera);
-	App->renderer3D->SetMainCamera(camera->GetComponent<Component_Camera>());
+	App->renderer3D->SetMainCamera(cam);
 
 	//Create initial gameObject
 	GameObject* street_environment = App->resources->RequestGameObject("Assets/Models/Street environment_V01.FBX");
@@ -207,6 +208,8 @@ bool ModuleScene::Save(const char* file_path)
 	JsonArray gameObjects = saveFile.AddArray("Game Objects");
 
 	root->Save(gameObjects);
+	saveFile.AddFloat3("Camera Position", App->camera->GetPosition());
+	saveFile.AddFloat3("Camera Reference", App->camera->GetReferencePos());
 
 	char* buffer = NULL;
 	uint size = saveFile.Save(&buffer);
@@ -237,6 +240,10 @@ bool ModuleScene::Load(const char* scene_file)
 	
 	JsonObj base_object(buffer);
 	JsonArray gameObjects(base_object.GetArray("Game Objects"));
+
+	App->camera->SetPosition(base_object.GetFloat3("Camera Position"));
+	App->camera->SetReferencePos(base_object.GetFloat3("Camera Reference"));
+	App->gui->sceneWindowFocused = true;
 
 	std::vector<GameObject*> createdObjects;
 
